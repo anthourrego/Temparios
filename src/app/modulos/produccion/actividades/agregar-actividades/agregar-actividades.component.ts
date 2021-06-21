@@ -98,7 +98,6 @@ export class AgregarActividadesComponent implements OnInit {
 					}
 				});
 			});
-			console.log("Respuesta ", resp);
 			this.infoActividades = this.infoActividades.concat(resp);
 			if (resp.length && this.fin >= +this.infoActividades[this.infoActividades.length - 1]['totCol']) {
 				if (evento) {

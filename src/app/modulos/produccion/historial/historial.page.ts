@@ -9,8 +9,6 @@ export class HistorialPage implements OnInit {
 
   constructor() { }
 
-  ngOnInit() {
-    console.log("Historial")
-  }
+  ngOnInit() { }
 
 }

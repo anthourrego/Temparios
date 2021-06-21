@@ -1,11 +1,11 @@
 export class Constantes {
-    static valoresTemas = [{
+	static valoresTemas = [{
 		titulo: 'Oscuro', valor: 'dark'
 	}, {
 		titulo: 'Estandar', valor: 'estandar'
 	}];
 
-    static temas = [{
+	static temas = [{
 		name: 'dark',
 		styles: [
 			{ themeVariable: '--ion-color-primary', value: '#737373' },
@@ -30,7 +30,6 @@ export class Constantes {
 			{ themeVariable: '--ion-text-color', value: '#fff' },
 			{ themeVariable: '--ion-border-color', value: '#92949c' },
 			{ themeVariable: '--text-toolbar', value: '#a9a9a9' },
-			{ themeVariable: '--header-menu', value: '#171616' },
 			{ themeVariable: '--toolbar-menu', value: '#1e2023' }
 		]
 	}, {
@@ -58,11 +57,7 @@ export class Constantes {
 			{ themeVariable: '--ion-text-color', value: '#000' },
 			{ themeVariable: '--ion-border-color', value: '#c8c7cc' },
 			{ themeVariable: '--text-toolbar', value: '#ffffff' },
-			{ themeVariable: '--header-menu', value: '#a526bd' },
 			{ themeVariable: '--toolbar-menu', value: '#f1f1f1' }
-
-
 		]
-
 	}];
 }

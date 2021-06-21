@@ -46,7 +46,6 @@ export class LoginPage implements OnInit {
 		}
 		if (datos.nroDocumento && datos.password) {
 			datos.password = this.loginService.desencriptar(JSON.parse(datos.password));
-			console.log("Usuario ", datos);
 			this.formLogin.formulario.patchModelValue(datos);
 			this.login();
 		}

@@ -95,3 +95,12 @@ ion-segment-button {
 ion-searchbar {
     color: var(--ion-color-dark) !important;
 }
+
+ion-loading {
+    .loading-wrapper {
+        background-color: var(--ion-color-light) !important;
+        .loading-content {
+            color: var(--ion-color-dark) !important;
+        }
+    }
+}

@@ -7,7 +7,7 @@ ion-content {
 					width: 100px;
 					height: 100px;
 					ion-text {
-						color: var(--ion-item-md-background-color);
+						color: #ffffff;
 					}
 					ion-text:nth-child(1) {
 						font-size: 36px;
@@ -20,6 +20,7 @@ ion-content {
 			div {
 				countdown {
 					font-size: 7em;
+					color: var(--ion-color-dark);
 				}
 			}
 		}

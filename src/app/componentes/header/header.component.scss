@@ -1,3 +1,12 @@
-ion-label {
-	font-size: 11px;
+ion-header {
+	ion-toolbar {
+		ion-segment {
+			border-bottom: 1px solid var(--ion-border-color);
+			ion-segment-button {
+				ion-label {
+					font-size: 11px;
+				}
+			}
+		}
+	}
 }

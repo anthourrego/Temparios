@@ -1,6 +1,6 @@
-<ion-header>
-    <ion-toolbar>
-        <ion-title class="ion-text-center">Improductivos</ion-title>
+<ion-header class="ion-no-border">
+    <ion-toolbar color="ligth">
+        <ion-title color="dark" class="ion-text-center">Improductivos</ion-title>
         <ion-buttons slot="end" (click)="cerrarModal()">
             <ion-icon color="dark" slot='icon-only' size='large' name='close-outline'>
             </ion-icon>
@@ -26,9 +26,7 @@
                         {{ it['Nombre'][0] }}
                         <br class="ion-no-margin">
                     </ion-text>
-                    <ion-text>
-                        {{ it['Nombre'] }}
-                    </ion-text>
+                    <ion-text>{{ it['Nombre'] }}</ion-text>
                 </div>
             </div>
         </div>
@@ -55,8 +53,9 @@
 </ion-content>
 
 <ion-footer *ngIf="cuentaRegresiva">
-    <ion-toolbar>
-        <ion-button expand="full" size="large" shape="round" class="ion-margin-horizontal" (click)="agregarLog({action: 'done'});">
+    <ion-toolbar color="light">
+        <ion-button expand="full" size="large" shape="round" class="ion-margin-horizontal"
+            (click)="agregarLog({action: 'done'});">
             <ion-icon slot="start" name="alarm-outline"></ion-icon>
             Finalizar
         </ion-button>
