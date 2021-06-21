@@ -1,0 +1,76 @@
+<ion-header>
+	<ion-toolbar>
+		<ion-title class="ion-text-center">Ordenes de Producción</ion-title>
+		<ion-buttons slot="end" (click)="cerrarModal()">
+			<ion-icon color="dark" slot='icon-only' size='large' name='close-outline'>
+			</ion-icon>
+		</ion-buttons>
+	</ion-toolbar>
+</ion-header>
+
+<ion-progress-bar *ngIf="searching" type="indeterminate"></ion-progress-bar>
+
+<ion-searchbar (ionChange)="buscarFiltro($event)" clearIcon="close-sharp" placeholder="Buscar orden" [debounce]="400">
+</ion-searchbar>
+
+<ion-content color="gray">
+
+	<ion-refresher slot="fixed" (ionRefresh)="refrescar($event)">
+		<ion-refresher-content></ion-refresher-content>
+	</ion-refresher>
+
+	<ion-list *ngIf="infoActividades.length && !searching">
+		<div *ngFor="let it of infoActividades; let pos = index">
+			<ion-item class="item-collapse" lines="full" (click)="opcionCollapse(pos)" data-bs-toggle="collapse"
+				aria-expanded="false" [attr.aria-controls]="'collapse' + pos" [attr.data-bs-target]="'collapse' + pos"
+				[attr.data-bs-target]="'#collapse' + pos">
+				<ion-icon color="dark" class="ion-margin-end" name="pricetag-outline"></ion-icon>
+				<ion-label>
+					{{ it['NombreProducto'] }}
+					<p>Ref: {{ it['Referencia'] }} | Orden: {{ it['NumerOrden'] }} | Cantidad: {{ +it['Cantidad'] }}</p>
+				</ion-label>
+				<ion-icon color="dark" slot="end"
+					[name]="it['collapse'] ? 'chevron-up-outline' : 'chevron-down-outline'"></ion-icon>
+			</ion-item>
+			<div class="collapse" [id]="'collapse' + pos">
+				<ion-list>
+					<ion-item lines="inset" *ngFor="let item of it['actividades'] ; let po = index">
+						<!-- <ion-icon color="dark" slot="start" name="play-circle-outline"></ion-icon> -->
+						<ion-label>
+							<h2>{{ item['Nombre'] }}</h2>
+							<p>Estado: {{ item['Estado'] }}</p>
+							<p>Cantidad: {{ item['CantiRecib'] ? +item['CantiRecib'] : 0}}
+							</p>
+						</ion-label>
+						<ion-checkbox [checked]="item['checked']" (ionChange)="opcionCheck($event, pos, po)">
+						</ion-checkbox>
+					</ion-item>
+				</ion-list>
+			</div>
+		</div>
+	</ion-list>
+
+	<ion-list *ngIf="!infoActividades.length && !searching">
+		<ion-item lines="none">
+			<ion-text color="dark" class="ion-text-center">
+				<h4 class="ion-no-margin">No hay ordenes de producción disponibles</h4>
+			</ion-text>
+		</ion-item>
+	</ion-list>
+
+	<ion-infinite-scroll threshold="180px" (ionInfinite)="loadData($event)">
+		<ion-infinite-scroll-content loadingSpinner="lines" loadingText="Obteniendo información...">
+		</ion-infinite-scroll-content>
+	</ion-infinite-scroll>
+
+</ion-content>
+
+<ion-footer>
+	<ion-toolbar>
+		<ion-button class="ion-margin-horizontal" [disabled]="!cantidadAgregada" (click)="agregarActividades()"
+			[size]="'full'" shape="round">
+			<ion-icon slot="start" name="add"></ion-icon>
+			Agregar
+		</ion-button>
+	</ion-toolbar>
+</ion-footer>

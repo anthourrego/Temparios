@@ -1,0 +1,64 @@
+<ion-header>
+    <ion-toolbar>
+        <ion-title class="ion-text-center">Improductivos</ion-title>
+        <ion-buttons slot="end" (click)="cerrarModal()">
+            <ion-icon color="dark" slot='icon-only' size='large' name='close-outline'>
+            </ion-icon>
+        </ion-buttons>
+    </ion-toolbar>
+</ion-header>
+
+<ion-progress-bar *ngIf="buscando" type="indeterminate"></ion-progress-bar>
+
+<ion-content color="gray">
+
+    <ion-refresher *ngIf="!cuentaRegresiva" slot="fixed" (ionRefresh)="obtenerActividades($event)">
+        <ion-refresher-content></ion-refresher-content>
+    </ion-refresher>
+
+    <div class="container" *ngIf="!cuentaRegresiva">
+        <div class="row" *ngIf="!buscando && paradas.length">
+            <div class="grid-circulo col-4 col-md-3 d-flex justify-content-center" (click)="contarCuentaRegresiva(it)"
+                *ngFor="let it of paradas">
+                <div class="ion-text-center circulo-parada rounded-circle m-1"
+                    [ngStyle]="{'background-color': 'var(--ion-color-primary)'}">
+                    <ion-text>
+                        {{ it['Nombre'][0] }}
+                        <br class="ion-no-margin">
+                    </ion-text>
+                    <ion-text>
+                        {{ it['Nombre'] }}
+                    </ion-text>
+                </div>
+            </div>
+        </div>
+        <div *ngIf="!buscando && !paradas.length">
+            <div class="ion-text-center ion-margin">
+                No hay paradas disponibles
+            </div>
+        </div>
+    </div>
+
+    <div class="container estilos-tiempo" *ngIf="cuentaRegresiva">
+        <ion-text color="dark">
+            <h1>{{ tiempoCuentaRegresiva['Nombre'] }}</h1>
+        </ion-text>
+        <div>
+            <div class="ion-text-center ion-margin">
+                <countdown #countdown [config]="{ leftTime: tiempoCuentaRegresiva['TiempoMaximo'], format: 'mm:ss' }"
+                    (event)="agregarLog($event)">
+                </countdown>
+            </div>
+        </div>
+    </div>
+
+</ion-content>
+
+<ion-footer *ngIf="cuentaRegresiva">
+    <ion-toolbar>
+        <ion-button expand="full" size="large" shape="round" class="ion-margin-horizontal" (click)="agregarLog({action: 'done'});">
+            <ion-icon slot="start" name="alarm-outline"></ion-icon>
+            Finalizar
+        </ion-button>
+    </ion-toolbar>
+</ion-footer>

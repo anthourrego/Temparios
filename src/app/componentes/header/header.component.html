@@ -1,0 +1,9 @@
+<ion-header>
+	<ion-toolbar>
+		<ion-segment mode="md" (ionChange)="segmentChanged($event)" [(ngModel)]="valorDefecto">
+			<ion-segment-button *ngFor="let it of segmentos;" [value]="it.valor">
+				<ion-label>{{ it.titulo }}</ion-label>
+			</ion-segment-button>
+		</ion-segment>
+	</ion-toolbar>
+</ion-header>

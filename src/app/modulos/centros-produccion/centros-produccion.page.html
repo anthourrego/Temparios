@@ -1,0 +1,32 @@
+<ion-header *ngIf="centrosProduccion.length">
+	<ion-toolbar>
+		<ion-title class="ion-text-center">Elije el centro de producción</ion-title>
+	</ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding" color="gray">
+
+	<ion-grid>
+		<ion-row *ngIf="centrosProduccion.length">
+			<ion-col size="12" *ngFor="let it of centrosProduccion" (click)="irCentroProduccion(it)">
+				<ion-item detail [ngStyle]="{'border-left': 'solid 5px ' + it['borde']}" lines="none">
+					<ion-label color="dark" class="ion-text-center">{{ it['nombreCP'] }}</ion-label>
+				</ion-item>
+			</ion-col>
+		</ion-row>
+		<ion-row *ngIf="!centrosProduccion.length">
+			<ion-col size="12">
+				<ion-text color="dark" class="ion-text-center">
+					<h4 class="ion-no-margin">No hay centros de producción disponibles</h4>
+				</ion-text>
+			</ion-col>
+			<ion-col size="12">
+				<ion-button (click)="regresar()" shape="round" size="full">
+					<ion-icon slot="start" name="arrow-back"></ion-icon>
+					Regresar
+				</ion-button>
+			</ion-col>
+		</ion-row>
+	</ion-grid>
+
+</ion-content>

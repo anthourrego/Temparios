@@ -1,0 +1,49 @@
+ion-content {
+	.container {
+		.row {
+			--bs-gutter-x: 0;
+			.grid-circulo {
+				.circulo-parada {
+					width: 100px;
+					height: 100px;
+					ion-text {
+						color: var(--ion-item-md-background-color);
+					}
+					ion-text:nth-child(1) {
+						font-size: 36px;
+						font-weight: 600;
+					}
+				}
+			}
+		}
+		div {
+			div {
+				countdown {
+					font-size: 7em;
+				}
+			}
+		}
+	}
+	.estilos-tiempo {
+		height: 100%;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		flex-direction: column;
+		ion-text {
+			h1 {
+				font-size: 3em;
+			}
+		}
+	}
+}
+
+@media only screen and (min-width: 576px) {
+	ion-content {
+		.container {
+			.row {
+				--bs-gutter-x: 1.5rem;
+			}
+		}
+	}
+}

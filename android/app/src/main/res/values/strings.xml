@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">ProcessApp</string>
+    <string name="title_activity_main">ProcessApp</string>
+    <string name="package_name">com.prosof.ProcessApp</string>
+    <string name="custom_url_scheme">com.prosof.ProcessApp</string>
+</resources>
