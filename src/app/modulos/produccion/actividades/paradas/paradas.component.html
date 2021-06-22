@@ -18,16 +18,13 @@
 
     <div class="container" *ngIf="!cuentaRegresiva">
         <div class="row" *ngIf="!buscando && paradas.length">
-            <div class="grid-circulo col-4 col-md-3 d-flex justify-content-center" (click)="contarCuentaRegresiva(it)"
-                *ngFor="let it of paradas">
-                <div class="ion-text-center circulo-parada rounded-circle m-1"
-                    [ngStyle]="{'background-color': 'var(--ion-color-primary)'}">
-                    <ion-text>
-                        {{ it['Nombre'][0] }}
-                        <br class="ion-no-margin">
-                    </ion-text>
-                    <ion-text>{{ it['Nombre'] }}</ion-text>
-                </div>
+            <div (click)="contarCuentaRegresiva(it)" *ngFor="let it of paradas" class="circulo-parada mb-1 col-12 row"
+                [ngStyle]="{'background-color': 'var(--ion-color-primary)'}">
+                <ion-text class="ion-text-center col-2">
+                    {{ it['Nombre'][0] }}
+                    <br class="ion-no-margin">
+                </ion-text>
+                <ion-text class="align-self-center col-10">{{ it['Nombre'] }}</ion-text>
             </div>
         </div>
         <div *ngIf="!buscando && !paradas.length">

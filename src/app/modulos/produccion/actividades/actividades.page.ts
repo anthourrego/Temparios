@@ -22,7 +22,7 @@ export class ActividadesPage implements OnInit {
 	actividades: Array<object> = [];
 	botones: Array<object> = [
 		/* { icono: 'home', color: 'success', accion: 'home' }
-		,*/ { icono: 'refresh', color: 'secondary', accion: 'cambiar-centro' }
+		,*/ { icono: 'swap-horizontal', color: 'secondary', accion: 'cambiar-centro' }
 		, { icono: 'add', color: 'primary', accion: 'agregar', component: AgregarActividadesComponent }
 		, { icono: 'trending-down', color: 'danger', accion: 'parada', component: ParadasComponent }
 		/* , { icono: 'car', color: 'warning', accion: 'car' } */
@@ -142,7 +142,7 @@ export class ActividadesPage implements OnInit {
 		/* Datos otro tabla a validar y comentar la asignacion de fechas o eliminar */
 		let data = {
 			OrdeProdOperacionId: opcion['OrdeProdOperacionId'],
-			Cantidad: 2,
+			Cantidad: 1,
 			Tipo: 'OPERACION',
 		}
 		//this.fechaInicial = data.fechaFinal;

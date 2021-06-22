@@ -1,0 +1,17 @@
+ion-content {
+    ion-list {
+        ion-item {
+            ion-label {
+                margin-bottom: 0px !important;
+                border-radius: 10px;
+                background-color: #e4e4e4;
+            }
+            .STOP {
+                background-color: #00c0d4;
+            }
+            h2 {
+                font-weight: 600;
+            }
+        }
+    }
+}

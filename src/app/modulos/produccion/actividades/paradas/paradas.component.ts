@@ -16,6 +16,7 @@ export class ParadasComponent implements OnInit {
 	buscando: boolean = true;
 	cuentaRegresiva: boolean = false;
 	tiempoCuentaRegresiva: object = {};
+	idParada: number = -1;
 
 	constructor(
 		private modalController: ModalController,
@@ -63,15 +64,22 @@ export class ParadasComponent implements OnInit {
 	ejecutarPeticionLog(Tipo) {
 		let data = {
 			Tipo,
-			TipoParada: this.tiempoCuentaRegresiva['TipoParadaId']
+			TipoParada: this.tiempoCuentaRegresiva['TipoParadaId'],
+			idParada: this.idParada
 		}
-		this.tipoParadasService.informacion(data, 'CentrosProduccion/agregarLogParada').then(({ valido, msg }) => {
-			if (valido && Tipo == 'STOPFIN') {
-				this.cargadorService.ocultar();
-				this.cuentaRegresiva = false;
-				this.cerrarModal(true);
+		this.tipoParadasService.informacion(data, 'CentrosProduccion/agregarLogParada').then(({ valido, msg, idParada }) => {
+			if (valido) {
+				if (Tipo == 'STOPFIN') {
+					this.cargadorService.ocultar();
+					this.cuentaRegresiva = false;
+					this.idParada = -1;
+					this.cerrarModal(true);
+				} else {
+					this.idParada = idParada;
+				}
 			} if (!valido) {
-				if (Tipo == 'STOPINICIO') {
+				if (data.Tipo == 'STOPINICIO') {
+					this.idParada = -1;
 					this.cuentaRegresiva = false;
 				}
 				this.notificacionesService.notificacion(msg);
