@@ -10,6 +10,7 @@ import { HistorialService } from '../../../servicios/historial.service';
 export class HistorialPage implements OnInit {
 
 	dataHistorial: Array<object> = [];
+	searching: boolean = true;
 
 	constructor(
 		private historialService: HistorialService
@@ -23,18 +24,25 @@ export class HistorialPage implements OnInit {
 	}
 
 	obtenerHistorial(event?) {
+		this.searching = !event ? true : false;
 		this.historialService.informacion({}, 'CentrosProduccion/obtenerHistorial').then(({ datos, valido }) => {
 			console.log({ datos, valido });
 			this.dataHistorial = datos.map(op => {
 				op.Hora = moment(op.Fecha).format('HH:mm:ss');
 				op.FechaReg = moment(op.Fecha).format('DD/MM/YYYY');
-				//if (){}
 				return op;
 			});
 			if (event) {
 				event.target.complete();
 			}
-		}, console.error);
+			this.searching = false;
+		}, error => {
+			console.error("Error ", error);
+			if (event) {
+				event.target.complete();
+			}
+			this.searching = false;
+		});
 	}
 
 }

@@ -106,6 +106,9 @@ export class ActividadesPage implements OnInit {
 				} */
 			}, console.error);
 		} else {
+			if (event) {
+				event.target.complete();
+			}
 			this.searching = false;
 		}
 	}

@@ -89,10 +89,10 @@ export class LoginPage implements OnInit {
 					}
 					this.cargadorService.ocultar();
 				}, error => {
+					this.notificaciones.notificacion(JSON.stringify(error));
 					console.error("Error ", error);
 					this.cargadorService.ocultar();
 				});
-				this.cargadorService.ocultar();
 			});
 		} else {
 			FuncionesGenerales.formularioTocado(this.formLogin.formulario);
