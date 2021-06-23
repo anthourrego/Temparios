@@ -104,3 +104,20 @@ ion-loading {
         }
     }
 }
+
+ion-action-sheet {
+    .action-sheet-wrapper {
+        .action-sheet-container {
+            .action-sheet-group {
+                button {
+                    color: var(--ion-color-dark);
+                    .action-sheet-button-inner {
+                        ion-icon {
+                            color: var(--ion-color-dark);
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

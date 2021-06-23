@@ -1,8 +1,9 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { IonInfiniteScroll, ModalController } from '@ionic/angular';
 import { ActividadesService } from 'src/app/servicios/actividades.service';
 import { StorageService } from '../../../../servicios/storage.service';
 import { CargadorService } from '../../../../servicios/cargador.service';
+import { NotificacionesService } from '../../../../servicios/notificaciones.service';
 
 @Component({
 	selector: 'app-agregar-actividades',
@@ -12,6 +13,7 @@ import { CargadorService } from '../../../../servicios/cargador.service';
 export class AgregarActividadesComponent implements OnInit {
 
 	@ViewChild(IonInfiniteScroll) infiniteScroll: IonInfiniteScroll;
+	@Input() idGrupo;
 	searching: boolean = true;
 	infoActividades: Array<object> = [];
 	centroProd: string;
@@ -21,13 +23,18 @@ export class AgregarActividadesComponent implements OnInit {
 	fin: number = 15;
 	cantidad: number = 15;
 	valorBuscar: String = '';
-	actividadesActuales: Array<object> = [];
+	seleccionMultiple: boolean = false;
+	datosMultiple: object = null;
+	actividadesSeleccionadas: Array<object> = [];
+	cantMultiple: number = 0;
+	codeBase64 = 'data:image/jpeg;base64,';
 
 	constructor(
 		private modalController: ModalController,
 		private actividadesService: ActividadesService,
 		private storage: StorageService,
-		private cargador: CargadorService
+		private cargador: CargadorService,
+		private notificcacionesService: NotificacionesService
 	) { }
 
 	ngOnInit() {
@@ -35,10 +42,6 @@ export class AgregarActividadesComponent implements OnInit {
 	}
 
 	async obtenerInformacion() {
-		this.actividadesActuales = await this.storage.get('actividades');
-		if (!this.actividadesActuales) {
-			this.actividadesActuales = [];
-		}
 		let { CentroProduccion } = this.actividadesService.desencriptar(JSON.parse(await this.storage.get('centroProduccion')));
 		this.centroProd = CentroProduccion;
 		this.obtenerActividades();
@@ -58,9 +61,47 @@ export class AgregarActividadesComponent implements OnInit {
 		this.modalController.dismiss(listar);
 	}
 
-	opcionCheck({ detail }, pos1, pos2) {
+	checkMultiples({ detail }) {
+		if (!detail.checked) {
+			this.datosMultiple = null;
+		} else {
+			this.cantMultiple++;
+		}
+	}
+
+	opcionCheck({ detail }, pos1, pos2, element) {
+		if (this.seleccionMultiple) {
+			if (this.datosMultiple) {
+				if (this.datosMultiple['Nombre'] !== this.infoActividades[pos1]['actividades'][pos2]['Nombre']) {
+					this.notificcacionesService.notificacion("No es un producto valido para multiple.");
+					let ele = document.getElementById(element);
+					ele['checked'] = false;
+					return;
+				}
+			} else {
+				this.datosMultiple = this.infoActividades[pos1]['actividades'][pos2];
+			}
+		}
 		this.infoActividades[pos1]['actividades'][pos2]['checked'] = detail.checked;
-		this.infoActividades[pos1]['actividades'][pos2]['checked'] ? this.cantidadAgregada++ : this.cantidadAgregada--;
+		let dataOrde = this.infoActividades[pos1];
+		let dataActi = this.infoActividades[pos1]['actividades'][pos2];
+		let index = this.actividadesSeleccionadas.findIndex(op => op['OrdeProdId'] == dataOrde['OrdeProdId']);
+		if (detail.checked) {
+			let info = { ...dataActi, multiple: this.seleccionMultiple, tipoMultiple: 'Multiple' + this.cantMultiple };
+			dataOrde['actividades'][pos2] = info;
+			if (index != -1) {
+				this.actividadesSeleccionadas[index] = dataOrde;
+			} else {
+				this.actividadesSeleccionadas.push(dataOrde);
+			}
+		} else {
+			if (index != -1) {
+				let cant = this.actividadesSeleccionadas[index]['actividades'].filter(op => op.checked).length;
+				if (cant <= 0) {
+					this.actividadesSeleccionadas.splice(index, 1);
+				}
+			}
+		}
 	}
 
 	buscarFiltro({ detail }) {
@@ -80,24 +121,17 @@ export class AgregarActividadesComponent implements OnInit {
 	}
 
 	obtenerActividades(evento?) {
-		let datos: any = {
+		let datos = {
 			inicio: this.inicio,
 			fin: this.fin,
 			centroProd: this.centroProd,
-			buscar: this.valorBuscar
+			buscar: this.valorBuscar,
+			GrupoId: this.idGrupo ? this.idGrupo : null
 		}
 		this.actividadesService.informacion(datos, 'CentrosProduccion/obtenerOrdenProduccion').then(resp => {
 			if (!evento) {
 				this.infoActividades = [];
 			}
-			this.actividadesActuales.forEach(it => {
-				resp.forEach((x, index) => {
-					let pos = x.actividades.findIndex(op => op.OrdeProdOperacionId == it);
-					if (pos != -1) {
-						resp[index].actividades[pos]['checked'] = true;
-					}
-				});
-			});
 			this.infoActividades = this.infoActividades.concat(resp);
 			if (resp.length && this.fin >= +this.infoActividades[this.infoActividades.length - 1]['totCol']) {
 				if (evento) {
@@ -113,25 +147,18 @@ export class AgregarActividadesComponent implements OnInit {
 
 	agregarActividades() {
 		this.cargador.presentar("Agregando actividades").then(async (resp) => {
-			let actividades = [];
-			this.infoActividades.forEach(x => {
-				x['actividades'].forEach(op => {
-					if (op['checked']) {
-						actividades.push(op['OrdeProdOperacionId']);
-					}
-				});
-			});
-			/* this.actividadesService.informacion(actividades, 'agregarActividades').then(resp => {
-				this.storage.set('actividades', actividades);
+			let datos = this.organizarDataGuardar();
+			this.actividadesService.informacion(datos, 'CentrosProduccion/agregarActividadOperario').then(({ valido, msg }) => {
 				this.cargador.ocultar();
-				this.cerrarModal(true);
-			}); */
-			/* if (this.actividadesActuales.length) {
-				actividades = actividades.concat(this.actividadesActuales);
-			} */
-			this.storage.set('actividades', actividades);
-			this.cerrarModal(true);
-			this.cargador.ocultar();
+				if (valido) {
+					this.cerrarModal(true);
+				} else {
+					this.notificcacionesService.notificacion(msg);
+				}
+			}, error => {
+				console.error(error);
+				this.cargador.ocultar();
+			});
 		});
 	}
 
@@ -139,6 +166,24 @@ export class AgregarActividadesComponent implements OnInit {
 		this.inicio += this.cantidad;
 		this.fin += this.cantidad;
 		this.obtenerActividades(event);
+	}
+
+	organizarDataGuardar() {
+		let multiples = {}, individuales = [];
+		this.actividadesSeleccionadas.forEach(x => {
+			x['actividades'].forEach(op => {
+				let data = { OrdeProdOperacionId: op['OrdeProdOperacionId'] };
+				if (op['multiple']) {
+					if (!multiples[op['tipoMultiple']]) {
+						multiples[op['tipoMultiple']] = [];
+					}
+					multiples[op['tipoMultiple']].push(data);
+				} else if (op['checked']) {
+					individuales.push(data);
+				}
+			});
+		});
+		return { multiples, individuales, grupo: this.idGrupo ? this.idGrupo : null };
 	}
 
 }

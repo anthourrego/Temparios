@@ -1,7 +1,6 @@
-.fab-horizontal-center {
-	left: 6vw !important;
-	width: 100%;
-}
+/* ion-content::part(scroll) {
+	height: 93%;
+} */
 ion-content {
 	ion-card {
 		margin: 5px;
@@ -69,6 +68,7 @@ ion-content {
 									}
 									.tiempo {
 										display: flex;
+										justify-content: center;
 									}
 								}
 							}
@@ -78,14 +78,25 @@ ion-content {
 			}
 		}
 	}
-	ion-fab {
-		ion-grid {
-			ion-row {
-				ion-col {
-					display: flex;
-					justify-content: center;
+}
+ion-footer {
+	ion-toolbar {
+		ion-fab {
+			height: 100%;
+			width: 100%;
+			ion-grid {
+				ion-row {
+					ion-col {
+						display: flex;
+						justify-content: center;
+					}
 				}
 			}
+		}
+		.fab-horizontal-start {
+			left: 0vw !important;
+			bottom: 0px;
+			position: inherit;
 		}
 	}
 }

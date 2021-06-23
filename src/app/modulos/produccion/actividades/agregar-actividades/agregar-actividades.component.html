@@ -19,12 +19,21 @@
 		<ion-refresher-content></ion-refresher-content>
 	</ion-refresher>
 
+	<ion-item lines="none" *ngIf="infoActividades.length && !searching && !idGrupo">
+		<ion-label class="ion-text-end ion-padding-horizontal">Selección Multiple</ion-label>
+		<ion-checkbox (ionChange)="checkMultiples($event)" color="success" [(ngModel)]="seleccionMultiple">
+		</ion-checkbox>
+	</ion-item>
+
 	<ion-list *ngIf="infoActividades.length && !searching">
 		<div *ngFor="let it of infoActividades; let pos = index">
 			<ion-item class="item-collapse" lines="full" (click)="opcionCollapse(pos)" data-bs-toggle="collapse"
 				aria-expanded="false" [attr.aria-controls]="'collapse' + pos" [attr.data-bs-target]="'collapse' + pos"
 				[attr.data-bs-target]="'#collapse' + pos">
-				<ion-icon color="dark" class="ion-margin-end" name="pricetag-outline"></ion-icon>
+				<ion-avatar>
+					<img class="rounded-circle"
+						[src]="it['Foto'] ? codeBase64 + it['Foto'] : '../../../../../assets/images/nofoto.png'" />
+				</ion-avatar>
 				<ion-label>
 					{{ it['NombreProducto'] }}
 					<p>Ref: {{ it['Referencia'] }} | Orden: {{ it['NumerOrden'] }} | Cantidad: {{ +it['Cantidad'] }}</p>
@@ -35,14 +44,13 @@
 			<div class="collapse" [id]="'collapse' + pos">
 				<ion-list>
 					<ion-item lines="inset" *ngFor="let item of it['actividades'] ; let po = index">
-						<!-- <ion-icon color="dark" slot="start" name="play-circle-outline"></ion-icon> -->
 						<ion-label>
 							<h2>{{ item['Nombre'] }}</h2>
 							<p>Estado: {{ item['Estado'] }}</p>
-							<p>Cantidad: {{ item['CantiRecib'] ? +item['CantiRecib'] : 0}}
-							</p>
+							<p>Cantidad: {{ item['CantiRecib'] ? +item['CantiRecib'] : 0}}</p>
 						</ion-label>
-						<ion-checkbox [checked]="item['checked']" (ionChange)="opcionCheck($event, pos, po)">
+						<ion-checkbox [id]="'check' + pos + po" [checked]="item['checked']"
+							(ionChange)="opcionCheck($event, pos, po, ('check' + pos + po))">
 						</ion-checkbox>
 					</ion-item>
 				</ion-list>
@@ -67,10 +75,10 @@
 
 <ion-footer>
 	<ion-toolbar color="light">
-		<ion-button class="ion-margin-horizontal" [disabled]="!cantidadAgregada" (click)="agregarActividades()"
-			[size]="'full'" shape="round">
+		<ion-button class="ion-margin-horizontal" [disabled]="!actividadesSeleccionadas.length"
+			(click)="agregarActividades()" [size]="'full'" shape="round">
 			<ion-icon slot="start" name="add"></ion-icon>
-			Agregar
+			Guardar
 		</ion-button>
 	</ion-toolbar>
 </ion-footer>

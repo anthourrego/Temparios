@@ -10,7 +10,7 @@
 
 <ion-progress-bar *ngIf="buscando" type="indeterminate"></ion-progress-bar>
 
-<ion-content color="gray">
+<ion-content class="ion-padding" color="gray">
 
     <ion-refresher *ngIf="!cuentaRegresiva" slot="fixed" (ionRefresh)="obtenerActividades($event)">
         <ion-refresher-content></ion-refresher-content>

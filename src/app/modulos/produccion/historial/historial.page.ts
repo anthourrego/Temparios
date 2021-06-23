@@ -26,7 +26,6 @@ export class HistorialPage implements OnInit {
 	obtenerHistorial(event?) {
 		this.searching = !event ? true : false;
 		this.historialService.informacion({}, 'CentrosProduccion/obtenerHistorial').then(({ datos, valido }) => {
-			console.log({ datos, valido });
 			this.dataHistorial = datos.map(op => {
 				op.Hora = moment(op.Fecha).format('HH:mm:ss');
 				op.FechaReg = moment(op.Fecha).format('DD/MM/YYYY');

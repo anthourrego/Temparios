@@ -8,6 +8,8 @@ import { StorageService } from '../../../servicios/storage.service';
 import { ParadasComponent } from './paradas/paradas.component';
 import { Router } from '@angular/router';
 import { CambioCentroProduccionService } from 'src/app/config/suscripciones/cambio-centro-produccion.service';
+import { DetalleActividadComponent } from './detalle-actividad/detalle-actividad.component';
+import { CargadorService } from '../../../servicios/cargador.service';
 
 @Component({
 	selector: 'app-actividades',
@@ -27,9 +29,9 @@ export class ActividadesPage implements OnInit {
 		, { icono: 'trending-down', color: 'danger', accion: 'parada', component: ParadasComponent }
 		/* , { icono: 'car', color: 'warning', accion: 'car' } */
 	];
+	componente = DetalleActividadComponent;
 	subject = new Subject();
 	tiempo: string = '';
-	/* fechaInicial: string = ''; */
 	dataQuery: object = {};
 	idLogActividad: number;
 	dataCentroProduccion: object = {};
@@ -41,7 +43,8 @@ export class ActividadesPage implements OnInit {
 		private actividadesService: ActividadesService,
 		private storage: StorageService,
 		private router: Router,
-		private cambioCentroProduccionService: CambioCentroProduccionService
+		private cambioCentroProduccionService: CambioCentroProduccionService,
+		private cargadorService: CargadorService
 	) {
 		this.cambioCentroProduccionService.suscripcion().subscribe(respu => {
 			this.actividades = [];
@@ -59,28 +62,22 @@ export class ActividadesPage implements OnInit {
 	async obtenerCentroProd(event) {
 		this.dataCentroProduccion = this.actividadesService.desencriptar(JSON.parse(await this.storage.get('centroProduccion')));
 		this.dataQuery = {
-			actividades: await this.storage.get('actividades'),
 			centroProd: this.dataCentroProduccion['CentroProduccion'],
 		}
 		this.obtenerInformacion(event, true);
 	}
 
-	async presentActionSheet() {
+	async presentActionSheet({ ActividadOperarioId, GrupoId }) {
+		let data = { ActividadOperarioId, GrupoId };
 		const actionSheet = await this.actionSheetController.create({
 			buttons: [{
 				text: 'Reiniciar',
-				role: 'destructive',
 				icon: 'refresh',
-				handler: () => {
-					console.log('Proximamente...');
-				}
+				handler: () => this.peticionActionSheet('reiniciar', data)
 			}, {
 				text: 'Eliminar',
-				role: 'delete',
 				icon: 'trash',
-				handler: () => {
-					console.log('Proximamente...');
-				}
+				handler: () => this.peticionActionSheet('eliminar', data)
 			}]
 		});
 		await actionSheet.present();
@@ -90,30 +87,16 @@ export class ActividadesPage implements OnInit {
 
 	async obtenerInformacion(event?, fecha?) {
 		this.searching = true;
-		if (this.dataQuery['actividades']) {
-			this.actividadesService.informacion(this.dataQuery, 'CentrosProduccion/obtenerActividadesAsignadas').then(({ valido, datos, msg }) => {
-				datos = datos.map(op => {
-					op['valProgress'] = ((+op['CantiRecib'] * 100) / op['CantidadTotal']) / 100;
-					return op;
-				});
-				this.actividades = datos;
-				if (event) {
-					event.target.complete();
-				}
-				this.searching = false;
-				/* if (fecha) {
-					this.fechaInicial = moment().format('YYYY-MM-DD HH:mm:ss.SSS');
-				} */
-			}, console.error);
-		} else {
+		this.actividadesService.informacion(this.dataQuery, 'CentrosProduccion/obtenerActividadesAsignadas').then(({ valido, datos, msg }) => {
+			this.actividades = datos;
 			if (event) {
 				event.target.complete();
 			}
 			this.searching = false;
-		}
+		}, console.error);
 	}
 
-	async accionBoton({ accion, component }) {
+	async accionBoton({ accion, component }, datos?) {
 		if (!component) {
 			if (accion == 'cambiar-centro') {
 				this.router.navigateByUrl('/modulos/centros-produccion');
@@ -122,33 +105,30 @@ export class ActividadesPage implements OnInit {
 			}
 			return
 		}
-		const modal = await this.modalController.create({ component, backdropDismiss: false });
+		let componentProps = {};
+		if (datos && datos['GrupoId'] && accion != 'agregar') {
+			componentProps['idGrupo'] = datos['GrupoId']
+		}
+		const modal = await this.modalController.create({
+			component
+			, backdropDismiss: false
+			, componentProps
+		});
 		await modal.present();
 		modal.onWillDismiss().then(({ data, role }) => {
-			if (data && accion == 'agregar') {
+			if (data && (accion == 'agregar' || accion == 'detalle')) {
 				this.obtenerCentroProd(false);
 			}
 		}, console.error);
 	}
 
-	agregarTiempoActividad(opcion) {
+	agregarTiempoActividad({ OrdeProdOperacionId, GrupoId }) {
 		this.searching = true;
-		/* let data = {
-			OrdeProdOperacionId: opcion['OrdeProdOperacionId'],
-			cantidad: 2,
-			fechaInicial: this.fechaInicial,
-			fechaFinal: moment().format('YYYY-MM-DD HH:mm:ss.SSS'),
-			estado: 'LC',
-			Tipo: 'OP',
-			cantidadFinal: opcion['CantidadTotal']
-		} */
-		/* Datos otro tabla a validar y comentar la asignacion de fechas o eliminar */
 		let data = {
-			OrdeProdOperacionId: opcion['OrdeProdOperacionId'],
+			OrdeProdOperacionId, GrupoId,
 			Cantidad: 1,
-			Tipo: 'OPERACION',
+			Tipo: 'OPERACION'
 		}
-		//this.fechaInicial = data.fechaFinal;
 		this.actividadesService.informacion(data, 'CentrosProduccion/agregarLogActividad').then(({ datos, msg, valido }) => {
 			this.idLogActividad = datos;
 			if (!valido) {
@@ -158,6 +138,22 @@ export class ActividadesPage implements OnInit {
 			}
 			this.searching = false;
 		}, console.error);
+	}
+
+	peticionActionSheet(accion, datos) {
+		this.notificacionesService.alerta(`¿Esta seguro de ${accion} la actividad?`).then(({ data, role }) => {
+			if (role === 'aceptar') {
+				this.cargadorService.presentar().then(() => {
+					this.actividadesService.informacion(datos, 'CentrosProduccion/eliminarActividadOperario').then(({ valido, msg }) => {
+						this.notificacionesService.notificacion(msg);
+						if (valido) {
+							this.obtenerInformacion();
+						}
+						this.cargadorService.ocultar();
+					}, () => this.cargadorService.ocultar());
+				}, () => this.cargadorService.ocultar());
+			}
+		});
 	}
 
 }
