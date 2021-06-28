@@ -1,7 +1,9 @@
-/* ion-content::part(scroll) {
-	height: 93%;
-} */
 ion-content {
+	ion-progress-bar {
+		position: sticky;
+		top: 0;
+		z-index: 2;
+	}
 	ion-card {
 		margin: 5px;
 		border-radius: 7px;
@@ -81,6 +83,7 @@ ion-content {
 }
 ion-footer {
 	ion-toolbar {
+		--opacity: 0;
 		ion-fab {
 			height: 100%;
 			width: 100%;

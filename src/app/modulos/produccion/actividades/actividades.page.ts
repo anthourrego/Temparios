@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActionSheetController, ModalController } from '@ionic/angular';
 import { Subject } from 'rxjs';
 import { AgregarActividadesComponent } from './agregar-actividades/agregar-actividades.component';
@@ -10,13 +10,15 @@ import { Router } from '@angular/router';
 import { CambioCentroProduccionService } from 'src/app/config/suscripciones/cambio-centro-produccion.service';
 import { DetalleActividadComponent } from './detalle-actividad/detalle-actividad.component';
 import { CargadorService } from '../../../servicios/cargador.service';
+import { ProductoTerminadoComponent } from './producto-terminado/producto-terminado.component';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
 	selector: 'app-actividades',
 	templateUrl: './actividades.page.html',
 	styleUrls: ['./actividades.page.scss'],
 })
-export class ActividadesPage implements OnInit {
+export class ActividadesPage implements OnInit, OnDestroy {
 
 	tituloEficiencia: Array<string> = ['Hora', 'Diaria', 'Mensual'];
 	valoresEficiencia: Array<string> = ['0%', '0%', '0%'];
@@ -29,7 +31,8 @@ export class ActividadesPage implements OnInit {
 		, { icono: 'trending-down', color: 'danger', accion: 'parada', component: ParadasComponent }
 		/* , { icono: 'car', color: 'warning', accion: 'car' } */
 	];
-	componente = DetalleActividadComponent;
+	compoDetalle = DetalleActividadComponent;
+	compoTerminado = ProductoTerminadoComponent;
 	subject = new Subject();
 	tiempo: string = '';
 	dataQuery: object = {};
@@ -46,10 +49,14 @@ export class ActividadesPage implements OnInit {
 		private cambioCentroProduccionService: CambioCentroProduccionService,
 		private cargadorService: CargadorService
 	) {
-		this.cambioCentroProduccionService.suscripcion().subscribe(respu => {
+		this.cambioCentroProduccionService.suscripcion().pipe(takeUntil(this.subject)).subscribe(respu => {
 			this.actividades = [];
 			this.obtenerCentroProd(false);
 		});
+	}
+
+	ngOnDestroy() {
+		this.subject.next(true);
 	}
 
 	ngOnInit() { }
@@ -70,15 +77,15 @@ export class ActividadesPage implements OnInit {
 	async presentActionSheet({ ActividadOperarioId, GrupoId }) {
 		let data = { ActividadOperarioId, GrupoId };
 		const actionSheet = await this.actionSheetController.create({
-			buttons: [{
+			buttons: [/* {
 				text: 'Reiniciar',
 				icon: 'refresh',
 				handler: () => this.peticionActionSheet('reiniciar', data)
-			}, {
-				text: 'Eliminar',
-				icon: 'trash',
-				handler: () => this.peticionActionSheet('eliminar', data)
-			}]
+			},  */{
+					text: 'Eliminar',
+					icon: 'trash',
+					handler: () => this.peticionActionSheet('eliminar', data)
+				}]
 		});
 		await actionSheet.present();
 		const { role } = await actionSheet.onDidDismiss();
@@ -105,9 +112,14 @@ export class ActividadesPage implements OnInit {
 			}
 			return
 		}
-		let componentProps = {};
-		if (datos && datos['GrupoId'] && accion != 'agregar') {
-			componentProps['idGrupo'] = datos['GrupoId']
+		let componentProps = {
+			centroProduccion: this.dataQuery['centroProd']
+		};
+		if (datos && (accion == 'detalle' || accion == 'terminado')) {
+			if (datos['GrupoId']) {
+				componentProps['idGrupo'] = datos['GrupoId']
+			}
+			componentProps['datos'] = datos;
 		}
 		const modal = await this.modalController.create({
 			component
@@ -116,7 +128,7 @@ export class ActividadesPage implements OnInit {
 		});
 		await modal.present();
 		modal.onWillDismiss().then(({ data, role }) => {
-			if (data && (accion == 'agregar' || accion == 'detalle')) {
+			if (data && (accion == 'agregar' || accion == 'detalle' || accion == 'terminado')) {
 				this.obtenerCentroProd(false);
 			}
 		}, console.error);
@@ -131,12 +143,12 @@ export class ActividadesPage implements OnInit {
 		}
 		this.actividadesService.informacion(data, 'CentrosProduccion/agregarLogActividad').then(({ datos, msg, valido }) => {
 			this.idLogActividad = datos;
+			this.searching = false;
 			if (!valido) {
 				this.notificacionesService.notificacion(msg);
 			} else {
 				this.obtenerInformacion(false, false);
 			}
-			this.searching = false;
 		}, console.error);
 	}
 

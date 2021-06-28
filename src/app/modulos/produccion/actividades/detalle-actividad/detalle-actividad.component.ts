@@ -4,6 +4,7 @@ import { ActividadesService } from '../../../../servicios/actividades.service';
 import { NotificacionesService } from '../../../../servicios/notificaciones.service';
 import { CargadorService } from '../../../../servicios/cargador.service';
 import { AgregarActividadesComponent } from '../agregar-actividades/agregar-actividades.component';
+import { ProductoTerminadoComponent } from '../producto-terminado/producto-terminado.component';
 
 @Component({
 	selector: 'app-detalle-actividad',
@@ -12,7 +13,9 @@ import { AgregarActividadesComponent } from '../agregar-actividades/agregar-acti
 })
 export class DetalleActividadComponent implements OnInit {
 
-	@Input() idGrupo
+	@Input() datos;
+	@Input() idGrupo;
+	@Input() centroProduccion;
 	detalleActividad: Array<object> = [];
 	searching: boolean = true;
 	listarAnterior: boolean = false;
@@ -44,7 +47,11 @@ export class DetalleActividadComponent implements OnInit {
 	}
 
 	obtenerInformacion(event?) {
-		let datos = { grupoId: this.idGrupo };
+		let datos = {
+			grupoId: this.idGrupo
+			, centroProd: this.centroProduccion
+			, actProd: this.datos['ActividadProduccionId']
+		};
 		this.searching = true;
 		this.actividadesService.informacion(datos, 'CentrosProduccion/obtenerDetalleGrupo').then(({ valido, datos }) => {
 			this.detalleActividad = datos;
@@ -78,8 +85,24 @@ export class DetalleActividadComponent implements OnInit {
 	async agregarMas() {
 		let datos = {
 			component: AgregarActividadesComponent,
-			componentProps: { idGrupo: this.idGrupo }
+			componentProps: { idGrupo: this.idGrupo, centroProduccion: this.centroProduccion }
 		}
+		this.abrirlModal(datos);
+	}
+
+	finalizarActividad(opcion) {
+		let datos = {
+			component: ProductoTerminadoComponent
+			, componentProps: {
+				datos: opcion
+				, centroProduccion: this.centroProduccion
+				, detalleActividad: true
+			}
+		};
+		this.abrirlModal(datos);
+	}
+
+	async abrirlModal(datos) {
 		const modal = await this.modalController.create({ ...datos, backdropDismiss: false });
 		await modal.present();
 		modal.onWillDismiss().then(({ data }) => {

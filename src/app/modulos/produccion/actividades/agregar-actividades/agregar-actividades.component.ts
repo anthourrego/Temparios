@@ -1,7 +1,6 @@
 import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { IonInfiniteScroll, ModalController } from '@ionic/angular';
 import { ActividadesService } from 'src/app/servicios/actividades.service';
-import { StorageService } from '../../../../servicios/storage.service';
 import { CargadorService } from '../../../../servicios/cargador.service';
 import { NotificacionesService } from '../../../../servicios/notificaciones.service';
 
@@ -14,9 +13,9 @@ export class AgregarActividadesComponent implements OnInit {
 
 	@ViewChild(IonInfiniteScroll) infiniteScroll: IonInfiniteScroll;
 	@Input() idGrupo;
+	@Input() centroProduccion;
 	searching: boolean = true;
 	infoActividades: Array<object> = [];
-	centroProd: string;
 	cantidadAgregada: number = 0;
 	posicionAnterior: number = -1;
 	inicio: number = 1;
@@ -32,18 +31,11 @@ export class AgregarActividadesComponent implements OnInit {
 	constructor(
 		private modalController: ModalController,
 		private actividadesService: ActividadesService,
-		private storage: StorageService,
 		private cargador: CargadorService,
 		private notificcacionesService: NotificacionesService
 	) { }
 
 	ngOnInit() {
-		this.obtenerInformacion();
-	}
-
-	async obtenerInformacion() {
-		let { CentroProduccion } = this.actividadesService.desencriptar(JSON.parse(await this.storage.get('centroProduccion')));
-		this.centroProd = CentroProduccion;
 		this.obtenerActividades();
 	}
 
@@ -72,7 +64,7 @@ export class AgregarActividadesComponent implements OnInit {
 	opcionCheck({ detail }, pos1, pos2, element) {
 		if (this.seleccionMultiple) {
 			if (this.datosMultiple) {
-				if (this.datosMultiple['Nombre'] !== this.infoActividades[pos1]['actividades'][pos2]['Nombre']) {
+				if (this.datosMultiple['ActividadProduccionId'] !== this.infoActividades[pos1]['actividades'][pos2]['ActividadProduccionId']) {
 					this.notificcacionesService.notificacion("No es un producto valido para multiple.");
 					let ele = document.getElementById(element);
 					ele['checked'] = false;
@@ -124,7 +116,7 @@ export class AgregarActividadesComponent implements OnInit {
 		let datos = {
 			inicio: this.inicio,
 			fin: this.fin,
-			centroProd: this.centroProd,
+			centroProd: this.centroProduccion,
 			buscar: this.valorBuscar,
 			GrupoId: this.idGrupo ? this.idGrupo : null
 		}

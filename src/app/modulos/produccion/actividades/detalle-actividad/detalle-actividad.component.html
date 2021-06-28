@@ -19,18 +19,25 @@
 	<ion-list class="ion-no-padding" *ngIf="detalleActividad.length">
 		<ion-item-sliding class="ion-margin" (click)="slidingDelInvitado('sliding' + pos)" [id]="'sliding' + pos"
 			*ngFor="let item of detalleActividad; let pos = index;">
-			<ion-item lines="none">
+			<ion-item lines="none"
+				[ngStyle]=" item['EstadoOperacion'] == 'FI' ? {'border-left': '4px solid var(--ion-color-success)'} : {}">
 				<ion-label>
-					<h3>{{item['Nombre']}}</h3>
+					<h3>{{item['NombreProd']}}</h3>
 					<p>Orden: {{item['NumerOrden']}}</p>
+					<p>Ref: {{item['Referencia']}}</p>
 				</ion-label>
 				<ion-badge
-					[color]="+item['progreso'] < 0.40 ? 'danger' : (+item['progreso'] > 0.74 ? 'success' : 'warning')">
+					[color]="+item['progreso'] < 0.40 ? 'danger' : (+item['progreso'] > 0.84 ? 'success' : 'warning')">
 					{{ +item['CantiRecib']}} / {{ +item['CantidadTotal'] }}</ion-badge>
 			</ion-item>
 			<ion-item-options side="end">
-				<ion-item-option color="danger" (click)="eliminarActividad(item)">
+				<!-- <ion-item-option color="danger" (click)="eliminarActividad(item)">
 					<ion-icon slot="icon-only" name="trash"></ion-icon>
+				</ion-item-option> -->
+				<ion-item-option color="success"
+					*ngIf="+item['CantiRecib'] >= +item['CantidadTotal'] && item['EstadoOperacion'] != 'FI'"
+					(click)="finalizarActividad(item)">
+					<ion-icon slot="icon-only" name="checkmark"></ion-icon>
 				</ion-item-option>
 			</ion-item-options>
 		</ion-item-sliding>

@@ -1,0 +1,18 @@
+ion-content {
+	ion-list {
+		ion-item {
+			ion-label {
+				max-width: unset;
+				p {
+					ion-item {
+						ion-label {
+							width: unset;
+							min-width: unset;
+							overflow: unset;
+						}
+					}
+				}
+			}
+		}
+	}
+}

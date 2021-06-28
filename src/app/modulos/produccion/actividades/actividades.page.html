@@ -1,6 +1,6 @@
-<ion-progress-bar *ngIf="searching" type="indeterminate"></ion-progress-bar>
+<ion-content color="gray" fullscreen="true">
 
-<ion-content color="gray">
+	<ion-progress-bar *ngIf="searching" type="indeterminate"></ion-progress-bar>
 
 	<ion-refresher slot="fixed" (ionRefresh)="obtenerCentroProd($event)">
 		<ion-refresher-content></ion-refresher-content>
@@ -35,7 +35,7 @@
 					<ion-card-header class="ion-no-padding">
 						<ion-item lines="none">
 							<ion-label class="ion-no-margin"
-								(click)="op['GrupoId'] ? accionBoton({accion: 'detalle', component: componente}, op) : null">
+								(click)="op['GrupoId'] ? accionBoton({accion: 'detalle', component: compoDetalle}, op) : null">
 								<h6>{{ op['Nombre'] }}</h6>
 								<p *ngIf="!op['GrupoId']">Orden: {{ op['NumerOrden'] }}</p>
 							</ion-label>
@@ -46,12 +46,11 @@
 					<ion-card-content class="ion-no-padding">
 						<ion-grid>
 							<ion-row class="ion-justify-content-evenly">
-								<ion-col size="5"
-									(click)="+op['CantiRecib'] < +op['CantidadTotal'] ? agregarTiempoActividad(op) : null">
+								<ion-col size="5" (click)="+op['CantiRecib'] < +op['CantidadTotal'] ? agregarTiempoActividad(op) : accionBoton({accion: 'terminado', component: compoTerminado}, op)">
 									<div class="cantidad-proceso">
 										<p class="conteo-accion">{{ +op['CantiRecib'] }}</p>
 										<ion-progress-bar color="secondary"
-											[color]="+op['valProgress'] < 0.40 ? 'danger' : (+op['valProgress'] > 0.74 ? 'success' : 'warning')"
+											[color]="+op['valProgress'] < 0.40 ? 'danger' : (+op['valProgress'] > 0.84 ? 'success' : 'warning')"
 											[value]="+op['valProgress']">
 										</ion-progress-bar>
 										<p>{{ +op['CantidadTotal'] }}</p>
@@ -84,9 +83,9 @@
 </ion-content>
 
 <ion-footer class="ion-no-border">
-	<ion-toolbar color="gray">
+	<ion-toolbar>
 		<ion-fab vertical="center" horizontal="start">
-			<ion-grid class="ion-no-padding ion-padding-horizontal">
+			<ion-grid class="ion-no-padding">
 				<ion-row>
 					<ion-col class="ion-no-padding"
 						[ngClass]="it['accion'] == 'cambiar-centro' ? (dataCentroProduccion['cantidad'] > 1 ? '' : 'd-none') : ''"

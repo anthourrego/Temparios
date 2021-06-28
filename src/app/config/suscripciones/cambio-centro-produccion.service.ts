@@ -6,7 +6,7 @@ import { Subject, Observable } from 'rxjs';
 })
 export class CambioCentroProduccionService {
 
-	subject$ = new Subject();
+	private subject$ = new Subject();
 
 	constructor() { }
 
