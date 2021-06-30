@@ -40,9 +40,9 @@
         </ion-text>
         <div>
             <div class="ion-text-center ion-margin">
-                <countdown #countdown [config]="{ leftTime: tiempoCuentaRegresiva['TiempoMaximo'], format: 'mm:ss' }"
-                    (event)="agregarLog($event)">
-                </countdown>
+                <countup-timer *ngIf="tiempoCuentaRegresiva['up']" [countUpTimerConfig]="testConfig"></countup-timer>
+                <countdown-timer *ngIf="tiempoCuentaRegresiva['down']" [countDownTimerConfig]="testConfig">
+                </countdown-timer>
             </div>
         </div>
     </div>
@@ -51,8 +51,7 @@
 
 <ion-footer *ngIf="cuentaRegresiva">
     <ion-toolbar color="light">
-        <ion-button expand="full" size="large" shape="round" class="ion-margin-horizontal"
-            (click)="agregarLog({action: 'done'});">
+        <ion-button expand="full" size="large" shape="round" class="ion-margin-horizontal" (click)="agregarLog();">
             <ion-icon slot="start" name="alarm-outline"></ion-icon>
             Finalizar
         </ion-button>

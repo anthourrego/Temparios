@@ -16,9 +16,15 @@ ion-content {
 		}
 		div {
 			div {
-				countdown {
-					font-size: 7em;
+				countup-timer::ng-deep,
+				countdown-timer::ng-deep {
+					font-size: 4em;
 					color: var(--ion-color-dark);
+					div {
+						span:nth-child(6) {
+							display: none;
+						}
+					}
 				}
 			}
 		}

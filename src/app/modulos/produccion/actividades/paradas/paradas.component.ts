@@ -1,8 +1,12 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ModalController } from '@ionic/angular';
 import { TipoParadasService } from 'src/app/servicios/tipo-paradas.service';
 import { NotificacionesService } from '../../../../servicios/notificaciones.service';
 import { CargadorService } from '../../../../servicios/cargador.service';
+import { countUpTimerConfigModel, timerTexts, CountupTimerService, CountdownTimerService } from 'ngx-timer';
+import * as moment from 'moment';
+import { takeUntil } from 'rxjs/operators';
+import { Subject } from 'rxjs';
 
 @Component({
 	selector: 'app-paradas',
@@ -11,27 +15,35 @@ import { CargadorService } from '../../../../servicios/cargador.service';
 })
 export class ParadasComponent implements OnInit {
 
-	@ViewChild('countdown') tiempo: any;
 	paradas: Array<object> = [];
 	buscando: boolean = true;
 	cuentaRegresiva: boolean = false;
 	tiempoCuentaRegresiva: object = {};
 	idParada: number = -1;
+	testConfig;
+	subject = new Subject();
 
 	constructor(
 		private modalController: ModalController,
 		private tipoParadasService: TipoParadasService,
 		private notificacionesService: NotificacionesService,
-		private cargadorService: CargadorService
+		private cargadorService: CargadorService,
+		private countupTimerService: CountupTimerService,
+		private countdownTimerService: CountdownTimerService
 	) { }
 
 	ngOnInit() {
 		this.obtenerActividades();
+		this.configTime();
 	}
 
 	cerrarModal(listar?) {
 		if (this.cuentaRegresiva) {
-			this.agregarLog({ action: 'done' });
+			if (!this.tiempoCuentaRegresiva['up']) {
+				this.countdownTimerService.onTimerStatusChange.emit("STOP");
+			} else {
+				this.agregarLog();
+			}
 		} else {
 			this.modalController.dismiss(listar);
 		}
@@ -41,11 +53,9 @@ export class ParadasComponent implements OnInit {
 		this.buscando = true;
 		this.tipoParadasService.informacion({}, 'CentrosProduccion/obtenerTiposParadas').then(({ valido, datos }) => {
 			if (valido && datos.length) {
-				this.paradas = datos.map(it => {
-					it['TiempoMaximo'] *= 60;
-					return it;
-				});
+				this.paradas = datos;
 			} else {
+				this.paradas = [];
 				this.notificacionesService.notificacion("No se encontro información");
 			}
 			if (evento) {
@@ -56,9 +66,18 @@ export class ParadasComponent implements OnInit {
 	}
 
 	contarCuentaRegresiva(opcion) {
-		this.tiempoCuentaRegresiva = opcion;
-		this.cuentaRegresiva = true;
+		this.tiempoCuentaRegresiva = Object.assign({}, opcion);
+		if (!opcion['TiempoMaximo'] || opcion['TiempoMaximo'] <= 0) {
+			this.tiempoCuentaRegresiva = { ...this.tiempoCuentaRegresiva, up: true };
+			this.countupTimerService.startTimer();
+		} else {
+			this.tiempoCuentaRegresiva = { ...this.tiempoCuentaRegresiva, down: true };
+			let fecha = moment().add(opcion['TiempoMaximo'], 'minute').toDate();
+			this.countdownTimerService.startTimer(fecha);
+			this.suscripcionTiempo();
+		}
 		this.ejecutarPeticionLog('STOPINICIO');
+		this.cuentaRegresiva = true;
 	}
 
 	ejecutarPeticionLog(Tipo) {
@@ -72,8 +91,8 @@ export class ParadasComponent implements OnInit {
 				if (Tipo == 'STOPFIN') {
 					this.cargadorService.ocultar();
 					this.cuentaRegresiva = false;
-					this.idParada = -1;
 					this.cerrarModal(true);
+					this.idParada = -1;
 				} else {
 					this.idParada = idParada;
 				}
@@ -93,13 +112,34 @@ export class ParadasComponent implements OnInit {
 		});
 	}
 
-	agregarLog({ action }) {
-		if (action == "done") {
-			this.tiempo.stop();
+	agregarLog() {
+		if (this.tiempoCuentaRegresiva['up']) {
+			this.countupTimerService.stopTimer()
 			this.cargadorService.presentar("Guardando información").then(() => {
 				this.ejecutarPeticionLog('STOPFIN');
 			});
+		} else {
+			this.countdownTimerService.onTimerStatusChange.emit("STOP");
 		}
+	}
+
+	configTime() {
+		this.testConfig = new countUpTimerConfigModel();
+		this.testConfig.timerClass = 'test_Timer_class';
+		this.testConfig.timerTexts = new timerTexts();
+		this.testConfig.timerTexts.hourText = ":";
+		this.testConfig.timerTexts.minuteText = ":";
+		this.testConfig.timerTexts.secondsText = ":";
+	}
+
+	suscripcionTiempo() {
+		this.countdownTimerService.onTimerStatusChange.pipe(takeUntil(this.subject)).subscribe(status => {
+			if (status == "STOP") this.subject.next(true);
+		}, (err) => { }, () => {
+			this.cargadorService.presentar("Guardando información").then(() => {
+				this.ejecutarPeticionLog('STOPFIN');
+			});
+		});
 	}
 
 }

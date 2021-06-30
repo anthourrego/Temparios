@@ -7,13 +7,9 @@ import { ActividadesPage } from './actividades.page';
 import { AgregarActividadesComponent } from './agregar-actividades/agregar-actividades.component';
 import { PipesModule } from '../../../pipes/pipes.module';
 import { ParadasComponent } from './paradas/paradas.component';
-import { CountdownModule, CountdownGlobalConfig, CountdownConfig } from 'ngx-countdown';
 import { DetalleActividadComponent } from './detalle-actividad/detalle-actividad.component';
 import { ProductoTerminadoComponent } from './producto-terminado/producto-terminado.component';
-
-function countdownConfigFactory(): CountdownConfig {
-	return { format: `mm:ss` };
-}
+import { NgxTimerModule } from 'ngx-timer';
 
 @NgModule({
 	imports: [
@@ -22,7 +18,7 @@ function countdownConfigFactory(): CountdownConfig {
 		, IonicModule
 		, ActividadesPageRoutingModule
 		, PipesModule
-		, CountdownModule,
+		, NgxTimerModule
 	],
 	declarations: [
 		ActividadesPage
@@ -31,9 +27,7 @@ function countdownConfigFactory(): CountdownConfig {
 		, DetalleActividadComponent
 		, ProductoTerminadoComponent
 	],
-	providers: [
-		{ provide: CountdownGlobalConfig, useFactory: countdownConfigFactory }
-	],
+	providers: [],
 	schemas: [NO_ERRORS_SCHEMA]
 })
 

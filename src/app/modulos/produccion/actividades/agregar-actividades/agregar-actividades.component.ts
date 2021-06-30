@@ -53,15 +53,15 @@ export class AgregarActividadesComponent implements OnInit {
 		this.modalController.dismiss(listar);
 	}
 
-	checkMultiples({ detail }) {
-		if (!detail.checked) {
+	checkMultiples(evento) {
+		if (!evento.detail.checked) {
 			this.datosMultiple = null;
 		} else {
 			this.cantMultiple++;
 		}
 	}
 
-	opcionCheck({ detail }, pos1, pos2, element) {
+	opcionCheck(evento, pos1, pos2, element) {
 		if (this.seleccionMultiple) {
 			if (this.datosMultiple) {
 				if (this.datosMultiple['ActividadProduccionId'] !== this.infoActividades[pos1]['actividades'][pos2]['ActividadProduccionId']) {
@@ -74,11 +74,11 @@ export class AgregarActividadesComponent implements OnInit {
 				this.datosMultiple = this.infoActividades[pos1]['actividades'][pos2];
 			}
 		}
-		this.infoActividades[pos1]['actividades'][pos2]['checked'] = detail.checked;
+		this.infoActividades[pos1]['actividades'][pos2]['checked'] = evento.detail.checked;
 		let dataOrde = this.infoActividades[pos1];
 		let dataActi = this.infoActividades[pos1]['actividades'][pos2];
 		let index = this.actividadesSeleccionadas.findIndex(op => op['OrdeProdId'] == dataOrde['OrdeProdId']);
-		if (detail.checked) {
+		if (evento.detail.checked) {
 			let info = { ...dataActi, multiple: this.seleccionMultiple, tipoMultiple: 'Multiple' + this.cantMultiple };
 			dataOrde['actividades'][pos2] = info;
 			if (index != -1) {
@@ -96,8 +96,8 @@ export class AgregarActividadesComponent implements OnInit {
 		}
 	}
 
-	buscarFiltro({ detail }) {
-		this.valorBuscar = detail.value;
+	buscarFiltro(evento) {
+		this.valorBuscar = evento.detail.value;
 		this.refrescar();
 	}
 

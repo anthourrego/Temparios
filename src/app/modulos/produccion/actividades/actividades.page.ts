@@ -74,8 +74,11 @@ export class ActividadesPage implements OnInit, OnDestroy {
 		this.obtenerInformacion(event, true);
 	}
 
-	async presentActionSheet({ ActividadOperarioId, GrupoId }) {
-		let data = { ActividadOperarioId, GrupoId };
+	async presentActionSheet(op) {
+		let data = {
+			ActividadOperarioId: op['ActividadOperarioId'],
+			GrupoId: op['GrupoId']
+		};
 		const actionSheet = await this.actionSheetController.create({
 			buttons: [/* {
 				text: 'Reiniciar',
@@ -96,16 +99,14 @@ export class ActividadesPage implements OnInit, OnDestroy {
 		this.searching = true;
 		this.actividadesService.informacion(this.dataQuery, 'CentrosProduccion/obtenerActividadesAsignadas').then(({ valido, datos, msg }) => {
 			this.actividades = datos;
-			if (event) {
-				event.target.complete();
-			}
+			if (event) event.target.complete();
 			this.searching = false;
 		}, console.error);
 	}
 
-	async accionBoton({ accion, component }, datos?) {
-		if (!component) {
-			if (accion == 'cambiar-centro') {
+	async accionBoton(op, datos?) {
+		if (!op['component']) {
+			if (op['accion'] == 'cambiar-centro') {
 				this.router.navigateByUrl('/modulos/centros-produccion');
 			} else {
 				this.notificacionesService.notificacion("No hay componente disponible");
@@ -115,30 +116,31 @@ export class ActividadesPage implements OnInit, OnDestroy {
 		let componentProps = {
 			centroProduccion: this.dataQuery['centroProd']
 		};
-		if (datos && (accion == 'detalle' || accion == 'terminado')) {
+		if (datos && (op['accion'] == 'detalle' || op['accion'] == 'terminado')) {
 			if (datos['GrupoId']) {
 				componentProps['idGrupo'] = datos['GrupoId']
 			}
 			componentProps['datos'] = datos;
 		}
 		const modal = await this.modalController.create({
-			component
+			component: op['component']
 			, backdropDismiss: false
 			, componentProps
 		});
 		await modal.present();
 		modal.onWillDismiss().then(({ data, role }) => {
-			if (data && (accion == 'agregar' || accion == 'detalle' || accion == 'terminado')) {
+			if (data && (op['accion'] == 'agregar' || op['accion'] == 'detalle' || op['accion'] == 'terminado')) {
 				this.obtenerCentroProd(false);
 			}
 		}, console.error);
 	}
 
-	agregarTiempoActividad({ OrdeProdOperacionId, GrupoId }) {
+	agregarTiempoActividad(op) {
 		this.searching = true;
 		let data = {
-			OrdeProdOperacionId, GrupoId,
-			Cantidad: 1,
+			OrdeProdOperacionId: op['OrdeProdOperacionId'],
+			GrupoId: op['GrupoId'],
+			Cantidad: 80,
 			Tipo: 'OPERACION'
 		}
 		this.actividadesService.informacion(data, 'CentrosProduccion/agregarLogActividad').then(({ datos, msg, valido }) => {

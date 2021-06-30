@@ -9,33 +9,33 @@
 	<ion-list>
 		<ion-item lines="none" *ngFor="let item of dataHistorial;">
 			<ion-label [ngClass]="item['Tipo']" class="p-2">
-				<h2>{{ item['Nombre'] }}</h2>
+				<h2 class="ion-text-uppercase">{{ item['Nombre'] }}</h2>
 				<p>
 					<ion-grid>
 						<ion-row>
 							<ion-col
-								[size]="item['Tipo'] == 'INGRESO' || item['Tipo'] == 'SALIDA' ? '6' : (item['Tipo'] == 'STOP' ? '4' : '3')">
+								[size]="item['Tipo'] == 'INGRESO' || item['Tipo'] == 'SALIDA' ? '6' : (item['Tipo'] == 'OPERACION' ? '3' : '4')">
 								<ion-label class="ion-text-center bg-transparent">
 									<p>{{ item['FechaReg'] }}</p>
 									<strong>Fecha</strong>
 								</ion-label>
 							</ion-col>
-							<ion-col size="3"
-								*ngIf="item['Tipo'] != 'INGRESO' && item['Tipo'] != 'SALIDA' && item['Tipo'] != 'STOP'">
+							<ion-col [size]="item['Tipo'] == 'OPERACION' ? '3' : '4'"
+								*ngIf="item['Tipo'] == 'OPERACION'">
 								<ion-label class="ion-text-center bg-transparent">
 									<p>{{ +item['Cantidad'] }}</p>
 									<strong>Cantidad</strong>
 								</ion-label>
 							</ion-col>
-							<ion-col [size]="item['Tipo'] == 'STOP' ? '4' : '3'"
+							<ion-col [size]="item['Tipo'] == 'OPERACION' ? '3' : '4'"
 								*ngIf="item['Tipo'] != 'INGRESO' && item['Tipo'] != 'SALIDA'">
 								<ion-label class="ion-text-center bg-transparent">
-									<p>{{ item['STOP'] ? +item['Tiempo1'] : +item['Tiempo2'] }} min</p>
+									<p>{{ item['Tipo'] == 'OPERACION' ? +item['Tiempo2'] : +item['Tiempo1'] }} min</p>
 									<strong>Tiempo</strong>
 								</ion-label>
 							</ion-col>
 							<ion-col
-								[size]="item['Tipo'] == 'INGRESO' || item['Tipo'] == 'SALIDA' ? '6' : (item['Tipo'] == 'STOP' ? '4' : '3')">
+								[size]="item['Tipo'] == 'INGRESO' || item['Tipo'] == 'SALIDA' ? '6' : (item['Tipo'] == 'OPERACION' ? '3' : '4')">
 								<ion-label class="ion-text-center bg-transparent">
 									<p>{{ item['Hora'] }}</p>
 									<strong>Hora</strong>
