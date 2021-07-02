@@ -25,9 +25,9 @@ export class HeaderComponent implements OnInit {
 
 	ngOnInit() { }
 
-	segmentChanged({ detail }) {
-		this.valorDefecto = detail.value;
-		this.router.navigateByUrl(`modulos/produccion/${detail.value}`)
+	segmentChanged(event) {
+		this.valorDefecto = event.detail.value;
+		this.router.navigateByUrl(`modulos/produccion/${event.detail.value}`)
 	}
 
 }

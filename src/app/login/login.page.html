@@ -7,7 +7,8 @@
 				<ion-icon class="ion-margin-end" slot="start" name="card-outline"></ion-icon>
 				<ion-input formControlName="nroDocumento" type="text" placeholder="Número de documento"></ion-input>
 			</ion-item>
-			<ion-text color="danger" class="ion-text-center animate__animated animate__bounceIn animate__faster validadores"
+			<ion-text color="danger"
+				class="ion-text-center animate__animated animate__bounceIn animate__faster validadores"
 				*ngIf="formLogin.formulario.get('nroDocumento').touched">
 				{{formLogin.formulario.get('nroDocumento')['errorMessage'] }}
 			</ion-text>
@@ -19,7 +20,8 @@
 				<ion-icon (click)="verPassword = !verPassword" slot="end" [name]="verPassword ? 'eye' : 'eye-off'">
 				</ion-icon>
 			</ion-item>
-			<ion-text color="danger" class="ion-text-center animate__animated animate__bounceIn animate__faster validadores"
+			<ion-text color="danger"
+				class="ion-text-center animate__animated animate__bounceIn animate__faster validadores"
 				*ngIf="formLogin.formulario.get('password').touched">
 				{{formLogin.formulario.get('password')['errorMessage'] }}
 			</ion-text>
@@ -27,7 +29,8 @@
 				<ion-row>
 					<ion-col size="6" size-xs='12' size-lg='6' size-md='6'
 						class="ion-align-self-center ion-text-center">
-						<ion-button [disabled]="formLogin.formulario.invalid" type="submit" class="ion-no-margin">
+						<ion-button [disabled]="formLogin.formulario.invalid" type="submit" class="ion-no-margin"
+							[size]="'full'" shape="round">
 							Iniciar sesión
 							<ion-icon slot="start" name="log-in-outline"></ion-icon>
 						</ion-button>

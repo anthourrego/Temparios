@@ -76,6 +76,14 @@ ion-button {
     }
 }
 
+modal-color {
+    .alert-wrapper {
+        .alert-message {
+            color: var(--ion-color-dark) !important;
+        }
+    }
+}
+
 .color-picker {
     .picker-button,
     .picker-opt {

@@ -1,7 +1,9 @@
 ion-header {
 	ion-toolbar {
+		--background: var(--ion-color-light);
 		ion-segment {
-			border-bottom: 1px solid var(--ion-border-color);
+			border-bottom: none;
+			--background: var(--ion-color-light);
 			ion-segment-button {
 				ion-label {
 					font-size: 11px;
