@@ -25,7 +25,7 @@ import { Drivers } from '@ionic/storage';
 			driverOrder: [Drivers.IndexedDB, Drivers.LocalStorage],
 			name: '__processDB',
 			storeName: 'settings',
-			description: 'ProcessApp data temp'
+			description: 'TemparioApp data temp'
 		}),
 	],
 	providers: [{
