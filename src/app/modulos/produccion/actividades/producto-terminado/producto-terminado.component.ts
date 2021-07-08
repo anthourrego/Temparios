@@ -29,7 +29,10 @@ export class ProductoTerminadoComponent implements OnInit {
 		this.obtenerInformacion();
 	}
 
-	cerrarModal(accion?) {
+	cerrarModal(accion?, grupoElimino?) {
+		if(grupoElimino) {
+			accion = { grupoElimino, accion};
+		}	
 		this.modalController.dismiss(accion);
 	}
 
@@ -87,17 +90,19 @@ export class ProductoTerminadoComponent implements OnInit {
 	finalizarActividades() {
 		let data = {
 			actFinal: this.productos
-			, OrdeProdOperacionId: this.datos['OrdeProdOperacionId']
+			, OrdeProdOperacionId: this.datos['OrdeProdOperacionId'] 
 			, ordeprodid: this.datos['OrdeProdId']
 			, NumerOrden: this.datos['NumerOrden']
 			, centroproduccionid: this.centroProduccion
+			, grupoId: this.datos['GrupoId']
 		}
-		this.actividadesService.informacion(data, 'CentrosProduccion/finalizarActividad').then(({ msg, datos, valido }) => {
+
+		this.actividadesService.informacion(data, 'CentrosProduccion/finalizarActividad').then(({ msg, valido, grupoElimino }) => {
 			this.cargadorService.ocultar();
 			if (!valido) {
 				this.notificacionesService.notificacion(msg);
 			} else {
-				this.cerrarModal(true);
+				this.cerrarModal(true, grupoElimino);
 			}
 		}, err => {
 			console.error(err);

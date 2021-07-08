@@ -106,7 +106,12 @@ export class DetalleActividadComponent implements OnInit {
 		const modal = await this.modalController.create({ ...datos, backdropDismiss: false });
 		await modal.present();
 		modal.onWillDismiss().then(({ data }) => {
-			if (data) {
+			if(data.grupoElimino) {
+				this.listarAnterior = true;
+				setTimeout(() => {
+					this.cerrarModal();
+				}, 500);
+			} else if (data) {
 				this.listarAnterior = true;
 				this.obtenerInformacion();
 			}
