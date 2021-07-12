@@ -134,7 +134,13 @@ export class AgregarActividadesComponent implements OnInit {
 				evento.target.complete();
 			}
 			this.searching = false;
-		}, console.error);
+		}, (error) => {
+			if (evento) {
+				evento.target.complete();
+			}
+			this.searching = false;
+			console.error
+		});
 	}
 
 	agregarActividades() {

@@ -97,14 +97,16 @@ export class ActividadesPage implements OnInit, OnDestroy {
 
 	async obtenerInformacion(event?, fecha?) {
 		this.searching = true;
-		this.actividadesService.informacion(this.dataQuery, 'CentrosProduccion/obtenerActividadesAsignadas').then(({ valido, datos, msg }) => {
-			this.actividades = datos;
+		this.actividadesService.informacion(this.dataQuery, 'CentrosProduccion/obtenerActividadesAsignadas').then((datos) => {
+			if(datos){
+				this.actividades = datos.datos;
+			}
 			if (event) event.target.complete();
 			this.searching = false;
 		}).catch((error) => {
+			if (event) event.target.complete();
+			this.searching = false;
 			console.log(error);
-			this.notificacionesService.notificacion("Error de conexión, comuniquese con el administrador.");
-
 		});
 	}
 
@@ -155,7 +157,10 @@ export class ActividadesPage implements OnInit, OnDestroy {
 			} else {
 				this.obtenerInformacion(false, false);
 			}
-		}, console.error);
+		}).catch((error) => {
+			console.log(error);
+			this.searching = false;
+		});
 	}
 
 	peticionActionSheet(accion, datos) {

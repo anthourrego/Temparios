@@ -76,7 +76,7 @@ export class ConfiguracionPage implements OnInit {
 			}
 		];
 		if (!event?.detail.checked) {
-			this.notificaciones.alerta('Restaurar tamaño de letra?', opciones);
+			this.notificaciones.alerta('Restaurar tamaño de letra?', '', [], opciones);
 		} else {
 			this.range.disabled = false;
 			this.theme.appliedSize = true;
@@ -85,7 +85,7 @@ export class ConfiguracionPage implements OnInit {
 	}
 
 	confirmarCerrarSesion(terminar?) {
-		this.notificaciones.alerta('', undefined, undefined, `¿Esta seguro de ${terminar ? 'terminar turno' : 'cerrar sesión'}?`).then(async respuesta => {
+		this.notificaciones.alerta('', `¿Esta seguro de ${terminar ? 'terminar turno' : 'cerrar sesión'}?`).then(async respuesta => {
 			if (respuesta.role === 'aceptar') {
 				this.cargadorService.presentar().then(resp => {
 					this.ejecutarPeticionLog(terminar);

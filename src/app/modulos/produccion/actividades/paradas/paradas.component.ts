@@ -62,7 +62,10 @@ export class ParadasComponent implements OnInit {
 				evento.target.complete();
 			}
 			this.buscando = false;
-		}, console.error);
+		}, (error) => {
+			this.buscando = false;
+			console.log(error);
+		});
 	}
 
 	contarCuentaRegresiva(opcion) {
