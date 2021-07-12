@@ -7,6 +7,7 @@ import { NotificacionesService } from 'src/app/servicios/notificaciones.service'
 import { StorageService } from 'src/app/servicios/storage.service';
 import { ThemeService } from 'src/app/servicios/theme.service';
 import { Router } from '@angular/router';
+import { App } from '@capacitor/app';
 
 @Component({
 	selector: 'app-configuracion',
@@ -108,9 +109,7 @@ export class ConfiguracionPage implements OnInit {
 					this.storage.remove('centrosProduccion');
 					this.storage.remove('conexion');
 					this.storage.remove('usuario');
-					if (navigator['app']) {
-						navigator['app'].exitApp();
-					}
+					App.exitApp();
 				} else {
 					this.storage.limpiarTodo(true);
 					this.cargadorService.ocultar();
