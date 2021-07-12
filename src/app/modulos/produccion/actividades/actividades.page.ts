@@ -101,7 +101,11 @@ export class ActividadesPage implements OnInit, OnDestroy {
 			this.actividades = datos;
 			if (event) event.target.complete();
 			this.searching = false;
-		}, console.error);
+		}).catch((error) => {
+			console.log(error);
+			this.notificacionesService.notificacion("Error de conexión, comuniquese con el administrador.");
+
+		});
 	}
 
 	async accionBoton(op, datos?) {
@@ -140,7 +144,7 @@ export class ActividadesPage implements OnInit, OnDestroy {
 		let data = {
 			OrdeProdOperacionId: op['OrdeProdOperacionId'],
 			GrupoId: op['GrupoId'],
-			Cantidad: 80,
+			Cantidad: 1,
 			Tipo: 'OPERACION'
 		}
 		this.actividadesService.informacion(data, 'CentrosProduccion/agregarLogActividad').then(({ datos, msg, valido }) => {
