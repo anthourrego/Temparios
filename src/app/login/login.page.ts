@@ -84,6 +84,7 @@ export class LoginPage implements OnInit {
 							this.router.navigateByUrl('/modulos/centros-produccion');
 						}
 						this.formLogin.formulario.reset();
+						this.formLogin.formulario.markAsUntouched();
 					} else {
 						this.notificaciones.notificacion(mensaje);
 					}
