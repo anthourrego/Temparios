@@ -1,8 +1,7 @@
 <ion-content [fullscreen]="true">
 
 	<div class="content">
-		<form [formGroup]="formLogin.formulario" (ngSubmit)="login()"
-			[class]="'animate__animated animate__faster ' + claseUsuario">
+		<form [formGroup]="formLogin.formulario" [class]="'animate__animated animate__faster ' + claseUsuario">
 			<ion-item class="ion-margin-top" lines="none">
 				<ion-icon class="ion-margin-end" slot="start" name="card-outline"></ion-icon>
 				<ion-input formControlName="nroDocumento" type="text" placeholder="Número de documento"></ion-input>
@@ -27,10 +26,8 @@
 			</ion-text>
 			<ion-grid class="ion-no-margin">
 				<ion-row>
-					<ion-col size="6" size-xs='12' size-lg='6' size-md='6'
-						class="ion-align-self-center ion-text-center">
-						<ion-button [disabled]="formLogin.formulario.invalid" type="submit" class="ion-no-margin"
-							[size]="'full'" shape="round">
+					<ion-col size="6" size-xs='12' size-lg='6' size-md='6' class="ion-align-self-center ion-text-center">
+						<ion-button [disabled]="formLogin.formulario.invalid" class="ion-no-margin" (click)="login()" expand="full" shape="round">
 							Iniciar sesión
 							<ion-icon slot="start" name="log-in-outline"></ion-icon>
 						</ion-button>
