@@ -81,30 +81,34 @@ export class PeticionService {
 				return desencriptado;
 			}
 		}).catch((request) => {
-			if (request.error != '' && request.error != undefined) {
-				let encabezado = "Se ha producido un problema";
-				let encabezado2 = 'Error';
-				let mensaje = `Para obtener más información de este problema y posibles correcciones, pulse el botón "Ver Detalle" y comuniquese a la línea de servicio al cliente.`;
-				if (request.error.includes('DELETE') && request.error.includes('REFERENCE') && request.error.includes('FK')) {
-					mensaje = 'No se puede eliminar, el registro se encuentra referenciado en otras tablas.';
-					encabezado = 'Error de Integridad';
-					encabezado2 = encabezado;
-				}
-				const opciones = [
-					{
-						text: 'Ver Detalle',
-						handler: () => {
-							this.notificacionesService.alerta(request.error, "Error", ['alerta-error'], [{ text: 'Cerrar', role: 'aceptar' }]);
-						}
-					}, {
-						text: 'Cerrar',
-						role: 'cancel'
-					}
-				];
-				this.notificacionesService.alerta(mensaje, encabezado, [], opciones);
-
-			}
+			this.validarAlertaError(request);
 		});
+	}
+
+	private validarAlertaError(request) {
+		if (request.error != '' && request.error != undefined) {
+			let encabezado = "Se ha producido un problema";
+			let encabezado2 = 'Error';
+			let mensaje = `Para obtener más información de este problema y posibles correcciones, pulse el botón "Ver Detalle" y comuniquese a la línea de servicio al cliente.`;
+			if (request.error.includes('DELETE') && request.error.includes('REFERENCE') && request.error.includes('FK')) {
+				mensaje = 'No se puede eliminar, el registro se encuentra referenciado en otras tablas.';
+				encabezado = 'Error de Integridad';
+				encabezado2 = encabezado;
+			}
+			const opciones = [
+				{
+					text: 'Ver Detalle',
+					handler: () => {
+						this.notificacionesService.alerta(request.error, "Error", ['alerta-error'], [{ text: 'Cerrar', role: 'aceptar' }]);
+					}
+				}, {
+					text: 'Cerrar',
+					role: 'cancel'
+				}
+			];
+			this.notificacionesService.alerta(mensaje, encabezado, [], opciones);
+
+		}
 	}
 
 	private construirUrl(controlador) {
@@ -118,7 +122,11 @@ export class PeticionService {
 			nit: environment.nit,
 			RASTREO: FuncionesGenerales.rastreo('Ingresa al Sistema Process App', 'Ingreso Sistema'),
 		};
-		return await this.ejecutarPeticion('post', `${this.url}Login/ingresoOperario`, data).toPromise().then(resp => this.desencriptar(resp), console.error);
+		return await this.ejecutarPeticion('post', `${this.url}Login/ingresoOperario`, data).toPromise().then(
+			resp => this.desencriptar(resp)
+		).catch(error => {
+			this.validarAlertaError(error);
+		});
 	}
 
 	async cerrarSesionUser() {
@@ -130,7 +138,11 @@ export class PeticionService {
 			usuario: ingreso.usuarioId
 		};
 		const headers = new HttpHeaders({ Conexion, Token: ingreso.IngresoId });
-		return await this.ejecutarPeticion('post', `${this.url}Login/cierreMovil`, data, headers).toPromise().then(resp => this.desencriptar(resp), console.error);
+		return await this.ejecutarPeticion('post', `${this.url}Login/cierreMovil`, data, headers).toPromise().then(
+			resp => this.desencriptar(resp)
+		).catch(error => {
+			this.validarAlertaError(error);
+		});
 	}
 
 	ejecutarPeticion(verboPeticion: string, url: string, data?: object, headers?: HttpHeaders): Observable<any> {

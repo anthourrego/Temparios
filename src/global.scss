@@ -139,6 +139,16 @@ ion-action-sheet {
 
         .alert-message{
             max-height: 100%;
+			height: 90vh;
         }
+    }
+}
+
+.alerta-input {
+    .alert-message{
+        padding-bottom: 0px !important;
+    }
+    .alert-input-group {
+        padding-top: 0px !important;
     }
 }

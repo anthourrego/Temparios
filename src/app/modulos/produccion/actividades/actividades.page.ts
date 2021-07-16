@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, ComponentFactoryResolver, OnDestroy, OnInit } from '@angular/core';
 import { ActionSheetController, ModalController } from '@ionic/angular';
 import { Subject } from 'rxjs';
 import { AgregarActividadesComponent } from './agregar-actividades/agregar-actividades.component';
@@ -79,16 +79,27 @@ export class ActividadesPage implements OnInit, OnDestroy {
 			ActividadOperarioId: op['ActividadOperarioId'],
 			GrupoId: op['GrupoId']
 		};
+		let buttons = [];
+		if (op['Ultimo'] == '1') {
+			buttons.push({
+				text: 'Entrega parcial',
+				icon: 'bag-add-outline',
+				handler: () => {
+					this.entregaParcial(op)
+				} 
+			});
+		}
+
+		buttons.push({
+			text: 'Eliminar',
+			icon: 'trash',
+			handler: () => this.peticionActionSheet('eliminar', data)
+		});
+
+
+		
 		const actionSheet = await this.actionSheetController.create({
-			buttons: [/* {
-				text: 'Reiniciar',
-				icon: 'refresh',
-				handler: () => this.peticionActionSheet('reiniciar', data)
-			},  */{
-					text: 'Eliminar',
-					icon: 'trash',
-					handler: () => this.peticionActionSheet('eliminar', data)
-				}]
+			buttons
 		});
 		await actionSheet.present();
 		const { role } = await actionSheet.onDidDismiss();
@@ -100,6 +111,7 @@ export class ActividadesPage implements OnInit, OnDestroy {
 		this.actividadesService.informacion(this.dataQuery, 'CentrosProduccion/obtenerActividadesAsignadas').then((datos) => {
 			if(datos){
 				this.actividades = datos.datos;
+				console.log(this.actividades);
 			}
 			if (event) event.target.complete();
 			this.searching = false;
@@ -178,5 +190,47 @@ export class ActividadesPage implements OnInit, OnDestroy {
 			}
 		});
 	}
+
+	entregaParcial(datos){
+		console.log(datos);
+		let botones = [{
+			text: 'Entregar',
+			handler: (data) => {
+				console.log(data);
+				let cantidad = data.cantidad == '' ? 0 : data.cantidad;
+				cantidad = Number(cantidad);
+				if (cantidad > 0) {
+					if (cantidad <= datos.CantidadMinima) {
+						this.cargadorService.presentar().then(() => {
+							let datico = {
+								ordeProdId : datos['OrdeProdId']
+								,centroProdId : this.dataQuery['centroProd'] 
+								,Cantidad : cantidad
+							}
+	
+							this.actividadesService.informacion(datico, 'CentrosProduccion/entregaParcial').then((datos) => {
+								this.notificacionesService.notificacion(datos.msg);
+								this.cargadorService.ocultar();
+							}).catch((error) => {
+								this.cargadorService.ocultar();
+								console.log(error);
+							});
+						}, () => this.cargadorService.ocultar());
+						
+					} else {
+						this.notificacionesService.notificacion(`Ha superado la cantidad maxima a entregar ${Number(datos.CantidadMinima)}`);
+						return false;
+					}
+				} else {
+					this.notificacionesService.notificacion("La cantidad debe ser mayor a 0.");
+					return false;
+				}
+			}
+		}, {
+			text: 'Cancelar',
+			role: 'cancel'
+		}]
+		this.notificacionesService.alerta(`¿Que cantidad desea entregar? <br> Cantidad máxima ${Number(datos.CantidadMinima)}`, 'Entrega parcial', ['alerta-input'], botones, [{min: 0, max: 10, type: "number", name: "cantidad"}]);
+	} 
 
 }
