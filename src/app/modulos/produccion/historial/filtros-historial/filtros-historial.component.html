@@ -1,0 +1,36 @@
+<ion-header class="ion-no-border">
+	<ion-toolbar color="ligth">
+		<ion-title color="dark" class="ion-text-center">Filtros</ion-title>
+		<ion-buttons slot="end" (click)="cerrarModal()">
+			<ion-icon color="dark" slot='icon-only' size='large' name='close-outline'>
+			</ion-icon>
+		</ion-buttons>
+	</ion-toolbar>
+</ion-header>
+
+<ion-content color="gray">
+  <form [formGroup]="formFiltro" (ngSubmit)="filtrar()">
+		<ion-list lines="full">
+			<ion-item>
+				<ion-label color="dark">
+					Desde:
+				</ion-label>
+				<ion-datetime #fechaDesde formControlName="desde" placeholder="Seleccione una fecha" [pickerOptions]="{'cssClass': 'color-picker'}" cancelText="Cancelar" doneText="Aceptar" display-format="DD-MM-YYYY" [max]="maximoFechaDesde" (ionChange)="cambioFechaDesde(fechaDesde.value)"></ion-datetime>
+			</ion-item>
+			<ion-item>
+				<ion-label color="dark">
+					Hasta:
+				</ion-label>
+				<ion-datetime #fechaHasta formControlName="hasta" placeholder="Seleccione una fecha" [pickerOptions]="{'cssClass': 'color-picker'}" cancelText="Cancelar" doneText="Aceptar" display-format="DD-MM-YYYY" [min]="minFechaHasta" [max]="maximoFechaHasta" (ionChange)="cambioFechaHasta(fechaHasta.value)"></ion-datetime>
+			</ion-item>
+		</ion-list>
+		<ion-button class="ion-margin-top" mode="md" expand="full" type="submit" shape="round">
+			<ion-icon slot="start" name="funnel"></ion-icon>
+			Filtrar
+		</ion-button>
+		<ion-button class="ion-margin-top" color="danger" mode="md" expand="full" shape="round">
+			<ion-icon slot="start" name="reload"></ion-icon>
+			Limpiar
+		</ion-button>
+	</form>
+</ion-content>

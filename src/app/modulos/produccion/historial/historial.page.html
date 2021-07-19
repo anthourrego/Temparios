@@ -51,4 +51,9 @@
 		</ion-item>
 	</ion-list>
 
+	<ion-fab horizontal="end" vertical="bottom" slot="fixed">
+		<ion-fab-button [disabled]="searching" color="secondary" (click)="filtros()">
+			<ion-icon name="funnel"></ion-icon>
+		</ion-fab-button>
+	</ion-fab>
 </ion-content>

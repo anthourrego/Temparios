@@ -111,7 +111,6 @@ export class ActividadesPage implements OnInit, OnDestroy {
 		this.actividadesService.informacion(this.dataQuery, 'CentrosProduccion/obtenerActividadesAsignadas').then((datos) => {
 			if(datos){
 				this.actividades = datos.datos;
-				console.log(this.actividades);
 			}
 			if (event) event.target.complete();
 			this.searching = false;
@@ -158,16 +157,20 @@ export class ActividadesPage implements OnInit, OnDestroy {
 		let data = {
 			OrdeProdOperacionId: op['OrdeProdOperacionId'],
 			GrupoId: op['GrupoId'],
-			Cantidad: 1,
-			Tipo: 'OPERACION'
+			Cantidad: op['GrupoId'] == null ? 1 : op['CantidadTotal'],
+			Tipo: 'OPERACION',
+			centroProd: this.dataQuery['centroProd']
 		}
-		this.actividadesService.informacion(data, 'CentrosProduccion/agregarLogActividad').then(({ datos, msg, valido }) => {
+		this.actividadesService.informacion(data, 'CentrosProduccion/agregarLogActividad').then(({ datos, msg, valido, actividades }) => {
 			this.idLogActividad = datos;
 			this.searching = false;
 			if (!valido) {
 				this.notificacionesService.notificacion(msg);
 			} else {
-				this.obtenerInformacion(false, false);
+				this.actividades = actividades;
+				if(op['GrupoId'] != null){
+					this.accionBoton({accion: 'terminado', component: this.compoTerminado}, op)
+				}
 			}
 		}).catch((error) => {
 			console.log(error);
