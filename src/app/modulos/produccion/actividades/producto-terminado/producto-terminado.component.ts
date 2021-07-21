@@ -62,15 +62,15 @@ export class ProductoTerminadoComponent implements OnInit {
 		this.actividadesService.informacion(info, 'CentrosProduccion/obtenerProductoTerminado').then(({ valido, datos }) => {
 			let cantMensaje = 0;
 			this.productos = datos.map(op => {
-				let cant = 0;
+				/* let cant = 0;
 				if (op.consumo) {
 					op.consumo.map(x => {
 						x['mostrar'] = (+x['CantidadRealProducto'] == 0 ? true : false);
 						!x['mostrar'] ? cant++ : null;
 						return x;
 					});
-				}
-				op['mostrarProd'] = (op.consumo && op.consumo.length == cant ? false : true);
+				} */
+				op['mostrarProd'] = (op.consumo && op.consumo.length > 0 ? true : false);
 				op['mostrarProd'] ? null : cantMensaje++;
 				return op;
 			});
@@ -106,6 +106,11 @@ export class ProductoTerminadoComponent implements OnInit {
 			}
 		}, err => {
 			console.error(err);
+			this.cargadorService.ocultar();
+			this.searching = false;
+		}).catch((error) => {
+			console.error(error);
+			this.cargadorService.ocultar();
 			this.searching = false;
 		});
 	}

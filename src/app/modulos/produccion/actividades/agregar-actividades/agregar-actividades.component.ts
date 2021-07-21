@@ -14,6 +14,7 @@ export class AgregarActividadesComponent implements OnInit {
 	@ViewChild(IonInfiniteScroll) infiniteScroll: IonInfiniteScroll;
 	@Input() idGrupo;
 	@Input() centroProduccion;
+	@Input() nombreCp;
 	searching: boolean = true;
 	infoActividades: Array<object> = [];
 	cantidadAgregada: number = 0;

@@ -37,7 +37,7 @@
 			<ion-item-divider sticky="true" color="gray">
 				<ion-label color="dark">{{ llave['nombre'] }}</ion-label>
 			</ion-item-divider>
-			<ion-item lines="none" [ngStyle]="{'display': item['mostrar']  ? 'block' : 'none'}"
+			<ion-item lines="none" [ngStyle]="{'display': llave['mostrarProd']  ? 'block' : 'none'}"
 				*ngFor="let item of llave['consumo']; let pos = index;">
 				<ion-label>
 					<h3>{{ item['Nombre'] }}</h3>
@@ -61,7 +61,7 @@
 
 <ion-footer>
 	<ion-toolbar color="light">
-		<ion-button (click)="confirmar('¿Desea terminar esta orden de producción?')" class="ion-margin-horizontal"
+		<ion-button (click)="confirmar('¿Desea terminar esta actividad?')" class="ion-margin-horizontal"
 			size="full" shape="round">
 			<ion-icon slot="start" name="arrow-forward"></ion-icon>
 			Confirmar

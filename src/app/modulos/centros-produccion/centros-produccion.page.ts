@@ -40,7 +40,8 @@ export class CentrosProduccionPage implements OnInit {
 	irCentroProduccion(op) {
 		let encryp = this.centroProduccionService.encriptar({
 			CentroProduccion: op.CentroProduccionId,
-			cantidad: this.centrosProduccion.length
+			cantidad: this.centrosProduccion.length,
+			nombre: op.nombreCP
 		});
 		this.storage.set('centroProduccion', encryp);
 		setTimeout(() => {

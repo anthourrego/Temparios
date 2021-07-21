@@ -85,7 +85,11 @@ export class ActividadesPage implements OnInit, OnDestroy {
 				text: 'Entrega parcial',
 				icon: 'bag-add-outline',
 				handler: () => {
-					this.entregaParcial(op)
+					if (Number(op.CantidadMinima) > 0) {
+						this.entregaParcial(op);
+					} else {
+						this.notificacionesService.notificacion("No tiene cantidad para la entrega");
+					}
 				} 
 			});
 		}
@@ -95,8 +99,6 @@ export class ActividadesPage implements OnInit, OnDestroy {
 			icon: 'trash',
 			handler: () => this.peticionActionSheet('eliminar', data)
 		});
-
-
 		
 		const actionSheet = await this.actionSheetController.create({
 			buttons
@@ -131,7 +133,8 @@ export class ActividadesPage implements OnInit, OnDestroy {
 			return
 		}
 		let componentProps = {
-			centroProduccion: this.dataQuery['centroProd']
+			centroProduccion: this.dataQuery['centroProd'],
+			nombreCp: this.dataCentroProduccion['nombre']
 		};
 		if (datos && (op['accion'] == 'detalle' || op['accion'] == 'terminado')) {
 			if (datos['GrupoId']) {
@@ -212,6 +215,7 @@ export class ActividadesPage implements OnInit, OnDestroy {
 							}
 	
 							this.actividadesService.informacion(datico, 'CentrosProduccion/entregaParcial').then((datos) => {
+								this.actividades = datos.actividades;
 								this.notificacionesService.notificacion(datos.msg);
 								this.cargadorService.ocultar();
 							}).catch((error) => {
