@@ -15,6 +15,7 @@ export class HistorialPage implements OnInit {
 	searching: boolean = true;
 	fechaInicio: string = '';
 	fechaFin: string = '';
+	posicionAnterior: number = -1;
 
 	constructor(
 		private historialService: HistorialService,
@@ -38,10 +39,17 @@ export class HistorialPage implements OnInit {
 			this.dataHistorial = datos.map(op => {
 				op.Hora = moment(op.Fecha).format('HH:mm:ss');
 				op.FechaReg = moment(op.Fecha).format('DD/MM/YYYY');
+				if (op.GrupoId) {
+					op.GrupoActividades.map(op2 => {
+						op2.Hora = moment(op2.Fecha).format('HH:mm:ss');
+						op2.FechaReg = moment(op2.Fecha).format('DD/MM/YYYY');
+					});
+				}
 				return op;
 			});
 			if (event) {
 				event.target.complete();
+				this.posicionAnterior = -1;
 			}
 			this.searching = false;
 		}, error => {
@@ -77,6 +85,16 @@ export class HistorialPage implements OnInit {
 		}).catch((error) =>{
 			console.log(error);
 		});
+	}
+
+	opcionCollapse(x) {
+		let data = document.getElementsByClassName('collapse show');
+		data.length > 0 ? data[0].classList.remove("show") : null;
+		this.dataHistorial[x]['collapse'] = !this.dataHistorial[x]['collapse'];
+		if (this.posicionAnterior != -1) {
+			this.dataHistorial[this.posicionAnterior]['collapse'] = false;
+		}
+		this.posicionAnterior = x;
 	}
 
 }

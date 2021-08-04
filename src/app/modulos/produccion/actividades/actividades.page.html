@@ -7,21 +7,36 @@
 	</ion-refresher>
 
 	<ion-card>
-		<ion-card-header>
+		<!-- <ion-card-header>
 			<ion-card-title class="ion-margin-start">
 				<strong>Eficiencia</strong>
 			</ion-card-title>
-		</ion-card-header>
-		<ion-card-content class="ion-no-padding ion-padding-bottom">
+		</ion-card-header> -->
+		<ion-card-content class="ion-no-padding">
 			<ion-grid class="ion-no-padding">
 				<ion-row>
-					<ion-col *ngFor="let op of valoresEficiencia" class="ion-text-center indicador">
-						{{ op }}
+					<ion-col class="columna-eficiencia" size="8">
+						<ion-grid class="ion-no-padding">
+							<ion-row>
+								<ion-col class="ion-margin-start" size="12">
+									<strong>Eficiencia</strong>
+								</ion-col>
+							</ion-row>
+							<ion-row>
+								<ion-col *ngFor="let op of valoresEficiencia" class="ion-text-center indicador">
+									{{ op }}
+								</ion-col>
+							</ion-row>
+							<ion-row>
+								<ion-col *ngFor="let op of tituloEficiencia" class="ion-text-center tiempo">
+									{{ op }}
+								</ion-col>
+							</ion-row>
+						</ion-grid>
 					</ion-col>
-				</ion-row>
-				<ion-row>
-					<ion-col *ngFor="let op of tituloEficiencia" class="ion-text-center tiempo">
-						{{ op }}
+					<ion-col class="ion-padding" size="4">
+						<ion-img *ngIf="!usuarioActual['foto']" src="assets/images/nofoto.png"></ion-img>
+						<ion-img *ngIf="usuarioActual['foto']" [src]="codeBase64 + usuarioActual['foto']"></ion-img>
 					</ion-col>
 				</ion-row>
 			</ion-grid>
@@ -37,7 +52,7 @@
 							<ion-label class="ion-no-margin"
 								(click)="op['GrupoId'] ? accionBoton({accion: 'detalle', component: compoDetalle}, op) : null">
 								<h6>{{ op['Nombre'] }}</h6>
-								<p *ngIf="!op['GrupoId']">Orden: {{ op['NumerOrden'] }}</p>
+								<p *ngIf="!op['GrupoId']">{{ op['Referencia'] }} - {{ op['OrdeProdOperacionId'] }}</p>
 							</ion-label>
 							<ion-icon color="dark" (click)="presentActionSheet(op)" name="ellipsis-vertical" slot="end">
 							</ion-icon>
@@ -46,7 +61,8 @@
 					<ion-card-content class="ion-no-padding">
 						<ion-grid>
 							<ion-row class="ion-justify-content-evenly">
-								<ion-col size="5" (click)="+op['CantiRecib'] < +op['CantidadTotal'] ? agregarTiempoActividad(op) : accionBoton({accion: 'terminado', component: compoTerminado}, op)">
+								<ion-col size="5"
+									(click)="+op['CantiRecib'] < +op['CantidadTotal'] ? agregarTiempoActividad(op) : accionBoton({accion: 'terminado', component: compoTerminado}, op)">
 									<div class="cantidad-proceso">
 										<p class="conteo-accion">{{ +op['CantiRecib'] }}</p>
 										<ion-progress-bar color="secondary"

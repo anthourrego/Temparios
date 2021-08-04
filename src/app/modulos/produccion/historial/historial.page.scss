@@ -1,18 +1,22 @@
 ion-content {
-    ion-list {
-        ion-item {
-            ion-label {
-                margin-bottom: 0px !important;
-                border-radius: 10px;
-                background-color: #e4e4e4;
-                color: #000;
-            }
-            .STOP {
-                background-color: #00c0d4;
-            }
-            h2 {
-                font-weight: 600;
-            }
-        }
-    }
+	ion-list {
+		div {
+			ion-item {
+				ion-label {
+					margin-bottom: 0px !important;
+					border-radius: 10px;
+					background-color: #e4e4e4;
+					color: #000;
+					.icono-posicion {
+						position: absolute;
+						top: 20px;
+						right: 30px;
+					}
+				}
+				h2 {
+					font-weight: 600;
+				}
+			}
+		}
+	}
 }

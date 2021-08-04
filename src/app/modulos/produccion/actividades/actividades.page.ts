@@ -38,6 +38,8 @@ export class ActividadesPage implements OnInit, OnDestroy {
 	dataQuery: object = {};
 	idLogActividad: number;
 	dataCentroProduccion: object = {};
+	usuarioActual = {};
+	codeBase64 = 'data:image/jpeg;base64,';
 
 	constructor(
 		private actionSheetController: ActionSheetController,
@@ -67,6 +69,7 @@ export class ActividadesPage implements OnInit, OnDestroy {
 	}
 
 	async obtenerCentroProd(event) {
+		this.usuarioActual = this.actividadesService.desencriptar(JSON.parse(await this.storage.get('usuario')));
 		this.dataCentroProduccion = this.actividadesService.desencriptar(JSON.parse(await this.storage.get('centroProduccion')));
 		this.dataQuery = {
 			centroProd: this.dataCentroProduccion['CentroProduccion'],
@@ -75,11 +78,22 @@ export class ActividadesPage implements OnInit, OnDestroy {
 	}
 
 	async presentActionSheet(op) {
+		console.log(op);
 		let data = {
 			ActividadOperarioId: op['ActividadOperarioId'],
 			GrupoId: op['GrupoId']
 		};
 		let buttons = [];
+		if (op['GrupoId'] != null) {
+			buttons.push({
+				text: 'Ver referencias',
+				icon: 'eye-outline',
+				handler: () => {
+					this.accionBoton({accion: 'detalle', component: this.compoDetalle}, op);
+				}
+			});
+		}
+
 		if (op['Ultimo'] == '1') {
 			buttons.push({
 				text: 'Entrega parcial',
@@ -90,7 +104,7 @@ export class ActividadesPage implements OnInit, OnDestroy {
 					} else {
 						this.notificacionesService.notificacion("No tiene cantidad para la entrega");
 					}
-				} 
+				}
 			});
 		}
 
@@ -99,7 +113,7 @@ export class ActividadesPage implements OnInit, OnDestroy {
 			icon: 'trash',
 			handler: () => this.peticionActionSheet('eliminar', data)
 		});
-		
+
 		const actionSheet = await this.actionSheetController.create({
 			buttons
 		});
@@ -111,7 +125,7 @@ export class ActividadesPage implements OnInit, OnDestroy {
 	async obtenerInformacion(event?, fecha?) {
 		this.searching = true;
 		this.actividadesService.informacion(this.dataQuery, 'CentrosProduccion/obtenerActividadesAsignadas').then((datos) => {
-			if(datos){
+			if (datos) {
 				this.actividades = datos.datos;
 			}
 			if (event) event.target.complete();
@@ -171,8 +185,8 @@ export class ActividadesPage implements OnInit, OnDestroy {
 				this.notificacionesService.notificacion(msg);
 			} else {
 				this.actividades = actividades;
-				if(op['GrupoId'] != null){
-					this.accionBoton({accion: 'terminado', component: this.compoTerminado}, op)
+				if (op['GrupoId'] != null) {
+					this.accionBoton({ accion: 'terminado', component: this.compoTerminado }, op)
 				}
 			}
 		}).catch((error) => {
@@ -197,8 +211,7 @@ export class ActividadesPage implements OnInit, OnDestroy {
 		});
 	}
 
-	entregaParcial(datos){
-		console.log(datos);
+	entregaParcial(datos) {
 		let botones = [{
 			text: 'Entregar',
 			handler: (data) => {
@@ -209,11 +222,11 @@ export class ActividadesPage implements OnInit, OnDestroy {
 					if (cantidad <= datos.CantidadMinima) {
 						this.cargadorService.presentar().then(() => {
 							let datico = {
-								ordeProdId : datos['OrdeProdId']
-								,centroProdId : this.dataQuery['centroProd'] 
-								,Cantidad : cantidad
+								ordeProdId: datos['OrdeProdId']
+								, centroProdId: this.dataQuery['centroProd']
+								, Cantidad: cantidad
 							}
-	
+
 							this.actividadesService.informacion(datico, 'CentrosProduccion/entregaParcial').then((datos) => {
 								this.actividades = datos.actividades;
 								this.notificacionesService.notificacion(datos.msg);
@@ -223,7 +236,7 @@ export class ActividadesPage implements OnInit, OnDestroy {
 								console.log(error);
 							});
 						}, () => this.cargadorService.ocultar());
-						
+
 					} else {
 						this.notificacionesService.notificacion(`Ha superado la cantidad maxima a entregar ${Number(datos.CantidadMinima)}`);
 						return false;
@@ -237,7 +250,7 @@ export class ActividadesPage implements OnInit, OnDestroy {
 			text: 'Cancelar',
 			role: 'cancel'
 		}]
-		this.notificacionesService.alerta(`¿Que cantidad desea entregar? <br> Cantidad máxima ${Number(datos.CantidadMinima)}`, 'Entrega parcial', ['alerta-input'], botones, [{min: 0, max: 10, type: "number", name: "cantidad"}]);
-	} 
+		this.notificacionesService.alerta(`¿Que cantidad desea entregar? <br> Cantidad máxima ${Number(datos.CantidadMinima)}`, 'Entrega parcial', ['alerta-input'], botones, [{ min: 0, max: 10, type: "number", name: "cantidad" }]);
+	}
 
 }
