@@ -28,6 +28,7 @@ export class AgregarActividadesComponent implements OnInit {
 	actividadesSeleccionadas: Array<object> = [];
 	cantMultiple: number = 0;
 	codeBase64 = 'data:image/jpeg;base64,';
+	segmento: number = 0; 
 
 	constructor(
 		private modalController: ModalController,
@@ -119,9 +120,11 @@ export class AgregarActividadesComponent implements OnInit {
 			fin: this.fin,
 			centroProd: this.centroProduccion,
 			buscar: this.valorBuscar,
-			GrupoId: this.idGrupo ? this.idGrupo : null
+			GrupoId: this.idGrupo ? this.idGrupo : null,
+			segmento: this.segmento
 		}
 		this.actividadesService.informacion(datos, 'CentrosProduccion/obtenerOrdenProduccion').then(resp => {
+			console.log("Funca", resp);
 			if (!evento) {
 				this.infoActividades = [];
 			}
@@ -147,6 +150,7 @@ export class AgregarActividadesComponent implements OnInit {
 	agregarActividades() {
 		this.cargador.presentar("Agregando actividades").then(async (resp) => {
 			let datos = this.organizarDataGuardar();
+			console.log(datos);
 			this.actividadesService.informacion(datos, 'CentrosProduccion/agregarActividadOperario').then(({ valido, msg }) => {
 				this.cargador.ocultar();
 				if (valido) {
@@ -183,6 +187,11 @@ export class AgregarActividadesComponent implements OnInit {
 			});
 		});
 		return { multiples, individuales, grupo: this.idGrupo ? this.idGrupo : null };
+	}
+
+	cambioSegmento(event) {
+		this.segmento = event.detail.value;
+		this.refrescar();
 	}
 
 }

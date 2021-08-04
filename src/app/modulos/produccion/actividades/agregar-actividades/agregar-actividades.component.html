@@ -8,9 +8,20 @@
 	</ion-toolbar>
 </ion-header>
 
+<ion-toolbar>
+	<ion-segment class="border" mode="md" (ionChange)="cambioSegmento($event)" [(ngModel)]="segmento">
+		<ion-segment-button value="0">
+			<ion-label>Orden</ion-label>
+		</ion-segment-button>
+		<ion-segment-button value="1">
+			<ion-label>Maquinaria</ion-label>
+		</ion-segment-button>
+	</ion-segment>
+</ion-toolbar>
+
 <ion-progress-bar *ngIf="searching" type="indeterminate"></ion-progress-bar>
 
-<ion-searchbar (ionChange)="buscarFiltro($event)" clearIcon="close-sharp" placeholder="Buscar orden" [debounce]="400">
+<ion-searchbar *ngIf="segmento == 0" (ionChange)="buscarFiltro($event)" clearIcon="close-sharp" placeholder="Buscar orden" [debounce]="400">
 </ion-searchbar>
 
 <ion-content color="gray">
@@ -25,7 +36,7 @@
 		</ion-checkbox>
 	</ion-item>
 
-	<ion-list *ngIf="infoActividades.length && !searching">
+	<ion-list *ngIf="infoActividades.length && !searching && segmento == 0">
 		<div *ngFor="let it of infoActividades; let pos = index">
 			<ion-item class="item-collapse" lines="full" (click)="opcionCollapse(pos)" data-bs-toggle="collapse"
 				aria-expanded="false" [attr.aria-controls]="'collapse' + pos" [attr.data-bs-target]="'collapse' + pos"
@@ -58,6 +69,39 @@
 		</div>
 	</ion-list>
 
+	<ion-list *ngIf="infoActividades.length && !searching && segmento == 1">
+		<div *ngFor="let it of infoActividades; let pos = index">
+			<ion-item class="item-collapse" lines="full" (click)="opcionCollapse(pos)" data-bs-toggle="collapse"
+				aria-expanded="false" [attr.aria-controls]="'collapse' + pos" [attr.data-bs-target]="'collapse' + pos"
+				[attr.data-bs-target]="'#collapse' + pos">
+				
+				<ion-label>
+					{{ it['Nombre'] }}
+				</ion-label>
+				<ion-icon color="dark" slot="end"
+					[name]="it['collapse'] ? 'chevron-up-outline' : 'chevron-down-outline'"></ion-icon>
+			</ion-item>
+			<div class="collapse" [id]="'collapse' + pos">
+				<ion-list>
+					<ion-item lines="inset" *ngFor="let item of it['actividades'] ; let po = index">
+						<ion-avatar>
+							<img class="rounded-circle" [src]="item['Foto'] ? codeBase64 + item['Foto'] : '../../../../../assets/images/nofoto.png'" />
+						</ion-avatar>
+						<ion-label>
+							{{ item['NombreProducto'] }}
+							<p>{{ item['nombreoperacion'] }}</p>
+							<p>Ref: {{ item['Referencia'] }} | Orden: {{ item['NumerOrden'] }} | Cantidad: {{ item['CantiRecib'] ? +item['CantiRecib'] : 0}}</p>
+							<p>Estado: {{ item['Estado'] }}</p>
+						</ion-label>
+						<ion-checkbox [id]="'check' + pos + po" [checked]="item['checked']"
+							(ionChange)="opcionCheck($event, pos, po, ('check' + pos + po))">
+						</ion-checkbox>
+					</ion-item>
+				</ion-list>
+			</div>
+		</div>
+	</ion-list>
+
 	<ion-list *ngIf="!infoActividades.length && !searching">
 		<ion-item lines="none">
 			<ion-text color="dark" class="ion-text-center">
@@ -67,8 +111,7 @@
 	</ion-list>
 
 	<ion-infinite-scroll threshold="180px" (ionInfinite)="loadData($event)">
-		<ion-infinite-scroll-content loadingSpinner="lines" loadingText="Obteniendo información...">
-		</ion-infinite-scroll-content>
+		<ion-infinite-scroll-content loadingSpinner="lines" loadingText="Obteniendo información..."></ion-infinite-scroll-content>
 	</ion-infinite-scroll>
 
 </ion-content>
