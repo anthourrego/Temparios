@@ -69,8 +69,8 @@ export class ActividadesPage implements OnInit, OnDestroy {
 	}
 
 	async obtenerCentroProd(event) {
-		this.usuarioActual = this.actividadesService.desencriptar(JSON.parse(await this.storage.get('usuario')));
-		this.dataCentroProduccion = this.actividadesService.desencriptar(JSON.parse(await this.storage.get('centroProduccion')));
+		this.usuarioActual = await this.actividadesService.desencriptar(JSON.parse(await this.storage.get('usuario')));
+		this.dataCentroProduccion = await this.actividadesService.desencriptar(JSON.parse(await this.storage.get('centroProduccion')));
 		this.dataQuery = {
 			centroProd: this.dataCentroProduccion['CentroProduccion'],
 		}
@@ -78,7 +78,6 @@ export class ActividadesPage implements OnInit, OnDestroy {
 	}
 
 	async presentActionSheet(op) {
-		console.log(op);
 		let data = {
 			ActividadOperarioId: op['ActividadOperarioId'],
 			GrupoId: op['GrupoId']
@@ -215,7 +214,6 @@ export class ActividadesPage implements OnInit, OnDestroy {
 		let botones = [{
 			text: 'Entregar',
 			handler: (data) => {
-				console.log(data);
 				let cantidad = data.cantidad == '' ? 0 : data.cantidad;
 				cantidad = Number(cantidad);
 				if (cantidad > 0) {

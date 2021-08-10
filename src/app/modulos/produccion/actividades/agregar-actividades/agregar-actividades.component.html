@@ -10,10 +10,10 @@
 
 <ion-toolbar>
 	<ion-segment class="border" mode="md" (ionChange)="cambioSegmento($event)" [(ngModel)]="segmento">
-		<ion-segment-button value="0">
+		<ion-segment-button value="0" [disabled]="segmento == 1 && searching">
 			<ion-label>Orden</ion-label>
 		</ion-segment-button>
-		<ion-segment-button value="1">
+		<ion-segment-button value="1" [disabled]="segmento == 0 && searching">
 			<ion-label>Maquinaria</ion-label>
 		</ion-segment-button>
 	</ion-segment>

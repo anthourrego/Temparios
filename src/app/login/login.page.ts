@@ -45,7 +45,7 @@ export class LoginPage implements OnInit {
 			password: await this.storageService.get('password')
 		}
 		if (datos.nroDocumento && datos.password) {
-			datos.password = this.loginService.desencriptar(JSON.parse(datos.password));
+			datos.password = await this.loginService.desencriptar(JSON.parse(datos.password));
 			this.formLogin.formulario.patchModelValue(datos);
 			this.login();
 		}
@@ -63,17 +63,18 @@ export class LoginPage implements OnInit {
 		if (this.formLogin.formulario.valid) {
 			this.cargadorService.presentar().then(resp => {
 				const data = Object.assign({}, this.formLogin.formulario.value);
-				this.loginService.iniciarSesionUser(data).then(({ mensaje, db, usuario, valido, indice, centrosProduccion }) => {
+				this.loginService.iniciarSesionUser(data).then(async ({ mensaje, db, usuario, valido, indice, centrosProduccion, crypt, password }) => {
 					if (valido) {
 						this.storageService.set('conexion', JSON.stringify(db));
 						this.storageService.set('nroDocumento', data.nroDocumento);
 						this.storageService.set('usuario', JSON.stringify(usuario));
-						let encrypPass = this.loginService.encriptar(data.password);
-						this.storageService.set('password', encrypPass);
+						await this.storageService.set('crypt', crypt);
+						//let encrypPass = this.loginService.encriptar(data.password);
+						this.storageService.set('password', JSON.stringify(password));
 						this.storageService.set('indice', indice);
-						let centrosProduccionDecryp = this.loginService.desencriptar(centrosProduccion);
+						let centrosProduccionDecryp = await this.loginService.desencriptar(centrosProduccion);
 						if (centrosProduccionDecryp.length == 1) {
-							let encryp = this.loginService.encriptar({
+							let encryp = await this.loginService.encriptar({
 								CentroProduccion: centrosProduccionDecryp[0].CentroProduccionId,
 								cantidad: centrosProduccionDecryp.length
 							});

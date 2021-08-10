@@ -20,7 +20,7 @@ export class PeticionService {
 	private notificacionesService: NotificacionesService;
 	private httpClient: HttpClient;
 	private url: string = environment.urlBack;
-	private llaveEncriptar: string = environment.secretoPeticion;
+	//private llaveEncriptar: string = environment.secretoPeticion;
 	public categoria: string = 'API/';
 
 	constructor(
@@ -36,10 +36,11 @@ export class PeticionService {
 		}
 	}
 
-	encriptar(datos) {
+	async encriptar(datos) {
 		const salt = CryptoJS.lib.WordArray.random(256);
 		const iv = CryptoJS.lib.WordArray.random(16);
-		const key = CryptoJS.PBKDF2(this.llaveEncriptar, salt, { hasher: CryptoJS.algo.SHA512, keySize: 64 / 8, iterations: 30 });
+		const crypt = JSON.parse(await this.storageService.get('crypt').then(resp => resp));
+		const key = CryptoJS.PBKDF2(crypt.key, salt, { hasher: CryptoJS.algo.SHA512, keySize: 64 / 8, iterations: crypt.it });
 		const encrypted = CryptoJS.AES.encrypt(JSON.stringify(datos), key, { iv: iv });
 		const data = {
 			ciphertext: CryptoJS.enc.Base64.stringify(encrypted.ciphertext),
@@ -49,10 +50,11 @@ export class PeticionService {
 		return JSON.stringify(data);
 	}
 
-	desencriptar(encriptado) {
+	async desencriptar(encriptado) {
 		const salt = CryptoJS.enc.Hex.parse(encriptado.salt);
 		const iv = CryptoJS.enc.Hex.parse(encriptado.iv);
-		const key = CryptoJS.PBKDF2(this.llaveEncriptar, salt, { hasher: CryptoJS.algo.SHA512, keySize: 64 / 8, iterations: 30 });
+		const crypt = JSON.parse(await this.storageService.get('crypt').then(resp => resp));
+		const key = CryptoJS.PBKDF2(crypt.key, salt, { hasher: CryptoJS.algo.SHA512, keySize: 64 / 8, iterations: crypt.it });
 		const decrypted = CryptoJS.AES.decrypt(encriptado.ciphertext, key, { iv: iv });
 		return JSON.parse(decrypted.toString(CryptoJS.enc.Utf8));
 	}
@@ -64,16 +66,16 @@ export class PeticionService {
 
 	async informacion(body: object | string | Array<any> | number, controlador: string) {
 		const data = {
-			encriptado: this.encriptar(body)
+			encriptado: await this.encriptar(body)
 		}
 		const uri = this.construirUrl(controlador);
 		const Conexion = await this.storageService.get('conexion').then(resp => resp);
 		const Cedula = await this.storageService.get('nroDocumento').then(resp => resp);
 		const indice = await this.storageService.get('indice').then(resp => resp);
-		let nit = this.desencriptar(JSON.parse(await this.storageService.get('usuario').then(resp => resp)));
+		let nit = await this.desencriptar(JSON.parse(await this.storageService.get('usuario').then(resp => resp)));
 		const headers = new HttpHeaders({ Token: '' + nit.OperarioId, Conexion, Cedula, Nit: environment.nit, Usuario: '' + nit.OperarioId, indice });
-		return await this.ejecutarPeticion('post', uri, data, headers).toPromise().then(resp => {
-			const desencriptado = this.desencriptar(resp);
+		return await this.ejecutarPeticion('post', uri, data, headers).toPromise().then(async resp => {
+			const desencriptado = await this.desencriptar(resp);
 			if (desencriptado.activoLogueo) {
 				// return Ejecutar cerrar sesion
 				this.storageService.limpiarTodo();
@@ -123,7 +125,7 @@ export class PeticionService {
 			RASTREO: FuncionesGenerales.rastreo('Ingresa al Sistema Process App', 'Ingreso Sistema'),
 		};
 		return await this.ejecutarPeticion('post', `${this.url}Login/ingresoOperario`, data).toPromise().then(
-			resp => this.desencriptar(resp)
+			resp => resp
 		).catch(error => {
 			this.validarAlertaError(error);
 		});
@@ -131,7 +133,7 @@ export class PeticionService {
 
 	async cerrarSesionUser() {
 		const Conexion = await this.storageService.get('conexion').then(resp => resp);
-		let ingreso = this.desencriptar(JSON.parse(await this.storageService.get('ingreso').then(resp => resp)));
+		let ingreso = await this.desencriptar(JSON.parse(await this.storageService.get('ingreso').then(resp => resp)));
 
 		let data = {
 			ingreso: ingreso.IngresoId,

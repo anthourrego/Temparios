@@ -24,21 +24,21 @@ export class CentrosProduccionPage implements OnInit {
 	ngOnInit() { }
 
 	ionViewDidEnter() {
-		this.centrosProduccion = [];
 		this.obtenerCentrosProd();
 	}
 
 	async obtenerCentrosProd() {
 		let datos = await this.storage.get('centrosProduccion');
-		datos = this.centroProduccionService.desencriptar(JSON.parse(datos));
+		this.centrosProduccion = [];
+		datos = await this.centroProduccionService.desencriptar(JSON.parse(datos));
 		this.centrosProduccion = datos.map(it => {
 			it.borde = FuncionesGenerales.generarColorAutomatico();
 			return it;
 		});
 	}
 
-	irCentroProduccion(op) {
-		let encryp = this.centroProduccionService.encriptar({
+	async irCentroProduccion(op) {
+		let encryp = await this.centroProduccionService.encriptar({
 			CentroProduccion: op.CentroProduccionId,
 			cantidad: this.centrosProduccion.length,
 			nombre: op.nombreCP
