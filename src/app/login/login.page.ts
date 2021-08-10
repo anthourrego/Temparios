@@ -94,6 +94,9 @@ export class LoginPage implements OnInit {
 					this.notificaciones.notificacion(JSON.stringify(error));
 					console.error("Error ", error);
 					this.cargadorService.ocultar();
+				}).catch((error) => {
+					console.error("Error ", error);
+					this.cargadorService.ocultar();
 				});
 			});
 		} else {
