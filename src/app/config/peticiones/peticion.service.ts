@@ -39,7 +39,7 @@ export class PeticionService {
 	encriptar(datos) {
 		const salt = CryptoJS.lib.WordArray.random(256);
 		const iv = CryptoJS.lib.WordArray.random(16);
-		const key = CryptoJS.PBKDF2(this.llaveEncriptar, salt, { hasher: CryptoJS.algo.SHA512, keySize: 64 / 8, iterations: 999 });
+		const key = CryptoJS.PBKDF2(this.llaveEncriptar, salt, { hasher: CryptoJS.algo.SHA512, keySize: 64 / 8, iterations: 30 });
 		const encrypted = CryptoJS.AES.encrypt(JSON.stringify(datos), key, { iv: iv });
 		const data = {
 			ciphertext: CryptoJS.enc.Base64.stringify(encrypted.ciphertext),
@@ -52,7 +52,7 @@ export class PeticionService {
 	desencriptar(encriptado) {
 		const salt = CryptoJS.enc.Hex.parse(encriptado.salt);
 		const iv = CryptoJS.enc.Hex.parse(encriptado.iv);
-		const key = CryptoJS.PBKDF2(this.llaveEncriptar, salt, { hasher: CryptoJS.algo.SHA512, keySize: 64 / 8, iterations: 999 });
+		const key = CryptoJS.PBKDF2(this.llaveEncriptar, salt, { hasher: CryptoJS.algo.SHA512, keySize: 64 / 8, iterations: 30 });
 		const decrypted = CryptoJS.AES.decrypt(encriptado.ciphertext, key, { iv: iv });
 		return JSON.parse(decrypted.toString(CryptoJS.enc.Utf8));
 	}

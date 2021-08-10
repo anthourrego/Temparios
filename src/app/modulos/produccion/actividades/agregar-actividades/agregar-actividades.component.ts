@@ -19,8 +19,11 @@ export class AgregarActividadesComponent implements OnInit {
 	infoActividades: Array<object> = [];
 	cantidadAgregada: number = 0;
 	posicionAnterior: number = -1;
+	maquinariaActual: number = null;
 	inicio: number = 1;
 	fin: number = 15;
+	inicioMaquinaria: number = 1;
+	finMaquinaria: number = 15;
 	cantidad: number = 15;
 	valorBuscar: String = '';
 	seleccionMultiple: boolean = false;
@@ -28,7 +31,7 @@ export class AgregarActividadesComponent implements OnInit {
 	actividadesSeleccionadas: Array<object> = [];
 	cantMultiple: number = 0;
 	codeBase64 = 'data:image/jpeg;base64,';
-	segmento: number = 0; 
+	segmento: number = 0;
 
 	constructor(
 		private modalController: ModalController,
@@ -41,14 +44,25 @@ export class AgregarActividadesComponent implements OnInit {
 		this.obtenerActividades();
 	}
 
-	opcionCollapse(x) {
+	opcionCollapse(x, id?) {
 		let data = document.getElementsByClassName('collapse show');
 		data.length > 0 ? data[0].classList.remove("show") : null;
 		this.infoActividades[x]['collapse'] = !this.infoActividades[x]['collapse'];
 		if (this.posicionAnterior != -1) {
 			this.infoActividades[this.posicionAnterior]['collapse'] = false;
 		}
+		if (!this.infoActividades[x]['collapse']) {
+			this.inicioMaquinaria = 1;
+			this.finMaquinaria = this.cantidad;
+		}
+		this.maquinariaActual = id;
 		this.posicionAnterior = x;
+		if (this.segmento == 1) {
+			setTimeout(() => {
+				let alto = +document.getElementById("listado" + x).getElementsByTagName('ion-list').item(0).offsetHeight;
+				document.getElementById("collapse" + x).setAttribute('style', `height: ${alto}px !important`);
+			}, 100);
+		}
 	}
 
 	cerrarModal(listar?) {
@@ -103,35 +117,55 @@ export class AgregarActividadesComponent implements OnInit {
 		this.refrescar();
 	}
 
-	refrescar(event?) {
-		this.inicio = 1;
-		this.fin = this.cantidad;
+	refrescar(event?, total?) {
+		if (this.segmento == 1) {
+			this.inicioMaquinaria = 1;
+			this.finMaquinaria = this.cantidad;
+		}
+		if (total) {
+			this.inicio = 1;
+			this.fin = this.cantidad;
+		}
 		this.infoActividades = [];
 		this.infiniteScroll.disabled = false;
 		this.cantidadAgregada = 0;
 		this.searching = true;
 		this.posicionAnterior = -1;
+		this.maquinariaActual = null;
 		this.obtenerActividades(event);
 	}
 
-	obtenerActividades(evento?) {
+	obtenerActividades(evento?, maquinaria?) {
 		let datos = {
 			inicio: this.inicio,
 			fin: this.fin,
 			centroProd: this.centroProduccion,
 			buscar: this.valorBuscar,
 			GrupoId: this.idGrupo ? this.idGrupo : null,
-			segmento: this.segmento
+			segmento: this.segmento,
+			iniciomaqInter: this.inicioMaquinaria,
+			finmaqInter: this.finMaquinaria,
+			maqInter: this.maquinariaActual
 		}
+		console.log(datos);
 		this.actividadesService.informacion(datos, 'CentrosProduccion/obtenerOrdenProduccion').then(resp => {
 			console.log("Funca", resp);
 			if (!evento) {
 				this.infoActividades = [];
 			}
-			this.infoActividades = this.infoActividades.concat(resp);
-			if (resp.length && this.fin >= +this.infoActividades[this.infoActividades.length - 1]['totCol']) {
-				if (evento) {
-					evento.target.disabled = true;
+			if (this.maquinariaActual && this.infoActividades[this.posicionAnterior]['collapse']) {
+				this.infoActividades[this.posicionAnterior]['actividades'] = this.infoActividades[this.posicionAnterior]['actividades'].concat(resp);
+				if (resp.length && this.finMaquinaria >= +this.infoActividades[this.infoActividades.length - 1]['totCol']) {
+					if (evento) {
+						evento.target.disabled = true;
+					}
+				}
+			} else {
+				this.infoActividades = this.infoActividades.concat(resp);
+				if (resp.length && this.fin >= +this.infoActividades[this.infoActividades.length - 1]['totCol']) {
+					if (evento) {
+						evento.target.disabled = true;
+					}
 				}
 			}
 			if (evento) {
@@ -191,7 +225,15 @@ export class AgregarActividadesComponent implements OnInit {
 
 	cambioSegmento(event) {
 		this.segmento = event.detail.value;
+		this.inicio = 1;
+		this.fin = this.cantidad;
 		this.refrescar();
+	}
+
+	loadDataMaquinaria(evento) {
+		this.inicioMaquinaria += this.cantidad;
+		this.finMaquinaria += this.cantidad;
+		this.obtenerActividades(evento);
 	}
 
 }

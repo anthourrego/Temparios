@@ -21,12 +21,13 @@
 
 <ion-progress-bar *ngIf="searching" type="indeterminate"></ion-progress-bar>
 
-<ion-searchbar *ngIf="segmento == 0" (ionChange)="buscarFiltro($event)" clearIcon="close-sharp" placeholder="Buscar orden" [debounce]="400">
+<ion-searchbar (ionChange)="buscarFiltro($event)" clearIcon="close-sharp"
+	[placeholder]="segmento == 1 ? 'Buscar maquinas' : ' Buscar orden'" [debounce]="400">
 </ion-searchbar>
 
 <ion-content color="gray">
 
-	<ion-refresher slot="fixed" (ionRefresh)="refrescar($event)">
+	<ion-refresher slot="fixed" (ionRefresh)="refrescar($event, true)">
 		<ion-refresher-content></ion-refresher-content>
 	</ion-refresher>
 
@@ -38,7 +39,7 @@
 
 	<ion-list *ngIf="infoActividades.length && !searching && segmento == 0">
 		<div *ngFor="let it of infoActividades; let pos = index">
-			<ion-item class="item-collapse" lines="full" (click)="opcionCollapse(pos)" data-bs-toggle="collapse"
+			<ion-item class="item-collapse" lines="full" (click)="opcionCollapse(pos, null)" data-bs-toggle="collapse"
 				aria-expanded="false" [attr.aria-controls]="'collapse' + pos" [attr.data-bs-target]="'collapse' + pos"
 				[attr.data-bs-target]="'#collapse' + pos">
 				<ion-avatar>
@@ -71,10 +72,10 @@
 
 	<ion-list *ngIf="infoActividades.length && !searching && segmento == 1">
 		<div *ngFor="let it of infoActividades; let pos = index">
-			<ion-item class="item-collapse" lines="full" (click)="opcionCollapse(pos)" data-bs-toggle="collapse"
-				aria-expanded="false" [attr.aria-controls]="'collapse' + pos" [attr.data-bs-target]="'collapse' + pos"
+			<ion-item *ngIf="it['actividades'] && it['actividades'].length" class="item-collapse" lines="full"
+				(click)="opcionCollapse(pos, it['MaquinariaId'])" data-bs-toggle="collapse" aria-expanded="false"
+				[attr.aria-controls]="'collapse' + pos" [attr.data-bs-target]="'collapse' + pos"
 				[attr.data-bs-target]="'#collapse' + pos">
-				
 				<ion-label>
 					{{ it['Nombre'] }}
 				</ion-label>
@@ -82,22 +83,30 @@
 					[name]="it['collapse'] ? 'chevron-up-outline' : 'chevron-down-outline'"></ion-icon>
 			</ion-item>
 			<div class="collapse" [id]="'collapse' + pos">
-				<ion-list>
-					<ion-item lines="inset" *ngFor="let item of it['actividades'] ; let po = index">
-						<ion-avatar>
-							<img class="rounded-circle" [src]="item['Foto'] ? codeBase64 + item['Foto'] : '../../../../../assets/images/nofoto.png'" />
-						</ion-avatar>
-						<ion-label>
-							{{ item['NombreProducto'] }}
-							<p>{{ item['nombreoperacion'] }}</p>
-							<p>Ref: {{ item['Referencia'] }} | Orden: {{ item['NumerOrden'] }} | Cantidad: {{ item['CantiRecib'] ? +item['CantiRecib'] : 0}}</p>
-							<p>Estado: {{ item['Estado'] }}</p>
-						</ion-label>
-						<ion-checkbox [id]="'check' + pos + po" [checked]="item['checked']"
-							(ionChange)="opcionCheck($event, pos, po, ('check' + pos + po))">
-						</ion-checkbox>
-					</ion-item>
-				</ion-list>
+				<ion-content class="content-collapse" [id]="'listado' + pos">
+					<ion-list>
+						<ion-item lines="inset" *ngFor="let item of it['actividades']; let po = index">
+							<ion-avatar>
+								<img class="rounded-circle"
+									[src]="item['Foto'] ? codeBase64 + item['Foto'] : '../../../../../assets/images/nofoto.png'" />
+							</ion-avatar>
+							<ion-label>
+								{{ item['NombreProducto'] }}
+								<p>{{ item['nombreoperacion'] }}</p>
+								<p>Ref: {{ item['Referencia'] }} | Orden: {{ item['NumerOrden'] }} | Cantidad: {{
+									item['CantiRecib'] ? +item['CantiRecib'] : 0}}</p>
+								<p>Estado: {{ item['Estado'] }}</p>
+							</ion-label>
+							<ion-checkbox [id]="'check' + pos + po" [checked]="item['checked']"
+								(ionChange)="opcionCheck($event, pos, po, ('check' + pos + po))">
+							</ion-checkbox>
+						</ion-item>
+					</ion-list>
+					<ion-infinite-scroll threshold="180px" (ionInfinite)="loadDataMaquinaria($event)">
+						<ion-infinite-scroll-content loadingSpinner="lines" loadingText="Obteniendo información...">
+						</ion-infinite-scroll-content>
+					</ion-infinite-scroll>
+				</ion-content>
 			</div>
 		</div>
 	</ion-list>
@@ -105,13 +114,15 @@
 	<ion-list *ngIf="!infoActividades.length && !searching">
 		<ion-item lines="none">
 			<ion-text color="dark" class="ion-text-center">
-				<h4 class="ion-no-margin">No hay ordenes de producción disponibles</h4>
+				<h4 class="ion-no-margin">No hay {{segmento == 1 ? 'maquinas' : 'ordenes de producción'}} disponibles
+				</h4>
 			</ion-text>
 		</ion-item>
 	</ion-list>
 
 	<ion-infinite-scroll threshold="180px" (ionInfinite)="loadData($event)">
-		<ion-infinite-scroll-content loadingSpinner="lines" loadingText="Obteniendo información..."></ion-infinite-scroll-content>
+		<ion-infinite-scroll-content loadingSpinner="lines" loadingText="Obteniendo información...">
+		</ion-infinite-scroll-content>
 	</ion-infinite-scroll>
 
 </ion-content>

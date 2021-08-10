@@ -13,6 +13,9 @@ ion-content {
                 ion-list {
                     padding-left: 10px;
                 }
+				ion-content {
+					max-height: 55vh;
+				}
             }
         }
         ion-item {
