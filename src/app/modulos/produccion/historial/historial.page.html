@@ -2,7 +2,7 @@
 
 <ion-content color="gray">
 
-	<ion-refresher slot="fixed" (ionRefresh)="obtenerHistorial($event)">
+	<ion-refresher slot="fixed" (ionRefresh)="refrescar($event)">
 		<ion-refresher-content></ion-refresher-content>
 	</ion-refresher>
 
@@ -55,7 +55,7 @@
 					</ion-icon>
 				</ion-label>
 			</ion-item>
-			<div class="collapse px-0" [id]="'collapse' + pos">
+			<div *ngIf="item['GrupoActividades']" class="collapse px-0" [id]="'collapse' + pos">
 				<ion-list>
 					<ion-item lines="none" *ngFor="let item of item['GrupoActividades']; let po = index">
 						<ion-label class="ion-margin-start">
@@ -112,4 +112,9 @@
 			<ion-icon name="funnel"></ion-icon>
 		</ion-fab-button>
 	</ion-fab>
+
+	<ion-infinite-scroll threshold="180px" (ionInfinite)="loadData($event)">
+		<ion-infinite-scroll-content loadingSpinner="lines" loadingText="Obteniendo información...">
+		</ion-infinite-scroll-content>
+	</ion-infinite-scroll>
 </ion-content>

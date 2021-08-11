@@ -32,6 +32,7 @@ export class AgregarActividadesComponent implements OnInit {
 	cantMultiple: number = 0;
 	codeBase64 = 'data:image/jpeg;base64,';
 	segmento: number = 0;
+	verRecargar: boolean = true;
 
 	constructor(
 		private modalController: ModalController,
@@ -47,13 +48,22 @@ export class AgregarActividadesComponent implements OnInit {
 	opcionCollapse(x, id?) {
 		let data = document.getElementsByClassName('collapse show');
 		data.length > 0 ? data[0].classList.remove("show") : null;
-		this.infoActividades[x]['collapse'] = !this.infoActividades[x]['collapse'];
 		if (this.posicionAnterior != -1) {
-			this.infoActividades[this.posicionAnterior]['collapse'] = false;
+			if (this.posicionAnterior != x) {
+				this.infoActividades[x]['collapse'] = !this.infoActividades[x]['collapse'];
+				this.infoActividades[this.posicionAnterior]['collapse'] = false;
+			} else if (this.infoActividades[this.posicionAnterior]['collapse'] || this.posicionAnterior == x) {
+				this.infoActividades[this.posicionAnterior]['collapse'] = !this.infoActividades[this.posicionAnterior]['collapse'];
+			}
+		} else {
+			this.infoActividades[x]['collapse'] = !this.infoActividades[x]['collapse'];
 		}
 		if (!this.infoActividades[x]['collapse']) {
 			this.inicioMaquinaria = 1;
 			this.finMaquinaria = this.cantidad;
+			this.verRecargar = true;
+		} else {
+			this.verRecargar = false;
 		}
 		this.maquinariaActual = id;
 		this.posicionAnterior = x;
@@ -93,7 +103,12 @@ export class AgregarActividadesComponent implements OnInit {
 		this.infoActividades[pos1]['actividades'][pos2]['checked'] = evento.detail.checked;
 		let dataOrde = this.infoActividades[pos1];
 		let dataActi = this.infoActividades[pos1]['actividades'][pos2];
-		let index = this.actividadesSeleccionadas.findIndex(op => op['OrdeProdId'] == dataOrde['OrdeProdId']);
+		let index = -1;
+		if (this.segmento == 0) {
+			index = this.actividadesSeleccionadas.findIndex(op => op['OrdeProdId'] == dataOrde['OrdeProdId']);
+		} else {
+			index = this.actividadesSeleccionadas.findIndex(op => op['MaquinariaId'] == dataOrde['MaquinariaId']);
+		}
 		if (evento.detail.checked) {
 			let info = { ...dataActi, multiple: this.seleccionMultiple, tipoMultiple: 'Multiple' + this.cantMultiple };
 			dataOrde['actividades'][pos2] = info;
@@ -175,7 +190,7 @@ export class AgregarActividadesComponent implements OnInit {
 				evento.target.complete();
 			}
 			this.searching = false;
-			console.error
+			console.error(error);
 		});
 	}
 
@@ -224,6 +239,8 @@ export class AgregarActividadesComponent implements OnInit {
 		this.segmento = event.detail.value;
 		this.inicio = 1;
 		this.fin = this.cantidad;
+		this.actividadesSeleccionadas = [];
+		this.verRecargar = true;
 		this.refrescar();
 	}
 

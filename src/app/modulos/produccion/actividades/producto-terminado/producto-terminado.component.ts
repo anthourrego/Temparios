@@ -59,22 +59,9 @@ export class ProductoTerminadoComponent implements OnInit {
 			info['detalle'] = this.detalleActividad;
 		}
 		this.searching = true;
-		this.actividadesService.informacion(info, 'CentrosProduccion/obtenerProductoTerminado').then(({ valido, datos }) => {
-			let cantMensaje = 0;
-			this.productos = datos.map(op => {
-				/* let cant = 0;
-				if (op.consumo) {
-					op.consumo.map(x => {
-						x['mostrar'] = (+x['CantidadRealProducto'] == 0 ? true : false);
-						!x['mostrar'] ? cant++ : null;
-						return x;
-					});
-				} */
-				op['mostrarProd'] = (op.consumo && op.consumo.length > 0 ? true : false);
-				op['mostrarProd'] ? null : cantMensaje++;
-				return op;
-			});
-			this.mostrarMensajeAgrupada = (this.productos.length == cantMensaje ? true : false);
+		this.actividadesService.informacion(info, 'CentrosProduccion/obtenerProductoTerminado').then(({ contMensaje, datos }) => {
+			this.productos = datos;
+			this.mostrarMensajeAgrupada = (this.productos.length == contMensaje ? true : false);
 			if ((this.datos['GrupoId'] && this.mostrarMensajeAgrupada) || !this.productos.length) {
 				this.confirmar("¿Desea finalizar la actividad?");
 			}

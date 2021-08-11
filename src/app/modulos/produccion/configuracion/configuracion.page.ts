@@ -6,7 +6,6 @@ import { LoginService } from 'src/app/servicios/login.service';
 import { NotificacionesService } from 'src/app/servicios/notificaciones.service';
 import { StorageService } from 'src/app/servicios/storage.service';
 import { ThemeService } from 'src/app/servicios/theme.service';
-import { Router } from '@angular/router';
 import { App } from '@capacitor/app';
 
 @Component({
@@ -24,7 +23,6 @@ export class ConfiguracionPage implements OnInit {
 		public theme: ThemeService,
 		private notificaciones: NotificacionesService,
 		private storage: StorageService,
-		private router: Router,
 		private cargadorService: CargadorService,
 		private loginService: LoginService
 	) { }
@@ -60,21 +58,19 @@ export class ConfiguracionPage implements OnInit {
 	}
 
 	restaurarLetra(event) {
-		const opciones = [
-			{
-				text: 'Si',
-				handler: () => {
-					this.theme.setFontSize(0, true);
-					this.range.disabled = true;
-				}
-			}, {
-				text: 'No',
-				role: 'cancel',
-				handler: () => {
-					this.check.checked = true;
-				}
+		const opciones = [{
+			text: 'Si',
+			handler: () => {
+				this.theme.setFontSize(0, true);
+				this.range.disabled = true;
 			}
-		];
+		}, {
+			text: 'No',
+			role: 'cancel',
+			handler: () => {
+				this.check.checked = true;
+			}
+		}];
 		if (!event?.detail.checked) {
 			this.notificaciones.alerta('Restaurar tamaño de letra?', '', [], opciones);
 		} else {

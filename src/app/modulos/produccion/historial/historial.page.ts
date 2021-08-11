@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { ModalController } from '@ionic/angular';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { IonInfiniteScroll, ModalController } from '@ionic/angular';
 import * as moment from 'moment';
 import { HistorialService } from '../../../servicios/historial.service';
 import { FiltrosHistorialComponent } from './filtros-historial/filtros-historial.component';
@@ -11,11 +11,15 @@ import { FiltrosHistorialComponent } from './filtros-historial/filtros-historial
 })
 export class HistorialPage implements OnInit {
 
+	@ViewChild(IonInfiniteScroll) infiniteScroll: IonInfiniteScroll;
 	dataHistorial: Array<object> = [];
 	searching: boolean = true;
 	fechaInicio: string = '';
 	fechaFin: string = '';
 	posicionAnterior: number = -1;
+	inicio: number = 1;
+	fin: number = 15;
+	cantidad: number = 15;
 
 	constructor(
 		private historialService: HistorialService,
@@ -25,28 +29,43 @@ export class HistorialPage implements OnInit {
 	ngOnInit() { }
 
 	ionViewDidEnter() {
-		this.dataHistorial = [];
-		this.obtenerHistorial();
+		this.obtenerHistorial(null, true);
 	}
 
-	obtenerHistorial(event?) {
+	refrescar(event?) {
+		this.inicio = 1;
+		this.fin = this.cantidad;
+		this.infiniteScroll.disabled = false;
+		this.searching = true;
+		this.posicionAnterior = -1;
+		this.obtenerHistorial(event, true);
+	}
+
+	obtenerHistorial(event?, refresh?) {
 		this.searching = !event ? true : false;
+		if (refresh) {
+			this.dataHistorial = [];
+			this.inicio = 1;
+			this.fin = 15;
+		}
 		let data = {
 			fechaInicio: this.fechaInicio,
-			fechaFin: this.fechaFin
+			fechaFin: this.fechaFin,
+			inicio: this.inicio,
+			fin: this.fin
 		}
-		this.historialService.informacion(data, 'CentrosProduccion/obtenerHistorial').then(({ datos, valido }) => {
-			this.dataHistorial = datos.map(op => {
-				op.Hora = moment(op.Fecha).format('HH:mm:ss');
-				op.FechaReg = moment(op.Fecha).format('DD/MM/YYYY');
-				if (op.GrupoId) {
-					op.GrupoActividades.map(op2 => {
-						op2.Hora = moment(op2.Fecha).format('HH:mm:ss');
-						op2.FechaReg = moment(op2.Fecha).format('DD/MM/YYYY');
-					});
-				}
-				return op;
-			});
+		console.log("Data ", data);
+		this.historialService.informacion(data, 'CentrosProduccion/obtenerHistorial').then(({ datos, final }) => {
+			console.log("Datos ", datos);
+			console.log("Datos 2 ", final);
+			this.dataHistorial = this.dataHistorial.concat(datos);
+			if (!final) {
+				if (event) {
+					event.target.disabled = true;
+				} else {
+					this.infiniteScroll.disabled = true;
+				};
+			}
 			if (event) {
 				event.target.complete();
 				this.posicionAnterior = -1;
@@ -67,8 +86,8 @@ export class HistorialPage implements OnInit {
 		});
 	}
 
-	async filtros(){
-		let componentProps = {fechaInicio: this.fechaInicio, fechaFin: this.fechaFin};
+	async filtros() {
+		let componentProps = { fechaInicio: this.fechaInicio, fechaFin: this.fechaFin };
 		const modal = await this.modalController.create({
 			component: FiltrosHistorialComponent,
 			backdropDismiss: true,
@@ -78,11 +97,20 @@ export class HistorialPage implements OnInit {
 
 		await modal.present();
 		modal.onWillDismiss().then(({ data }) => {
-			this.fechaInicio = data.desde;
-			this.fechaFin = data.hasta;
-			this.searching = true;
-			this.obtenerHistorial();
-		}).catch((error) =>{
+			if (data) {
+				if (data.limpiar) {
+					this.fechaInicio = '';
+					this.fechaFin = '';
+					this.refrescar();
+				} else {
+					this.fechaInicio = data.desde;
+					this.fechaFin = data.hasta;
+					this.searching = true;
+					this.infiniteScroll.disabled = false;
+					this.obtenerHistorial(undefined, true);
+				}
+			}
+		}).catch((error) => {
 			console.log(error);
 		});
 	}
@@ -90,11 +118,23 @@ export class HistorialPage implements OnInit {
 	opcionCollapse(x) {
 		let data = document.getElementsByClassName('collapse show');
 		data.length > 0 ? data[0].classList.remove("show") : null;
-		this.dataHistorial[x]['collapse'] = !this.dataHistorial[x]['collapse'];
 		if (this.posicionAnterior != -1) {
-			this.dataHistorial[this.posicionAnterior]['collapse'] = false;
+			if (this.posicionAnterior != x) {
+				this.dataHistorial[x]['collapse'] = !this.dataHistorial[x]['collapse'];
+				this.dataHistorial[this.posicionAnterior]['collapse'] = false;
+			} else if (this.dataHistorial[this.posicionAnterior]['collapse'] || this.posicionAnterior == x) {
+				this.dataHistorial[this.posicionAnterior]['collapse'] = !this.dataHistorial[this.posicionAnterior]['collapse'];
+			}
+		} else {
+			this.dataHistorial[x]['collapse'] = !this.dataHistorial[x]['collapse'];
 		}
 		this.posicionAnterior = x;
+	}
+
+	loadData(event) {
+		this.inicio += this.cantidad;
+		this.fin += this.cantidad;
+		this.obtenerHistorial(event);
 	}
 
 }

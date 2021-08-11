@@ -27,7 +27,7 @@
 
 <ion-content color="gray">
 
-	<ion-refresher slot="fixed" (ionRefresh)="refrescar($event, true)">
+	<ion-refresher *ngIf="verRecargar" slot="fixed" (ionRefresh)="refrescar($event, true)">
 		<ion-refresher-content></ion-refresher-content>
 	</ion-refresher>
 
@@ -82,8 +82,8 @@
 				<ion-icon color="dark" slot="end"
 					[name]="it['collapse'] ? 'chevron-up-outline' : 'chevron-down-outline'"></ion-icon>
 			</ion-item>
-			<div class="collapse" [id]="'collapse' + pos">
-				<ion-content class="content-collapse" [id]="'listado' + pos">
+			<div class="collapse collapse-maquinaria" [id]="'collapse' + pos">
+				<ion-content class="content-collapse collapse-maquinaria" [id]="'listado' + pos" [ngStyle]="{'height': '60vh'}">
 					<ion-list>
 						<ion-item lines="inset" *ngFor="let item of it['actividades']; let po = index">
 							<ion-avatar>

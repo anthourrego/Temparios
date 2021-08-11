@@ -26,9 +26,7 @@
 					<p>Orden: {{item['NumerOrden']}}</p>
 					<p>Ref: {{item['Referencia']}}</p>
 				</ion-label>
-				<ion-badge
-					[color]="+item['progreso'] < 0.40 ? 'danger' : (+item['progreso'] > 0.84 ? 'success' : 'warning')">
-					{{ +item['CantiRecib']}} / {{ +item['CantidadTotal'] }}</ion-badge>
+				<ion-badge [color]="item['color']">{{ +item['CantiRecib']}} / {{ +item['CantidadTotal'] }}</ion-badge>
 			</ion-item>
 			<!--<ion-item-options side="end">
 				 <ion-item-option color="danger" (click)="eliminarActividad(item)">
