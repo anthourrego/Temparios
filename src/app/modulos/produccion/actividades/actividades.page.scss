@@ -121,7 +121,7 @@ ion-footer {
 }
 
 .content-cargador {
-	background-color: #fff;
+	background-color: var(--ion-background-color) !important;
 }
 
 .content-activo{
@@ -135,7 +135,7 @@ ion-footer {
 }
 
 .contenedor{
-	background-color: #fff;
+	background-color: var(--ion-background-color) !important;
 	margin: 3px;
 	border-radius: 7px;
 	ion-item {
