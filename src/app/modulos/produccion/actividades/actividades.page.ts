@@ -37,6 +37,8 @@ export class ActividadesPage implements OnInit, OnDestroy {
 	tiempo: string = '';
 	dataQuery: object = {};
 	idLogActividad: number;
+	idLogActividadSearch: string = '';
+	idLogActividadUltimo: string = '';
 	dataCentroProduccion: object = {};
 	usuarioActual = {};
 	codeBase64 = 'data:image/jpeg;base64,';
@@ -64,6 +66,8 @@ export class ActividadesPage implements OnInit, OnDestroy {
 	ngOnInit() { }
 
 	ionViewDidEnter() {
+		this.idLogActividadSearch = '';
+		this.idLogActividadUltimo = '';
 		this.actividades = [];
 		this.obtenerCentroProd(false);
 	}
@@ -169,6 +173,9 @@ export class ActividadesPage implements OnInit, OnDestroy {
 	}
 
 	agregarTiempoActividad(op) {
+		console.log(op);
+		this.idLogActividadSearch = op['ActividadOperarioId'] != 0 ? op['ActividadOperarioId'] : op['GrupoId'];
+		this.idLogActividadUltimo = op['ActividadOperarioId'] != 0 ? op['ActividadOperarioId'] : op['GrupoId'];
 		this.searching = true;
 		let data = {
 			OrdeProdOperacionId: op['OrdeProdOperacionId'],
@@ -188,6 +195,7 @@ export class ActividadesPage implements OnInit, OnDestroy {
 					this.accionBoton({ accion: 'terminado', component: this.compoTerminado }, op)
 				}
 			}
+			this.idLogActividadSearch = '';
 		}).catch((error) => {
 			console.log(error);
 			this.searching = false;
