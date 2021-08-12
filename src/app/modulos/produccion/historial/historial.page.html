@@ -8,10 +8,9 @@
 
 	<ion-list>
 		<div *ngFor="let item of dataHistorial; let pos = index;">
-			<ion-item lines="none" (click)="opcionCollapse(pos)" data-bs-toggle="collapse" aria-expanded="false"
-				[attr.aria-controls]="'collapse' + pos" [attr.data-bs-target]="'collapse' + pos"
+			<ion-item lines="none" (click)="opcionCollapse(pos)" data-bs-toggle="collapse" aria-expanded="false" [attr.aria-controls]="'collapse' + pos" [attr.data-bs-target]="'collapse' + pos"
 				[attr.data-bs-target]="'#collapse' + pos">
-				<ion-label [ngClass]="item['Tipo']" class="p-2">
+				<ion-label [ngClass]="item['Tipo']" class="p-2 sombra">
 					<h2 class="ion-text-uppercase">{{ item['Nombre'] }}</h2>
 					<p *ngIf="item['Referencia']">{{ item['Referencia'] }}</p>
 					<p>
@@ -58,7 +57,7 @@
 			<div *ngIf="item['GrupoActividades']" class="collapse px-0" [id]="'collapse' + pos">
 				<ion-list>
 					<ion-item lines="none" *ngFor="let item of item['GrupoActividades']; let po = index">
-						<ion-label class="ion-margin-start">
+						<ion-label class="ion-margin-start sombra">
 							<h2 class="ion-padding-start">{{ item['Nombre'] }}</h2>
 							<p class="ion-padding-start">Referencia: {{ item['Referencia'] }}</p>
 							<p>

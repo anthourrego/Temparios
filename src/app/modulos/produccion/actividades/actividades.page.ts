@@ -173,7 +173,6 @@ export class ActividadesPage implements OnInit, OnDestroy {
 	}
 
 	agregarTiempoActividad(op) {
-		console.log(op);
 		this.idLogActividadSearch = op['ActividadOperarioId'] != 0 ? op['ActividadOperarioId'] : op['GrupoId'];
 		this.idLogActividadUltimo = op['ActividadOperarioId'] != 0 ? op['ActividadOperarioId'] : op['GrupoId'];
 		this.searching = true;

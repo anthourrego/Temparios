@@ -54,10 +54,7 @@ export class HistorialPage implements OnInit {
 			inicio: this.inicio,
 			fin: this.fin
 		}
-		console.log("Data ", data);
 		this.historialService.informacion(data, 'CentrosProduccion/obtenerHistorial').then(({ datos, final }) => {
-			console.log("Datos ", datos);
-			console.log("Datos 2 ", final);
 			this.dataHistorial = this.dataHistorial.concat(datos);
 			if (!final) {
 				if (event) {
