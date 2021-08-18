@@ -33,8 +33,7 @@
 								<ion-col [size]="item['Tipo'] == 'OPERACION' ? '3' : '4'"
 									*ngIf="item['Tipo'] != 'INGRESO' && item['Tipo'] != 'SALIDA'">
 									<ion-label class="ion-text-center bg-transparent">
-										<p>{{ item['Tipo'] == 'OPERACION' ? +item['Tiempo2'] : +item['Tiempo1'] }} min
-										</p>
+										<p>{{ item['Tipo'] == 'OPERACION' ? item['TiempoHora2'] : item['TiempoHora1'] }}</p>
 										<strong>Tiempo</strong>
 									</ion-label>
 								</ion-col>
@@ -80,8 +79,8 @@
 										<ion-col [size]="item['Tipo'] == 'OPERACION' ? '3' : '4'"
 											*ngIf="item['Tipo'] != 'INGRESO' && item['Tipo'] != 'SALIDA'">
 											<ion-label class="ion-text-center bg-transparent">
-												<p>{{ item['Tipo'] == 'OPERACION' ? +item['Tiempo2'] : +item['Tiempo1']
-													}} min
+												<p>
+													{{ item['Tipo'] == 'OPERACION' ? item['TiempoHora2'] : item['TiempoHora1'] }}
 												</p>
 												<strong>Tiempo</strong>
 											</ion-label>

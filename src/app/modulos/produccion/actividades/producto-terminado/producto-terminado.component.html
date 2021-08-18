@@ -35,7 +35,10 @@
 		<ion-item-group *ngFor="let llave of productos"
 			[ngStyle]="{'display': llave['mostrarProd'] ? 'block' : 'none'}">
 			<ion-item-divider sticky="true" color="gray">
-				<ion-label color="dark">{{ llave['nombre'] }}</ion-label>
+				<ion-label color="dark">
+					{{ llave['referencia'] && llave['referencia'] != '' ? llave['referencia'] + ' - ' : '' }}
+					{{llave['nombre'] }}
+				</ion-label>
 			</ion-item-divider>
 			<ion-item lines="none" [ngStyle]="{'display': llave['mostrarProd']  ? 'block' : 'none'}"
 				*ngFor="let item of llave['consumo']; let pos = index;">
@@ -61,8 +64,8 @@
 
 <ion-footer>
 	<ion-toolbar color="light">
-		<ion-button (click)="confirmar('¿Desea terminar esta actividad?')" class="ion-margin-horizontal"
-			size="full" shape="round">
+		<ion-button (click)="confirmar('¿Desea terminar esta actividad?')" class="ion-margin-horizontal" size="full"
+			shape="round">
 			<ion-icon slot="start" name="arrow-forward"></ion-icon>
 			Confirmar
 		</ion-button>

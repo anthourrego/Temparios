@@ -1,4 +1,4 @@
-import { Component, ComponentFactoryResolver, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActionSheetController, ModalController } from '@ionic/angular';
 import { Subject } from 'rxjs';
 import { AgregarActividadesComponent } from './agregar-actividades/agregar-actividades.component';
@@ -42,6 +42,9 @@ export class ActividadesPage implements OnInit, OnDestroy {
 	dataCentroProduccion: object = {};
 	usuarioActual = {};
 	codeBase64 = 'data:image/jpeg;base64,';
+	count: number = 0;
+	timeoutHandler;
+	clickPresionado: boolean = false;
 
 	constructor(
 		private actionSheetController: ActionSheetController,
@@ -92,7 +95,7 @@ export class ActividadesPage implements OnInit, OnDestroy {
 				text: 'Ver referencias',
 				icon: 'eye-outline',
 				handler: () => {
-					this.accionBoton({accion: 'detalle', component: this.compoDetalle}, op);
+					this.accionBoton({ accion: 'detalle', component: this.compoDetalle }, op);
 				}
 			});
 		}
@@ -131,7 +134,6 @@ export class ActividadesPage implements OnInit, OnDestroy {
 			if (datos) {
 				this.actividades = datos.datos;
 			}
-			console.log("Funciona ", this.actividades);
 			if (event) event.target.complete();
 			this.searching = false;
 		}).catch((error) => {
@@ -173,14 +175,14 @@ export class ActividadesPage implements OnInit, OnDestroy {
 		}, console.error);
 	}
 
-	agregarTiempoActividad(op) {
+	agregarTiempoActividad(op, cantidad?) {
 		this.idLogActividadSearch = op['ActividadOperarioId'] != 0 ? op['ActividadOperarioId'] : op['GrupoId'];
 		this.idLogActividadUltimo = op['ActividadOperarioId'] != 0 ? op['ActividadOperarioId'] : op['GrupoId'];
 		this.searching = true;
 		let data = {
 			OrdeProdOperacionId: op['OrdeProdOperacionId'],
 			GrupoId: op['GrupoId'],
-			Cantidad: op['GrupoId'] == null ? 1 : op['CantidadTotal'],
+			Cantidad: op['GrupoId'] == null ? (cantidad ? cantidad : 1) : op['CantidadTotal'],
 			Tipo: 'OPERACION',
 			centroProd: this.dataQuery['centroProd']
 		}
@@ -257,6 +259,55 @@ export class ActividadesPage implements OnInit, OnDestroy {
 			role: 'cancel'
 		}]
 		this.notificacionesService.alerta(`¿Que cantidad desea entregar? <br> Cantidad máxima ${Number(datos.CantidadMinima)}`, 'Entrega parcial', ['alerta-input'], botones, [{ min: 0, max: 10, type: "number", name: "cantidad" }]);
+	}
+
+	endCount() {
+		if (this.timeoutHandler) {
+			this.clickPresionado = !this.clickPresionado;
+			clearTimeout(this.timeoutHandler);
+			this.timeoutHandler = null;
+		}
+	}
+
+	startCount(datos) {
+		this.clickPresionado = !this.clickPresionado;
+		this.timeoutHandler = setTimeout(() => {
+			if (this.clickPresionado) {
+				this.alertaAgregarCantidad(datos);
+			}
+		}, 1000);
+	}
+
+	alertaAgregarCantidad(datos) {
+		let cantidadValida = Number(datos.CantidadTotal) - Number(datos.CantiRecib);
+		let botones = [{
+			text: 'Aceptar',
+			handler: (data) => {
+				let cantidad = data.cantidad == '' ? 0 : data.cantidad;
+				cantidad = Number(cantidad);
+				if (cantidad > 0) {
+					if (cantidad <= cantidadValida) {
+						this.agregarTiempoActividad(datos, cantidad);
+					} else {
+						this.notificacionesService.notificacion(`Ha superado la cantidad maxima que es ${cantidadValida}`);
+						return false;
+					}
+				} else {
+					this.notificacionesService.notificacion("La cantidad debe ser mayor a 0.");
+					return false;
+				}
+			}
+		}, {
+			text: 'Cancelar',
+			role: 'cancel'
+		}]
+		this.notificacionesService.alerta(
+			`¿Que cantidad desea confirmar? <br> Cantidad máxima ${cantidadValida}`
+			, 'Agregar Tiempo'
+			, ['alerta-input']
+			, botones
+			, [{ min: 0, max: cantidadValida, type: "number", name: "cantidad" }]
+		);
 	}
 
 }
