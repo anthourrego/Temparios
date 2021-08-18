@@ -5,9 +5,10 @@
 export const environment = {
   production: false,
   //urlBack: 'https://prosof.co:8011/dev/TemparioApp1/TemparioBack/',
-  urlBack: 'http://192.168.0.224:8016/dev/TemparioApp/TemparioBack/',
-  //nit: '900445834'
-  nit: '111111111'
+  //urlBack: 'http://192.168.0.224:8016/dev/TemparioApp/TemparioBack/',
+  urlBack: 'https://prosof.co:8011/dev/TemparioApp/TemparioBack/',
+  nit: '900445834'
+  //nit: '111111111'
 };
 
 /*

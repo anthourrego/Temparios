@@ -131,6 +131,7 @@ export class ActividadesPage implements OnInit, OnDestroy {
 			if (datos) {
 				this.actividades = datos.datos;
 			}
+			console.log("Funciona ", this.actividades);
 			if (event) event.target.complete();
 			this.searching = false;
 		}).catch((error) => {

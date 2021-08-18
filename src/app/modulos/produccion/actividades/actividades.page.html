@@ -41,23 +41,27 @@
 	<ion-grid class="ion-no-padding">
 		<ion-row *ngIf="actividades.length">
 			<ion-col size="6" sizeMd="4" *ngFor="let op of actividades">
-				<ion-card class="content-cargador" [ngClass]="{'cargador': (idLogActividadSearch == op['ActividadOperarioId'] && op['ActividadOperarioId'] != '0') || (idLogActividadSearch == op['GrupoId'] && op['GrupoId'] != null), 'content-activo' : (idLogActividadUltimo == op['ActividadOperarioId'] && op['ActividadOperarioId'] != '0') || (idLogActividadUltimo == op['GrupoId'] && op['GrupoId'] != null) }">
+				<ion-card class="content-cargador"
+					[ngClass]="{'cargador': (idLogActividadSearch == op['ActividadOperarioId'] && op['ActividadOperarioId'] != '0') || (idLogActividadSearch == op['GrupoId'] && op['GrupoId'] != null), 'content-activo' : (idLogActividadUltimo == op['ActividadOperarioId'] && op['ActividadOperarioId'] != '0') || (idLogActividadUltimo == op['GrupoId'] && op['GrupoId'] != null) }">
 					<div class="contenedor">
 						<ion-card-header class="ion-no-padding">
 							<ion-item lines="none">
 								<ion-label class="ion-no-margin"
 									(click)="op['GrupoId'] ? accionBoton({accion: 'detalle', component: compoDetalle}, op) : null">
 									<h6>{{ op['Nombre'] }}</h6>
-									<p *ngIf="!op['GrupoId']">{{ op['Referencia'] }} - {{ op['ActividadOperarioId'] }}</p>
+									<p *ngIf="!op['GrupoId']">{{ (!op['Referencia'] || op['Referencia'] == '' ? '' :
+										op['Referencia'] + ' - ') }} {{ op['NumerOrden'] }}</p>
 								</ion-label>
-								<ion-icon color="dark" (click)="presentActionSheet(op)" name="ellipsis-vertical" slot="end">
+								<ion-icon color="dark" (click)="presentActionSheet(op)" name="ellipsis-vertical"
+									slot="end">
 								</ion-icon>
 							</ion-item>
 						</ion-card-header>
 						<ion-card-content class="ion-no-padding">
 							<ion-grid>
 								<ion-row class="ion-justify-content-evenly">
-									<ion-col size="5" (click)="+op['CantiRecib'] < +op['CantidadTotal'] ? agregarTiempoActividad(op) : accionBoton({accion: 'terminado', component: compoTerminado}, op)">
+									<ion-col size="5"
+										(click)="+op['CantiRecib'] < +op['CantidadTotal'] ? agregarTiempoActividad(op) : accionBoton({accion: 'terminado', component: compoTerminado}, op)">
 										<div class="cantidad-proceso">
 											<p class="conteo-accion">{{ +op['CantiRecib'] }}</p>
 											<ion-progress-bar color="secondary"
@@ -73,7 +77,8 @@
 												<strong>0</strong> Reprocesos
 											</div>
 											<div class="tiempo">
-												<strong>{{ (op['Tiempo'] ? +op['Tiempo'] : 0) + ' ' }}</strong>&nbsp;Minutos
+												<strong>{{ (op['Tiempo'] ? +op['Tiempo'] : 0) + ' '
+													}}</strong>&nbsp;Minutos
 											</div>
 										</div>
 									</ion-col>
