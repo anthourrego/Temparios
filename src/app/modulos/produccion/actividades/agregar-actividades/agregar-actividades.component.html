@@ -23,8 +23,8 @@
 
 <div class="d-flex align-items-center collapsed" data-bs-toggle="collapse" aria-expanded="false"
 	aria-controls="collSearch" data-bs-target="collSearch" data-bs-target="#collSearch">
-	<ion-searchbar (ionChange)="buscarFiltro($event)" clearIcon="close-sharp"
-		[placeholder]="segmento == 1 ? 'Buscar maquinas' : ' Buscar orden'" [disabled]="segmento == 1"[debounce]="1000">
+	<ion-searchbar #inputBuscar clearIcon="close-sharp" [enterkeyhint]="'search'" (keyup.enter)="buscarFiltro(inputBuscar)"
+		[placeholder]="segmento == 1 ? (posicionAnterior ? 'Buscar maquinaria' : 'Buscar orden') : 'Buscar orden'">
 	</ion-searchbar>
 	<ion-button (click)="collapseMultiple = !collapseMultiple" color="gray">
 		<ion-icon [name]="!collapseMultiple ? 'arrow-down-outline' : 'arrow-up-outline'"></ion-icon>
@@ -39,8 +39,7 @@
 
 	<ion-item id="collSearch" lines="none" *ngIf="infoActividades.length && !searching && !idGrupo && collapseMultiple">
 		<ion-label class="ion-text-end ion-padding-horizontal">Selección Multiple</ion-label>
-		<ion-checkbox (ionChange)="checkMultiples($event)" color="success" [(ngModel)]="seleccionMultiple">
-		</ion-checkbox>
+		<ion-checkbox (ionChange)="checkMultiples($event)" color="success" [(ngModel)]="seleccionMultiple"></ion-checkbox>
 	</ion-item>
 
 	<ion-list *ngIf="infoActividades.length && !searching && segmento == 0">
@@ -83,7 +82,7 @@
 		<div *ngFor="let it of infoActividades; let pos = index" class="div-maquinas"
 			[ngClass]="{'list-maquinas' : collapseAbierto && pos == posicionAnterior}">
 			<ion-item-divider [sticky]="it['collapse']" [ngStyle]="{'top': '-2px'}" [ngClass]="{'sombra' : collapseAbierto && pos == posicionAnterior}">
-				<ion-item *ngIf="it['actividades'] && it['actividades'].length" class="item-collapse w-100" lines="full"
+				<ion-item *ngIf="it['actividades']" class="item-collapse w-100" lines="full"
 					(click)="opcionCollapse(pos, it['MaquinariaId'])" data-bs-toggle="collapse" lines="none" aria-expanded="false"
 					[attr.aria-controls]="'collapse' + pos" [attr.data-bs-target]="'collapse' + pos"
 					[attr.data-bs-target]="'#collapse' + pos"
@@ -95,7 +94,7 @@
 						[name]="it['collapse'] ? 'chevron-up-outline' : 'chevron-down-outline'"></ion-icon>
 				</ion-item>
 			</ion-item-divider>
-			<ion-content class="collapse collapse-maquinas" [id]="'collapse' + pos" [ngClass]="{'height-collapse' : collapseAbierto && pos == posicionAnterior}">
+			<ion-content class="collapse collapse-maquinas" [id]="'collapse' + pos" [ngClass]="{'height-collapse show' : collapseAbierto && pos == posicionAnterior}">
 				<ion-list>
 					<ion-item lines="inset" *ngFor="let item of it['actividades']; let po = index">
 						<ion-avatar>
@@ -112,6 +111,14 @@
 						<ion-checkbox [id]="'check' + pos + po" [checked]="item['checked']"
 							(ionChange)="opcionCheck($event, pos, po, ('check' + pos + po))">
 						</ion-checkbox>
+					</ion-item>
+				</ion-list>
+				<ion-list *ngIf="!it['actividades'].length && !searching">
+					<ion-item lines="none">
+						<ion-text color="dark" class="ion-text-center">
+							<h4 class="ion-no-margin">No se encontraron resultados disponibles
+							</h4>
+						</ion-text>
 					</ion-item>
 				</ion-list>
 				<ion-infinite-scroll threshold="180px" (ionInfinite)="loadDataMaquinaria($event)">

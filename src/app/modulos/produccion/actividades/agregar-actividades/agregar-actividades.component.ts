@@ -1,5 +1,5 @@
-import { Component, Input, OnInit, ViewChild } from '@angular/core';
-import { IonInfiniteScroll, ModalController } from '@ionic/angular';
+import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
+import { IonInfiniteScroll, IonInput, ModalController } from '@ionic/angular';
 import { ActividadesService } from 'src/app/servicios/actividades.service';
 import { CargadorService } from '../../../../servicios/cargador.service';
 import { NotificacionesService } from '../../../../servicios/notificaciones.service';
@@ -12,6 +12,7 @@ import { NotificacionesService } from '../../../../servicios/notificaciones.serv
 export class AgregarActividadesComponent implements OnInit {
 
 	@ViewChild(IonInfiniteScroll) infiniteScroll: IonInfiniteScroll;
+	@ViewChild('inputBuscar') inputBuscar: IonInput;
 	@Input() idGrupo;
 	@Input() centroProduccion;
 	@Input() nombreCp;
@@ -70,9 +71,15 @@ export class AgregarActividadesComponent implements OnInit {
 		if (id != null) {
 			this.collapseAbierto = this.infoActividades[x]['collapse'];
 		}
-		this.maquinariaActual = id;
-		console.log(this.maquinariaActual);
-		this.posicionAnterior = x;
+
+		if(this.posicionAnterior == x){
+			this.maquinariaActual = null;
+			this.posicionAnterior = -1;
+		} else {
+			this.maquinariaActual = id;
+			this.posicionAnterior = x;
+		}
+
 		/* if (this.segmento == 1) {
 			setTimeout(() => {
 				let alto = +document.getElementById("listado" + x).getElementsByTagName('ion-list').item(0).offsetHeight;
@@ -134,9 +141,11 @@ export class AgregarActividadesComponent implements OnInit {
 	}
 
 	buscarFiltro(evento) {
-		this.valorBuscar = evento.detail.value;
-		if (this.segmento == 0 || this.posicionAnterior == -1) {
+		this.valorBuscar = evento.value;
+		if (this.segmento == 0 || this.posicionAnterior == -1 || !this.collapseAbierto) {
 			this.infoActividades = [];
+		} else {
+			this.infoActividades[this.posicionAnterior]['actividades'] = []
 		}
 		this.refrescar(true);
 	}
@@ -146,7 +155,6 @@ export class AgregarActividadesComponent implements OnInit {
 			this.posicionAnterior = -1;
 			this.maquinariaActual = null;
 		}
-
 		if (this.segmento == 1) {
 			this.inicioMaquinaria = 1;
 			this.finMaquinaria = this.cantidad;
@@ -181,11 +189,8 @@ export class AgregarActividadesComponent implements OnInit {
 				this.infoActividades = [];
 			}
 			if (this.maquinariaActual && this.infoActividades[this.posicionAnterior]['collapse']) {
-				if(this.valorBuscar != '' && this.valorBuscar != null) {
-					this.infoActividades[this.posicionAnterior]['actividades'] = resp;
-				} else {
-					this.infoActividades[this.posicionAnterior]['actividades'] = this.infoActividades[this.posicionAnterior]['actividades'].concat(resp);
-				}
+				this.infoActividades[this.posicionAnterior]['actividades'] = this.infoActividades[this.posicionAnterior]['actividades'].concat(resp);
+				
 				if (evento && evento.target) {
 					evento.target.complete();
 				}
@@ -258,7 +263,9 @@ export class AgregarActividadesComponent implements OnInit {
 	}
 
 	cambioSegmento(event) {
+		this.inputBuscar.value = '';
 		this.segmento = event.detail.value;
+		this.collapseAbierto = false;
 		this.inicio = 1;
 		this.fin = this.cantidad;
 		this.actividadesSeleccionadas = [];
