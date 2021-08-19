@@ -71,6 +71,7 @@ export class AgregarActividadesComponent implements OnInit {
 			this.collapseAbierto = this.infoActividades[x]['collapse'];
 		}
 		this.maquinariaActual = id;
+		console.log(this.maquinariaActual);
 		this.posicionAnterior = x;
 		/* if (this.segmento == 1) {
 			setTimeout(() => {
@@ -134,10 +135,18 @@ export class AgregarActividadesComponent implements OnInit {
 
 	buscarFiltro(evento) {
 		this.valorBuscar = evento.detail.value;
-		this.refrescar();
+		if (this.segmento == 0 || this.posicionAnterior == -1) {
+			this.infoActividades = [];
+		}
+		this.refrescar(true);
 	}
 
 	refrescar(event?, total?) {
+		if(this.segmento == 0) {
+			this.posicionAnterior = -1;
+			this.maquinariaActual = null;
+		}
+
 		if (this.segmento == 1) {
 			this.inicioMaquinaria = 1;
 			this.finMaquinaria = this.cantidad;
@@ -145,13 +154,13 @@ export class AgregarActividadesComponent implements OnInit {
 		if (total) {
 			this.inicio = 1;
 			this.fin = this.cantidad;
+			this.maquinariaActual = null;
+			this.posicionAnterior = -1;
+			this.infoActividades = [];
 		}
-		this.infoActividades = [];
 		this.infiniteScroll.disabled = false;
 		this.cantidadAgregada = 0;
 		this.searching = true;
-		this.posicionAnterior = -1;
-		this.maquinariaActual = null;
 		this.obtenerActividades(event);
 	}
 
@@ -172,30 +181,34 @@ export class AgregarActividadesComponent implements OnInit {
 				this.infoActividades = [];
 			}
 			if (this.maquinariaActual && this.infoActividades[this.posicionAnterior]['collapse']) {
-				this.infoActividades[this.posicionAnterior]['actividades'] = this.infoActividades[this.posicionAnterior]['actividades'].concat(resp);
-				if (evento) {
+				if(this.valorBuscar != '' && this.valorBuscar != null) {
+					this.infoActividades[this.posicionAnterior]['actividades'] = resp;
+				} else {
+					this.infoActividades[this.posicionAnterior]['actividades'] = this.infoActividades[this.posicionAnterior]['actividades'].concat(resp);
+				}
+				if (evento && evento.target) {
 					evento.target.complete();
 				}
 				/* && this.finMaquinaria >= +this.infoActividades[this.infoActividades.length - 1]['totCol'] */
 				if (!resp.length) {
-					if (evento) {
+					if (evento && evento.target) {
 						evento.target.disabled = true;
 					}
 				}
 			} else {
 				this.infoActividades = this.infoActividades.concat(resp);
 				if (resp.length && this.fin >= +this.infoActividades[this.infoActividades.length - 1]['totCol']) {
-					if (evento) {
+					if (evento && evento.target) {
 						evento.target.disabled = true;
 					}
 				}
-				if (evento) {
+				if (evento && evento.target) {
 					evento.target.complete();
 				}
 			}
 			this.searching = false;
 		}, (error) => {
-			if (evento) {
+			if (evento && evento.target) {
 				evento.target.complete();
 			}
 			this.searching = false;

@@ -24,7 +24,7 @@
 <div class="d-flex align-items-center collapsed" data-bs-toggle="collapse" aria-expanded="false"
 	aria-controls="collSearch" data-bs-target="collSearch" data-bs-target="#collSearch">
 	<ion-searchbar (ionChange)="buscarFiltro($event)" clearIcon="close-sharp"
-		[placeholder]="segmento == 1 ? 'Buscar maquinas' : ' Buscar orden'" [debounce]="400">
+		[placeholder]="segmento == 1 ? 'Buscar maquinas' : ' Buscar orden'" [disabled]="segmento == 1"[debounce]="1000">
 	</ion-searchbar>
 	<ion-button (click)="collapseMultiple = !collapseMultiple" color="gray">
 		<ion-icon [name]="!collapseMultiple ? 'arrow-down-outline' : 'arrow-up-outline'"></ion-icon>
@@ -46,7 +46,7 @@
 	<ion-list *ngIf="infoActividades.length && !searching && segmento == 0">
 		<div *ngFor="let it of infoActividades; let pos = index">
 			<ion-item-divider [sticky]="it['collapse']" [ngStyle]="{'top': '-2px'}">
-				<ion-item class="item-collapse w-100" lines="full" (click)="opcionCollapse(pos, null)"
+				<ion-item class="item-collapse w-100" lines="none" (click)="opcionCollapse(pos, null)"
 					data-bs-toggle="collapse" aria-expanded="false" [attr.aria-controls]="'collapse' + pos"
 					[attr.data-bs-target]="'collapse' + pos" [attr.data-bs-target]="'#collapse' + pos">
 					<ion-avatar>
@@ -84,7 +84,7 @@
 			[ngClass]="{'list-maquinas' : collapseAbierto && pos == posicionAnterior}">
 			<ion-item-divider [sticky]="it['collapse']" [ngStyle]="{'top': '-2px'}" [ngClass]="{'sombra' : collapseAbierto && pos == posicionAnterior}">
 				<ion-item *ngIf="it['actividades'] && it['actividades'].length" class="item-collapse w-100" lines="full"
-					(click)="opcionCollapse(pos, it['MaquinariaId'])" data-bs-toggle="collapse" aria-expanded="false"
+					(click)="opcionCollapse(pos, it['MaquinariaId'])" data-bs-toggle="collapse" lines="none" aria-expanded="false"
 					[attr.aria-controls]="'collapse' + pos" [attr.data-bs-target]="'collapse' + pos"
 					[attr.data-bs-target]="'#collapse' + pos"
 					[ngClass]="{'d-none' : collapseAbierto && pos != posicionAnterior}">
