@@ -26,9 +26,10 @@
 	<ion-searchbar #inputBuscar clearIcon="close-sharp" [enterkeyhint]="'search'" (keyup.enter)="buscarFiltro(inputBuscar)"
 		[placeholder]="segmento == 1 ? (posicionAnterior ? 'Buscar maquinaria' : 'Buscar orden') : 'Buscar orden'">
 	</ion-searchbar>
-	<ion-button (click)="collapseMultiple = !collapseMultiple" color="gray">
+	<!-- <ion-button (click)="collapseMultiple = !collapseMultiple" color="gray">
 		<ion-icon [name]="!collapseMultiple ? 'arrow-down-outline' : 'arrow-up-outline'"></ion-icon>
-	</ion-button>
+	</ion-button> -->
+	<ion-checkbox class="ion-margin" (ionChange)="checkMultiples($event)" color="success" [(ngModel)]="seleccionMultiple"></ion-checkbox>
 </div>
 
 <ion-content color="gray">
@@ -37,10 +38,10 @@
 		<ion-refresher-content></ion-refresher-content>
 	</ion-refresher>
 
-	<ion-item id="collSearch" lines="none" *ngIf="infoActividades.length && !searching && !idGrupo && collapseMultiple">
+	<!-- <ion-item id="collSearch" lines="none" *ngIf="infoActividades.length && !searching && !idGrupo && collapseMultiple">
 		<ion-label class="ion-text-end ion-padding-horizontal">Selección Multiple</ion-label>
 		<ion-checkbox (ionChange)="checkMultiples($event)" color="success" [(ngModel)]="seleccionMultiple"></ion-checkbox>
-	</ion-item>
+	</ion-item> -->
 
 	<ion-list *ngIf="infoActividades.length && !searching && segmento == 0">
 		<div *ngFor="let it of infoActividades; let pos = index">

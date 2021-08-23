@@ -94,9 +94,11 @@ export class AgregarActividadesComponent implements OnInit {
 
 	checkMultiples(evento) {
 		if (!evento.detail.checked) {
+			this.notificcacionesService.notificacion("Selección multiple desactivada.");
 			this.datosMultiple = null;
 		} else {
 			this.cantMultiple++;
+			this.notificcacionesService.notificacion("Selección multiple activada.");
 		}
 	}
 

@@ -28,8 +28,8 @@ export class ActividadesPage implements OnInit, OnDestroy {
 		/* { icono: 'home', color: 'success', accion: 'home' }
 		,*/ { icono: 'swap-horizontal', color: 'secondary', accion: 'cambiar-centro' }
 		, { icono: 'add', color: 'primary', accion: 'agregar', component: AgregarActividadesComponent }
-		, { icono: 'trending-down', color: 'danger', accion: 'parada', component: ParadasComponent }
-		/* , { icono: 'car', color: 'warning', accion: 'car' } */
+		, { icono: 'trending-down', color: 'tertiary', accion: 'parada', component: ParadasComponent }
+		, { icono: 'close-circle-outline', color: 'danger', accion: 'eliminar-multiple' }
 	];
 	compoDetalle = DetalleActividadComponent;
 	compoTerminado = ProductoTerminadoComponent;
@@ -43,8 +43,10 @@ export class ActividadesPage implements OnInit, OnDestroy {
 	usuarioActual = {};
 	codeBase64 = 'data:image/jpeg;base64,';
 	count: number = 0;
+	actividadesEliminar: Array<object> = [];
 	timeoutHandler;
 	clickPresionado: boolean = false;
+	eliminarMultiple: boolean = false;
 
 	constructor(
 		private actionSheetController: ActionSheetController,
@@ -117,7 +119,7 @@ export class ActividadesPage implements OnInit, OnDestroy {
 		buttons.push({
 			text: 'Eliminar',
 			icon: 'trash',
-			handler: () => this.peticionActionSheet('eliminar', data)
+			handler: () => this.peticionActionSheet('eliminar la actividad', [data], 'eliminarActividadOperario')
 		});
 
 		const actionSheet = await this.actionSheetController.create({
@@ -171,50 +173,58 @@ export class ActividadesPage implements OnInit, OnDestroy {
 		modal.onWillDismiss().then(({ data, role }) => {
 			if (data && (op['accion'] == 'agregar' || op['accion'] == 'detalle' || op['accion'] == 'terminado')) {
 				this.obtenerCentroProd(false);
+			} else {
+				this.idLogActividadUltimo = '';
 			}
 		}, console.error);
 	}
 
 	agregarTiempoActividad(op, cantidad?) {
-		this.idLogActividadSearch = op['ActividadOperarioId'] != 0 ? op['ActividadOperarioId'] : op['GrupoId'];
-		this.idLogActividadUltimo = op['ActividadOperarioId'] != 0 ? op['ActividadOperarioId'] : op['GrupoId'];
-		this.searching = true;
-		let data = {
-			OrdeProdOperacionId: op['OrdeProdOperacionId'],
-			GrupoId: op['GrupoId'],
-			Cantidad: op['GrupoId'] == null ? (cantidad ? cantidad : 1) : op['CantidadTotal'],
-			Tipo: 'OPERACION',
-			centroProd: this.dataQuery['centroProd']
-		}
-		this.actividadesService.informacion(data, 'CentrosProduccion/agregarLogActividad').then(({ datos, msg, valido, actividades }) => {
-			this.idLogActividad = datos;
-			this.searching = false;
-			if (!valido) {
-				this.notificacionesService.notificacion(msg);
-			} else {
-				this.actividades = actividades;
-				if (op['GrupoId'] != null) {
-					this.accionBoton({ accion: 'terminado', component: this.compoTerminado }, op)
-				}
+		if (!this.searching) {
+			this.searching = true;
+			this.idLogActividadSearch = op['ActividadOperarioId'] != 0 ? op['ActividadOperarioId'] : op['GrupoId'];
+			this.idLogActividadUltimo = op['ActividadOperarioId'] != 0 ? op['ActividadOperarioId'] : op['GrupoId'];
+			let data = {
+				OrdeProdOperacionId: op['OrdeProdOperacionId'],
+				GrupoId: op['GrupoId'],
+				Cantidad: op['GrupoId'] == null ? (cantidad ? cantidad : 1) : op['CantidadTotal'],
+				Tipo: 'OPERACION',
+				centroProd: this.dataQuery['centroProd']
 			}
-			this.idLogActividadSearch = '';
-		}).catch((error) => {
-			console.log(error);
-			this.searching = false;
-		});
+			this.actividadesService.informacion(data, 'CentrosProduccion/agregarLogActividad').then(({ datos, msg, valido, actividades }) => {
+				this.idLogActividad = datos;
+				this.searching = false;
+				if (!valido) {
+					this.notificacionesService.notificacion(msg);
+				} else {
+					this.actividades = actividades;
+					if ((op['GrupoId'] != null) || ((+op['CantiRecib'] + data.Cantidad) == +op['CantidadTotal'])) {
+						this.accionBoton({ accion: 'terminado', component: this.compoTerminado }, op)
+					}
+				}
+				this.idLogActividadSearch = '';
+			}).catch((error) => {
+				console.log(error);
+				this.searching = false;
+			});
+		}
 	}
 
-	peticionActionSheet(accion, datos) {
-		this.notificacionesService.alerta(`¿Esta seguro de ${accion} la actividad?`).then(({ data, role }) => {
+	peticionActionSheet(accion, datos, funcion) {
+		this.notificacionesService.alerta(`¿Está seguro de ${accion}?`).then(({ data, role }) => {
 			if (role === 'aceptar') {
 				this.cargadorService.presentar().then(() => {
-					this.actividadesService.informacion(datos, 'CentrosProduccion/eliminarActividadOperario').then(({ valido, msg }) => {
+					this.actividadesService.informacion(datos, 'CentrosProduccion/' + funcion).then(({ valido, msg }) => {
 						this.notificacionesService.notificacion(msg);
 						if (valido) {
+							this.accionEliminarMultiple(true);
 							this.obtenerInformacion();
 						}
 						this.cargadorService.ocultar();
-					}, () => this.cargadorService.ocultar());
+					}).catch((error) => {
+						this.cargadorService.ocultar();
+						console.log(error);
+					});;
 				}, () => this.cargadorService.ocultar());
 			}
 		});
@@ -308,6 +318,44 @@ export class ActividadesPage implements OnInit, OnDestroy {
 			, botones
 			, [{ min: 0, max: cantidadValida, type: "number", name: "cantidad" }]
 		);
+	}
+
+	accionEliminarMultiple(cancelar?) {
+		if (cancelar) {
+			let data = document.getElementsByClassName('data-buttons');
+			data.length > 0 ? data[0].classList.remove("show") : null;
+		}
+		this.eliminarMultiple = !this.eliminarMultiple;
+		this.actividadesEliminar = [];
+		this.actividades.forEach(it => it['eliminarMultiple'] = false);
+	}
+
+	agregarEliminarActividad(op, pos) {
+		if (this.eliminarMultiple) {
+			if (this.actividades[pos]['eliminarMultiple']) {
+				let index = this.actividadesEliminar.findIndex(op2 => op2['ActividadOperarioId'] == op.ActividadOperarioId);
+				if (index != -1) {
+					this.actividades[pos]['eliminarMultiple'] = false;
+					this.actividadesEliminar.splice(index, 1);
+				}
+			} else {
+				this.actividades[pos]['eliminarMultiple'] = true;
+				this.actividadesEliminar.push(op);
+			}
+		} else {
+			this.actividadesEliminar = [];
+		}
+	}
+
+	eliminarActividadesMultiples() {
+		let data = [];
+		this.actividadesEliminar.forEach(op => {
+			data.push({
+				ActividadOperarioId: op['ActividadOperarioId'],
+				GrupoId: op['GrupoId']
+			});
+		});
+		this.peticionActionSheet('eliminar las actividades', data, 'eliminarActividadOperario');
 	}
 
 }

@@ -14,7 +14,7 @@ export class ProductoTerminadoComponent implements OnInit {
 	@Input() datos;
 	@Input() centroProduccion;
 	@Input() detalleActividad: boolean;
-	productos: Array<object> = [];;
+	productos: Array<object> = [];
 	searching: boolean = true;
 	mostrarMensajeAgrupada: boolean = false;
 
@@ -82,6 +82,7 @@ export class ProductoTerminadoComponent implements OnInit {
 			, NumerOrden: this.datos['NumerOrden']
 			, centroproduccionid: this.centroProduccion
 			, grupoId: this.datos['GrupoId']
+			, Ultimo: this.datos['Ultimo']
 		}
 
 		this.actividadesService.informacion(data, 'CentrosProduccion/finalizarActividad').then(({ msg, valido, grupoElimino }) => {

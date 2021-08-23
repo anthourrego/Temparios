@@ -38,13 +38,32 @@
 		</ion-card-content>
 	</ion-card>
 
+	<ion-buttons class="ion-justify-content-around data-buttons ion-margin-vertical collapse" id="collapseEliminar">
+		<ion-button size="large" (click)="accionEliminarMultiple(true)" color="danger" fill="solid">
+			<ion-icon slot="start" name="close"></ion-icon>
+			Cancelar
+		</ion-button>
+		<ion-button [disabled]="!actividadesEliminar.length" color="success" fill="solid"
+			(click)="eliminarActividadesMultiples()">
+			<ion-icon slot="start" name="checkmark"></ion-icon>
+			Aceptar
+		</ion-button>
+	</ion-buttons>
+
 	<ion-grid class="ion-no-padding">
 		<ion-row *ngIf="actividades.length">
-			<ion-col size="6" sizeMd="4" *ngFor="let op of actividades">
+			<ion-col size="6" sizeMd="4" sizeLg="3" *ngFor="let op of actividades; let posi = index;"
+				(click)="agregarEliminarActividad(op, posi)">
 				<ion-card class="content-cargador"
-					[ngClass]="{'cargador': (idLogActividadSearch == op['ActividadOperarioId'] && op['ActividadOperarioId'] != '0') || (idLogActividadSearch == op['GrupoId'] && op['GrupoId'] != null), 'content-activo' : (idLogActividadUltimo == op['ActividadOperarioId'] && op['ActividadOperarioId'] != '0') || (idLogActividadUltimo == op['GrupoId'] && op['GrupoId'] != null) }">
+					[disabled]="searching && (idLogActividadUltimo == op['ActividadOperarioId'] && op['ActividadOperarioId'] != '0') || (idLogActividadUltimo == op['GrupoId'] && op['GrupoId'] != null) || eliminarMultiple"
+					[ngClass]="{
+						'cargador': (idLogActividadSearch == op['ActividadOperarioId'] && op['ActividadOperarioId'] != '0') || (idLogActividadSearch == op['GrupoId'] && op['GrupoId'] != null), 
+						'content-activo' : (idLogActividadUltimo == op['ActividadOperarioId'] && op['ActividadOperarioId'] != '0') || (idLogActividadUltimo == op['GrupoId'] && op['GrupoId'] != null),
+						'content-eliminar' : op['eliminarMultiple']
+					}">
 					<div class="contenedor">
-						<ion-card-header class="ion-no-padding">
+						<ion-card-header class="ion-no-padding"
+							[ngClass]="{'opacity3' : searching && (idLogActividadUltimo == op['ActividadOperarioId'] && op['ActividadOperarioId'] != '0') || (idLogActividadUltimo == op['GrupoId'] && op['GrupoId'] != null)}">
 							<ion-item lines="none">
 								<ion-label class="ion-no-margin"
 									(click)="op['GrupoId'] ? accionBoton({accion: 'detalle', component: compoDetalle}, op) : null">
@@ -57,7 +76,8 @@
 								</ion-icon>
 							</ion-item>
 						</ion-card-header>
-						<ion-card-content class="ion-no-padding">
+						<ion-card-content class="ion-no-padding"
+							[ngClass]="{'opacity3' : searching && (idLogActividadUltimo == op['ActividadOperarioId'] && op['ActividadOperarioId'] != '0') || (idLogActividadUltimo == op['GrupoId'] && op['GrupoId'] != null)}">
 							<ion-grid>
 								<ion-row class="ion-justify-content-evenly">
 									<ion-col size="5"
@@ -109,7 +129,15 @@
 					<ion-col class="ion-no-padding"
 						[ngClass]="it['accion'] == 'cambiar-centro' ? (dataCentroProduccion['cantidad'] > 1 ? '' : 'd-none') : ''"
 						*ngFor="let it of botones">
-						<ion-fab-button (click)="accionBoton(it)" class="ion-no-margin" mode="ios" size="small"
+						<ion-fab-button [disabled]="eliminarMultiple" *ngIf="it['accion'] != 'eliminar-multiple'"
+							(click)="accionBoton(it)" class="ion-no-margin" mode="ios" size="small"
+							[color]="it['color']">
+							<ion-icon [name]="it['icono']"></ion-icon>
+						</ion-fab-button>
+						<ion-fab-button *ngIf="it['accion'] == 'eliminar-multiple'" data-bs-toggle="collapse"
+							aria-expanded="false" [attr.aria-controls]="'collapseEliminar'"
+							[attr.data-bs-target]="'collapseEliminar'" [attr.data-bs-target]="'#collapseEliminar'"
+							(click)="accionEliminarMultiple()" class="ion-no-margin" mode="ios" size="small"
 							[color]="it['color']">
 							<ion-icon [name]="it['icono']"></ion-icon>
 						</ion-fab-button>
