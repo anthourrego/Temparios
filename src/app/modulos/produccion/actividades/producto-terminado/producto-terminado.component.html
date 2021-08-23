@@ -69,8 +69,8 @@
 
 <ion-footer>
 	<ion-toolbar color="light">
-		<ion-button (click)="confirmar('¿Desea terminar esta actividad?')" class="ion-margin-horizontal" size="full"
-			shape="round">
+		<ion-button [disabled]="searching" (click)="confirmar('¿Desea terminar esta actividad?')"
+			class="ion-margin-horizontal" size="full" shape="round">
 			<ion-icon slot="start" name="arrow-forward"></ion-icon>
 			Confirmar
 		</ion-button>
