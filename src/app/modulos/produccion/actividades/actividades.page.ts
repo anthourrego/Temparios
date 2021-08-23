@@ -285,7 +285,7 @@ export class ActividadesPage implements OnInit, OnDestroy {
 			if (this.clickPresionado) {
 				this.alertaAgregarCantidad(datos);
 			}
-		}, 600);
+		}, 400);
 	}
 
 	alertaAgregarCantidad(datos) {
