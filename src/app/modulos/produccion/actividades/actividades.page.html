@@ -134,7 +134,7 @@
 							[color]="it['color']">
 							<ion-icon [name]="it['icono']"></ion-icon>
 						</ion-fab-button>
-						<ion-fab-button *ngIf="it['accion'] == 'eliminar-multiple'" data-bs-toggle="collapse"
+						<ion-fab-button [disabled]="!actividades.length" *ngIf="it['accion'] == 'eliminar-multiple'" data-bs-toggle="collapse"
 							aria-expanded="false" [attr.aria-controls]="'collapseEliminar'"
 							[attr.data-bs-target]="'collapseEliminar'" [attr.data-bs-target]="'#collapseEliminar'"
 							(click)="accionEliminarMultiple()" class="ion-no-margin" mode="ios" size="small"
