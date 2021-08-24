@@ -321,11 +321,12 @@ export class ActividadesPage implements OnInit, OnDestroy {
 	}
 
 	accionEliminarMultiple(cancelar?) {
+		this.eliminarMultiple = !this.eliminarMultiple;
 		if (cancelar) {
 			let data = document.getElementsByClassName('data-buttons');
 			data.length > 0 ? data[0].classList.remove("show") : null;
+			this.eliminarMultiple = false;
 		}
-		this.eliminarMultiple = !this.eliminarMultiple;
 		this.actividadesEliminar = [];
 		this.actividades.forEach(it => it['eliminarMultiple'] = false);
 	}
