@@ -72,7 +72,7 @@ export class AgregarActividadesComponent implements OnInit {
 			this.collapseAbierto = this.infoActividades[x]['collapse'];
 		}
 
-		if(this.posicionAnterior == x){
+		if (this.posicionAnterior == x) {
 			this.maquinariaActual = null;
 			this.posicionAnterior = -1;
 		} else {
@@ -146,6 +146,8 @@ export class AgregarActividadesComponent implements OnInit {
 		this.valorBuscar = evento.value;
 		if (this.segmento == 0 || this.posicionAnterior == -1 || !this.collapseAbierto) {
 			this.infoActividades = [];
+			this.inicio = 1;
+			this.fin = this.cantidad;
 		} else {
 			this.infoActividades[this.posicionAnterior]['actividades'] = []
 		}
@@ -153,7 +155,7 @@ export class AgregarActividadesComponent implements OnInit {
 	}
 
 	refrescar(event?, total?) {
-		if(this.segmento == 0) {
+		if (this.segmento == 0) {
 			this.posicionAnterior = -1;
 			this.maquinariaActual = null;
 		}
@@ -186,13 +188,14 @@ export class AgregarActividadesComponent implements OnInit {
 			finmaqInter: this.finMaquinaria,
 			maqInter: this.maquinariaActual
 		}
+		console.log(datos);
 		this.actividadesService.informacion(datos, 'CentrosProduccion/obtenerOrdenProduccion').then(resp => {
 			if (!evento) {
 				this.infoActividades = [];
 			}
 			if (this.maquinariaActual && this.infoActividades[this.posicionAnterior]['collapse']) {
 				this.infoActividades[this.posicionAnterior]['actividades'] = this.infoActividades[this.posicionAnterior]['actividades'].concat(resp);
-				
+
 				if (evento && evento.target) {
 					evento.target.complete();
 				}
@@ -272,7 +275,7 @@ export class AgregarActividadesComponent implements OnInit {
 		this.fin = this.cantidad;
 		this.actividadesSeleccionadas = [];
 		this.verRecargar = true;
-		this.refrescar();
+		this.refrescar(null, true);
 	}
 
 	loadDataMaquinaria(evento) {

@@ -36,7 +36,7 @@
 		</ion-item>
 	</ion-list>
 
-	<ion-list *ngIf="datos['GrupoId']">
+	<!-- <ion-list *ngIf="datos['GrupoId']">
 		<ion-item-group *ngFor="let llave of productos"
 			[ngStyle]="{'display': llave['mostrarProd'] ? 'block' : 'none'}">
 			<ion-item-divider sticky="true" color="gray">
@@ -61,7 +61,26 @@
 			</ion-item>
 		</ion-item-group>
 		<ion-item lines="none" *ngIf="mostrarMensajeAgrupada && !searching">
-			<!-- <ion-text class="w-100 ion-text-center">No se encontraron registros</ion-text> -->
+			<ion-text class="w-100 ion-text-center">No se encontraron registros</ion-text>
+		</ion-item>
+	</ion-list> -->
+
+	<ion-list *ngIf="datos['GrupoId']">
+		<ion-item lines="none" *ngFor="let item of productosGrupo; let pos = index;">
+			<ion-label>
+				<h3>{{ item['Nombre']}}</h3>
+				<p>Cantidad {{ +item['cantidad'] }}</p>
+				<p>
+					<ion-item>
+						<ion-label position="fixed">Cantidad consumida</ion-label>
+						<ion-input required="true" [(ngModel)]="+item['cantireal']" type="number"
+							placeholder="Cantidad"></ion-input>
+					</ion-item>
+				</p>
+			</ion-label>
+		</ion-item>
+		<ion-item lines="none" *ngIf="!productosGrupo.length && !searching">
+			<!-- <ion-text class="w-100  ion-text-center">No se encontraron registros</ion-text> -->
 		</ion-item>
 	</ion-list>
 

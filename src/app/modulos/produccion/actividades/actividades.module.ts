@@ -10,6 +10,7 @@ import { ParadasComponent } from './paradas/paradas.component';
 import { DetalleActividadComponent } from './detalle-actividad/detalle-actividad.component';
 import { ProductoTerminadoComponent } from './producto-terminado/producto-terminado.component';
 import { NgxTimerModule } from 'ngx-timer';
+import { ListaChequeoComponent } from './lista-chequeo/lista-chequeo.component';
 
 @NgModule({
 	imports: [
@@ -26,6 +27,7 @@ import { NgxTimerModule } from 'ngx-timer';
 		, ParadasComponent
 		, DetalleActividadComponent
 		, ProductoTerminadoComponent
+		, ListaChequeoComponent
 	],
 	providers: [],
 	schemas: [NO_ERRORS_SCHEMA]

@@ -1,0 +1,20 @@
+<ion-header class="ion-no-border">
+	<ion-toolbar color="ligth">
+		<ion-title color="dark" class="ion-text-center">Lista de Chequeo</ion-title>
+		<ion-buttons slot="end" (click)="cerrarModal()">
+			<ion-icon color="dark" slot='icon-only' size='large' name='close-outline'>
+			</ion-icon>
+		</ion-buttons>
+	</ion-toolbar>
+</ion-header>
+
+<ion-content color="gray">
+	<p>Nombre producto, Numero orden, cantidad</p>
+	<div id="listaHTML"></div>
+
+	<ion-fab vertical="bottom" horizontal="end" slot="fixed" id="btnSubmit" [hidden]=formulario>
+		<ion-fab-button (click)="submit()">
+			<ion-icon name="save"></ion-icon>
+		</ion-fab-button>
+	</ion-fab>
+</ion-content>

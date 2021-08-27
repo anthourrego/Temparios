@@ -12,6 +12,7 @@ import { DetalleActividadComponent } from './detalle-actividad/detalle-actividad
 import { CargadorService } from '../../../servicios/cargador.service';
 import { ProductoTerminadoComponent } from './producto-terminado/producto-terminado.component';
 import { takeUntil } from 'rxjs/operators';
+import { ListaChequeoComponent } from './lista-chequeo/lista-chequeo.component';
 
 @Component({
 	selector: 'app-actividades',
@@ -133,6 +134,7 @@ export class ActividadesPage implements OnInit, OnDestroy {
 	async obtenerInformacion(event?, fecha?) {
 		this.searching = true;
 		this.actividadesService.informacion(this.dataQuery, 'CentrosProduccion/obtenerActividadesAsignadas').then((datos) => {
+			console.log("Datos ", datos);
 			if (datos) {
 				this.actividades = datos.datos;
 			}
@@ -224,7 +226,7 @@ export class ActividadesPage implements OnInit, OnDestroy {
 					}).catch((error) => {
 						this.cargadorService.ocultar();
 						console.log(error);
-					});;
+					});
 				}, () => this.cargadorService.ocultar());
 			}
 		});
@@ -331,7 +333,19 @@ export class ActividadesPage implements OnInit, OnDestroy {
 		this.actividades.forEach(it => it['eliminarMultiple'] = false);
 	}
 
-	agregarEliminarActividad(op, pos) {
+	async agregarEliminarActividad(op, pos) {
+		/*if (op && op['HeadProdId'] != 0) {
+			const modal = await this.modalController.create({
+				component: ListaChequeoComponent
+				, backdropDismiss: false
+				, componentProps: op
+			});
+			await modal.present();
+			modal.onWillDismiss().then(({ data, role }) => {
+				console.log("Data ", data);
+			}, console.error);
+		}
+		return*/
 		if (this.eliminarMultiple) {
 			if (this.actividades[pos]['eliminarMultiple']) {
 				let index = this.actividadesEliminar.findIndex(op2 => op2['ActividadOperarioId'] == op.ActividadOperarioId);
