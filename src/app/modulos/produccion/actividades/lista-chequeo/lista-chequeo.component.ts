@@ -16,6 +16,7 @@ export class ListaChequeoComponent implements OnInit {
 	@Input() centroProduccion;
 	arrLista: any = [];
 	formulario: any = true;
+	datosLista: any = {};
 
 	constructor(
 		private modalController: ModalController,
@@ -26,19 +27,25 @@ export class ListaChequeoComponent implements OnInit {
 	) { }
 
 	ngOnInit() {
-		this.buscarListaChequeos('15018'/* datos['HeadProdId'] */);
+		console.log("Datos ", this.datos);
+		this.buscarListaChequeos();
 	}
 
 	cerrarModal(listar?) {
 		this.modalController.dismiss(listar);
 	}
 
-	buscarListaChequeos(headProd) {
-		this.listaChequeoService.informacion({}, 'ListaChequeo/listaWeb/' + headProd).then((resp) => {
+	buscarListaChequeos() {
+		let data = {
+			headProdId: this.datos['HeadProdId'],
+			OrdeProdOperacionId: this.datos['OperacionId']
+		};
+		this.listaChequeoService.informacion(data, 'ListaChequeo/listaWeb').then((resp) => {
 			console.log("Respuesta ", resp);
-			document.getElementById('listaHTML').innerHTML = resp.vista;
+			this.datosLista = resp;
+			document.getElementById('listaHTML').innerHTML = this.datosLista.vista;
 
-			if (resp.listaCheck.length) {
+			if (resp.listaCheck.length == 1) {
 				this.ejecucionLista();
 			}
 
@@ -51,7 +58,7 @@ export class ListaChequeoComponent implements OnInit {
 			});
 		}).catch((error) => {
 			console.log(error);
-		});;
+		});
 	}
 
 	ejecucionLista() {
@@ -180,7 +187,6 @@ export class ListaChequeoComponent implements OnInit {
 	};
 
 	async submit() {
-		let self = this;
 		var form2 = document.getElementById("formElements");
 		var $DATA2 = {};
 		var data2 = {};
@@ -190,6 +196,7 @@ export class ListaChequeoComponent implements OnInit {
 		var fecha = date.getFullYear() + "-" + date.getDate() + "-" + (date.getMonth() + 1) + " " + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
 		var $LCOperacion = [];
 		var elementos = document.querySelectorAll('input[LCOperacion][type="radio"]:checked, input[LCOperacion][type="checkbox"]:checked, option[LCOperacion]:checked');
+		console.log(elementos);
 		for (var i = 0; i < elementos.length; i++) {
 			if (elementos[i].hasAttribute('LCOperacion') && elementos[i].getAttribute('LCOperacion') != '[]') {
 				$LCOperacion = $LCOperacion.concat(JSON.parse(elementos[i].getAttribute('LCOperacion')));
@@ -200,18 +207,30 @@ export class ListaChequeoComponent implements OnInit {
 			, LoteProductoId: 'this.vehiculo.LoteProductoId'
 			, fecha: fecha
 			, LCOperacion: $LCOperacion
-			, HeadProdId: this.datos.HeadProdId
-			, VIN: 'this.vehiculo.VIN'
+			, HeadProdId: this.datos.HeadProdId //Encabezado del producto
+			, VIN: this.datos.OrdeProdOperacionId //Orden de produccion
+			, proceso: this.datosLista['nombreActividad']
+			, OrdeProdId: this.datos.OrdeProdId
 		};
-		var ListasChequeadas = [];
-		await this.storageService.get('ListasChequeadas').then(
-			(data: any) => {
-				if (data != null) {
-					ListasChequeadas = JSON.parse(data);
-				}
-				ListasChequeadas.push($DATA);
+
+		this.listaChequeoService.informacion($DATA, 'ListaChequeo/Guardar').then((resp) => {
+			console.log("Respuesta ", resp);
+			if (resp.info == 1) {
+				this.notificacionesService.notificacion("Felicitaciones, se ha diligenciado la lista satisfactoriamente");
+				this.cerrarModal({ listar: true, listachequeo: true });
+			} else {
+				this.notificacionesService.notificacion("Lo sentimos, ocurrió un problema al diligenciar la lista");
 			}
-		).then(() => {
+		}).catch((error) => {
+			console.log(error);
+		});
+		/* var ListasChequeadas = [];
+		await this.storageService.get('ListasChequeadas').then((data: any) => {
+			if (data != null) {
+				ListasChequeadas = JSON.parse(data);
+			}
+			ListasChequeadas.push($DATA);
+		}).then(() => {
 			this.storageService.get('VINSCHECK').then(async (data: any) => {
 				if (data != null) {
 					data = JSON.parse(data);
@@ -227,6 +246,6 @@ export class ListaChequeoComponent implements OnInit {
 					this.router.navigateByUrl('/sgcheck');
 				}
 			});
-		});
+		}); */
 	}
 }

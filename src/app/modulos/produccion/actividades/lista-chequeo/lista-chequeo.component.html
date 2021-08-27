@@ -9,7 +9,22 @@
 </ion-header>
 
 <ion-content color="gray">
-	<p>Nombre producto, Numero orden, cantidad</p>
+
+	<p>
+		Nombre:
+		<strong>
+			<ion-text color="dark">{{ datos['Nombre'] }}</ion-text>
+		</strong><br>
+		Orden:
+		<strong>
+			<ion-text color="dark">{{ datos['Orden'] }}</ion-text>
+		</strong><br>
+		Cantidad:
+		<strong>
+			<ion-text color="dark">{{ +datos['CantidadTotal'] }}</ion-text>
+		</strong><br>
+	</p>
+
 	<div id="listaHTML"></div>
 
 	<ion-fab vertical="bottom" horizontal="end" slot="fixed" id="btnSubmit" [hidden]=formulario>

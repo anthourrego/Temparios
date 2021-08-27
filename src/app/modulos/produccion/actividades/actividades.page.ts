@@ -33,7 +33,6 @@ export class ActividadesPage implements OnInit, OnDestroy {
 		, { icono: 'close-circle-outline', color: 'danger', accion: 'eliminar-multiple' }
 	];
 	compoDetalle = DetalleActividadComponent;
-	compoTerminado = ProductoTerminadoComponent;
 	subject = new Subject();
 	tiempo: string = '';
 	dataQuery: object = {};
@@ -81,6 +80,7 @@ export class ActividadesPage implements OnInit, OnDestroy {
 	async obtenerCentroProd(event) {
 		this.usuarioActual = await this.actividadesService.desencriptar(JSON.parse(await this.storage.get('usuario')));
 		this.dataCentroProduccion = await this.actividadesService.desencriptar(JSON.parse(await this.storage.get('centroProduccion')));
+		console.log("Centro prod ", this.dataCentroProduccion);
 		this.dataQuery = {
 			centroProd: this.dataCentroProduccion['CentroProduccion'],
 		}
@@ -160,7 +160,7 @@ export class ActividadesPage implements OnInit, OnDestroy {
 			centroProduccion: this.dataQuery['centroProd'],
 			nombreCp: this.dataCentroProduccion['nombre']
 		};
-		if (datos && (op['accion'] == 'detalle' || op['accion'] == 'terminado')) {
+		if (datos && (op['accion'] == 'detalle' || op['accion'] == 'terminado' || op['accion'] == 'lista-chequeo')) {
 			if (datos['GrupoId']) {
 				componentProps['idGrupo'] = datos['GrupoId']
 			}
@@ -173,8 +173,15 @@ export class ActividadesPage implements OnInit, OnDestroy {
 		});
 		await modal.present();
 		modal.onWillDismiss().then(({ data, role }) => {
-			if (data && (op['accion'] == 'agregar' || op['accion'] == 'detalle' || op['accion'] == 'terminado')) {
-				this.obtenerCentroProd(false);
+			if (data) {
+				if (data.listachequeo && data.listar) {
+					this.accionBoton({ accion: 'terminado', component: ProductoTerminadoComponent }, datos);
+					this.obtenerInformacion(false);
+				} else if (data && (op['accion'] == 'agregar' || op['accion'] == 'detalle' || op['accion'] == 'terminado')) {
+					this.obtenerCentroProd(false);
+				} else {
+					this.idLogActividadUltimo = '';
+				}
 			} else {
 				this.idLogActividadUltimo = '';
 			}
@@ -201,7 +208,8 @@ export class ActividadesPage implements OnInit, OnDestroy {
 				} else {
 					this.actividades = actividades;
 					if ((op['GrupoId'] != null) || ((+op['CantiRecib'] + data.Cantidad) == +op['CantidadTotal'])) {
-						this.accionBoton({ accion: 'terminado', component: this.compoTerminado }, op)
+						op['CantiRecib'] = (+op['CantiRecib'] + data.Cantidad);
+						this.ordenOperacionClick(op);
 					}
 				}
 				this.idLogActividadSearch = '';
@@ -334,18 +342,6 @@ export class ActividadesPage implements OnInit, OnDestroy {
 	}
 
 	async agregarEliminarActividad(op, pos) {
-		/*if (op && op['HeadProdId'] != 0) {
-			const modal = await this.modalController.create({
-				component: ListaChequeoComponent
-				, backdropDismiss: false
-				, componentProps: op
-			});
-			await modal.present();
-			modal.onWillDismiss().then(({ data, role }) => {
-				console.log("Data ", data);
-			}, console.error);
-		}
-		return*/
 		if (this.eliminarMultiple) {
 			if (this.actividades[pos]['eliminarMultiple']) {
 				let index = this.actividadesEliminar.findIndex(op2 => op2['ActividadOperarioId'] == op.ActividadOperarioId);
@@ -371,6 +367,26 @@ export class ActividadesPage implements OnInit, OnDestroy {
 			});
 		});
 		this.peticionActionSheet('eliminar las actividades', data, 'eliminarActividadOperario');
+	}
+
+	ordenOperacionClick(op) {
+		if (+op['CantiRecib'] < +op['CantidadTotal']) {
+			this.agregarTiempoActividad(op);
+		} else {
+			if (op['AplicaListaChequeo']) {
+				if (op['AplicoListaChequeo']) {
+					this.accionBoton({ accion: 'terminado', component: ProductoTerminadoComponent }, op);
+				} else {
+					if (op['GrupoId'] == null) {
+						this.accionBoton({ accion: 'lista-chequeo', component: ListaChequeoComponent }, op);
+					} else {
+						console.log("Validar para cuando sea un grupo");
+					}
+				}
+			} else {
+				this.accionBoton({ accion: 'terminado', component: ProductoTerminadoComponent }, op);
+			}
+		}
 	}
 
 }

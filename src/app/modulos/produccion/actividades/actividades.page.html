@@ -67,7 +67,7 @@
 							<ion-item lines="none">
 								<ion-label class="ion-no-margin"
 									(click)="op['GrupoId'] ? accionBoton({accion: 'detalle', component: compoDetalle}, op) : null">
-									<h6>{{ op['Nombre'] }}</h6>
+									<h6>{{ op['Nombre'] }} {{ op['ListaChequeoId'] ? ' Reproceso' : '' }}</h6>
 									<p *ngIf="!op['GrupoId']">{{ (!op['Referencia'] || op['Referencia'] == '' ? '' :
 										op['Referencia'] + ' - ') }} {{ op['NumerOrden'] }}</p>
 								</ion-label>
@@ -83,7 +83,7 @@
 									<ion-col size="5"
 										(touchend)="!op['GrupoId'] && +op['CantiRecib'] < +op['CantidadTotal'] ? endCount() : null"
 										(touchstart)="!op['GrupoId'] && +op['CantiRecib'] < +op['CantidadTotal'] ? startCount(op) : null"
-										(click)="+op['CantiRecib'] < +op['CantidadTotal'] ? agregarTiempoActividad(op) : accionBoton({accion: 'terminado', component: compoTerminado}, op)">
+										(click)="ordenOperacionClick(op)">
 										<div class="cantidad-proceso">
 											<p class="conteo-accion">{{ +op['CantiRecib'] }}</p>
 											<ion-progress-bar color="secondary"
