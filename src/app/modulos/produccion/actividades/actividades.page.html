@@ -67,7 +67,7 @@
 							<ion-item lines="none">
 								<ion-label class="ion-no-margin"
 									(click)="op['GrupoId'] ? accionBoton({accion: 'detalle', component: compoDetalle}, op) : null">
-									<h6>{{ op['Nombre'] }} {{ op['ListaChequeoId'] ? ' Reproceso' : '' }}</h6>
+									<h6>{{ op['Nombre'] }} {{ op['ListaChequeoId'] ? ' - Reproceso' : '' }}</h6>
 									<p *ngIf="!op['GrupoId']">{{ (!op['Referencia'] || op['Referencia'] == '' ? '' :
 										op['Referencia'] + ' - ') }} {{ op['NumerOrden'] }}</p>
 								</ion-label>

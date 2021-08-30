@@ -8,10 +8,12 @@
 
 	<ion-list>
 		<div *ngFor="let item of dataHistorial; let pos = index;">
-			<ion-item lines="none" (click)="opcionCollapse(pos)" data-bs-toggle="collapse" aria-expanded="false" [attr.aria-controls]="'collapse' + pos" [attr.data-bs-target]="'collapse' + pos"
+			<ion-item lines="none" (click)="opcionCollapse(pos)" data-bs-toggle="collapse" aria-expanded="false"
+				[attr.aria-controls]="'collapse' + pos" [attr.data-bs-target]="'collapse' + pos"
 				[attr.data-bs-target]="'#collapse' + pos">
 				<ion-label [ngClass]="item['Tipo']" class="p-2 sombra">
-					<h2 class="ion-text-uppercase">{{ item['Nombre'] }}</h2>
+					<h2 class="ion-text-uppercase">{{ item['Nombre'] }} {{ item['Tipo'] == 'REPROCESO' ? ' - ' +
+						item['Tipo'] : '' }}</h2>
 					<p *ngIf="item['Referencia']">{{ item['Referencia'] }}</p>
 					<p>
 						<ion-grid class="pb-0">
@@ -33,7 +35,8 @@
 								<ion-col [size]="item['Tipo'] == 'OPERACION' ? '3' : '4'"
 									*ngIf="item['Tipo'] != 'INGRESO' && item['Tipo'] != 'SALIDA'">
 									<ion-label class="ion-text-center bg-transparent">
-										<p>{{ item['Tipo'] == 'OPERACION' ? item['TiempoHora2'] : item['TiempoHora1'] }}</p>
+										<p>{{ item['Tipo'] == 'OPERACION' ? item['TiempoHora2'] : item['TiempoHora1'] }}
+										</p>
 										<strong>Tiempo</strong>
 									</ion-label>
 								</ion-col>
@@ -80,7 +83,8 @@
 											*ngIf="item['Tipo'] != 'INGRESO' && item['Tipo'] != 'SALIDA'">
 											<ion-label class="ion-text-center bg-transparent">
 												<p>
-													{{ item['Tipo'] == 'OPERACION' ? item['TiempoHora2'] : item['TiempoHora1'] }}
+													{{ item['Tipo'] == 'OPERACION' ? item['TiempoHora2'] :
+													item['TiempoHora1'] }}
 												</p>
 												<strong>Tiempo</strong>
 											</ion-label>

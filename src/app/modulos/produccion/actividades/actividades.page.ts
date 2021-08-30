@@ -197,7 +197,7 @@ export class ActividadesPage implements OnInit, OnDestroy {
 				OrdeProdOperacionId: op['OrdeProdOperacionId'],
 				GrupoId: op['GrupoId'],
 				Cantidad: op['GrupoId'] == null ? (cantidad ? cantidad : 1) : op['CantidadTotal'],
-				Tipo: 'OPERACION',
+				Tipo: 'REPROCESO',
 				centroProd: this.dataQuery['centroProd']
 			}
 			this.actividadesService.informacion(data, 'CentrosProduccion/agregarLogActividad').then(({ datos, msg, valido, actividades }) => {

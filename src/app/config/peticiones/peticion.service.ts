@@ -56,7 +56,11 @@ export class PeticionService {
 		const crypt = JSON.parse(await this.storageService.get('crypt').then(resp => resp));
 		const key = CryptoJS.PBKDF2(crypt.key, salt, { hasher: CryptoJS.algo.SHA512, keySize: 64 / 8, iterations: crypt.it });
 		const decrypted = CryptoJS.AES.decrypt(encriptado.ciphertext, key, { iv: iv });
-		return JSON.parse(decrypted.toString(CryptoJS.enc.Utf8));
+		try {
+			return JSON.parse(decrypted.toString(CryptoJS.enc.Utf8));
+		} catch (err) {
+			return decrypted.toString(CryptoJS.enc.Utf8)
+		}
 	}
 
 	async obtener(controlador: string) {
