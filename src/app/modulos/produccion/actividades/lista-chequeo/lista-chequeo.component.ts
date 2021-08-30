@@ -1,9 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { ModalController } from '@ionic/angular';
 import { ListaChequeoService } from '../../../../servicios/lista-chequeo.service';
-import { StorageService } from '../../../../servicios/storage.service';
 import { NotificacionesService } from '../../../../servicios/notificaciones.service';
-import { Router } from '@angular/router';
 
 @Component({
 	selector: 'app-lista-chequeo',
@@ -21,9 +19,7 @@ export class ListaChequeoComponent implements OnInit {
 	constructor(
 		private modalController: ModalController,
 		private listaChequeoService: ListaChequeoService,
-		private storageService: StorageService,
 		private notificacionesService: NotificacionesService,
-		private router: Router
 	) { }
 
 	ngOnInit() {
@@ -38,7 +34,8 @@ export class ListaChequeoComponent implements OnInit {
 	buscarListaChequeos() {
 		let data = {
 			headProdId: this.datos['HeadProdId'],
-			OrdeProdOperacionId: this.datos['OperacionId']
+			OrdeProdOperacionId: this.datos['OperacionId'],
+			grupo: this.datos['GrupoId']
 		};
 		this.listaChequeoService.informacion(data, 'ListaChequeo/listaWeb').then((resp) => {
 			console.log("Respuesta ", resp);
@@ -224,28 +221,5 @@ export class ListaChequeoComponent implements OnInit {
 		}).catch((error) => {
 			console.log(error);
 		});
-		/* var ListasChequeadas = [];
-		await this.storageService.get('ListasChequeadas').then((data: any) => {
-			if (data != null) {
-				ListasChequeadas = JSON.parse(data);
-			}
-			ListasChequeadas.push($DATA);
-		}).then(() => {
-			this.storageService.get('VINSCHECK').then(async (data: any) => {
-				if (data != null) {
-					data = JSON.parse(data);
-					for (var i = 0; i < data.length; i++) {
-						if (data[i].LoteProductoId == $DATA.LoteProductoId) {
-							data.splice(i, 1);
-							break;
-						}
-					}
-					await this.storageService.set('VINSCHECK', JSON.stringify(data));
-					await this.storageService.set('ListasChequeadas', JSON.stringify(ListasChequeadas));
-					this.notificacionesService.notificacion('Felicitaciones, se ha diligenciado la lista satisfactoriamente');
-					this.router.navigateByUrl('/sgcheck');
-				}
-			});
-		}); */
 	}
 }

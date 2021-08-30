@@ -12,7 +12,7 @@ export class NotificacionesService {
     private alertaController: AlertController
   ) { }
 
-  async notificacion(message: string, duration: number = 3000, position?: 'top' | 'bottom' | 'middle', color?: string, mode?: 'ios' | 'md') {
+  async notificacion(message: string, duration: number = 1500, position?: 'top' | 'bottom' | 'middle', color?: string, mode?: 'ios' | 'md') {
     const toast = await this.toastController.create({
       message, position, animated: true, color, duration, mode,
     });

@@ -11,6 +11,7 @@ import { DetalleActividadComponent } from './detalle-actividad/detalle-actividad
 import { ProductoTerminadoComponent } from './producto-terminado/producto-terminado.component';
 import { NgxTimerModule } from 'ngx-timer';
 import { ListaChequeoComponent } from './lista-chequeo/lista-chequeo.component';
+import { ListaChequeoMultipleComponent } from './lista-chequeo-multiple/lista-chequeo-multiple.component';
 
 @NgModule({
 	imports: [
@@ -28,6 +29,7 @@ import { ListaChequeoComponent } from './lista-chequeo/lista-chequeo.component';
 		, DetalleActividadComponent
 		, ProductoTerminadoComponent
 		, ListaChequeoComponent
+		, ListaChequeoMultipleComponent
 	],
 	providers: [],
 	schemas: [NO_ERRORS_SCHEMA]

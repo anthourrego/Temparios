@@ -13,7 +13,7 @@
 	<p>
 		Nombre:
 		<strong>
-			<ion-text color="dark">{{ datos['Nombre'] }}</ion-text>
+			<ion-text color="dark">{{ datos['GrupoId'] ? datosLista['nombre'] : datos['Nombre'] }}</ion-text>
 		</strong><br>
 		Orden:
 		<strong>
@@ -21,15 +21,20 @@
 		</strong><br>
 		Cantidad:
 		<strong>
-			<ion-text color="dark">{{ +datos['CantidadTotal'] }}</ion-text>
+			<ion-text color="dark">{{ datos['GrupoId'] ? datosLista['cantidad'] : +datos['CantidadTotal'] }}</ion-text>
 		</strong><br>
 	</p>
 
 	<div id="listaHTML"></div>
 
-	<ion-fab vertical="bottom" horizontal="end" slot="fixed" id="btnSubmit" [hidden]=formulario>
+	<ion-fab vertical="bottom" horizontal="end" slot="fixed" id="btnSubmit" [hidden]="formulario">
 		<ion-fab-button (click)="submit()">
 			<ion-icon name="save"></ion-icon>
+		</ion-fab-button>
+	</ion-fab>
+	<ion-fab vertical="bottom" horizontal="start" slot="fixed">
+		<ion-fab-button color="danger" (click)="cerrarModal({ listachequeo: true })">
+			<ion-icon name="close"></ion-icon>
 		</ion-fab-button>
 	</ion-fab>
 </ion-content>

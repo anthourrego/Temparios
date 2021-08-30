@@ -189,6 +189,7 @@ export class AgregarActividadesComponent implements OnInit {
 			maqInter: this.maquinariaActual
 		}
 		this.actividadesService.informacion(datos, 'CentrosProduccion/obtenerOrdenProduccion').then(resp => {
+			console.log("respuesta ", resp);
 			if (!evento) {
 				this.infoActividades = [];
 			}
@@ -268,6 +269,7 @@ export class AgregarActividadesComponent implements OnInit {
 
 	cambioSegmento(event) {
 		this.inputBuscar.value = '';
+		this.valorBuscar = '';
 		this.segmento = event.detail.value;
 		this.collapseAbierto = false;
 		this.inicio = 1;

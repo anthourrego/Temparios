@@ -1,0 +1,41 @@
+<ion-header class="ion-no-border">
+	<ion-toolbar color="ligth">
+		<ion-title color="dark" class="ion-text-center">Lista de chequeo grupo Nro {{ datos?.GrupoId }}</ion-title>
+		<ion-buttons slot="end" (click)="cerrarModal()">
+			<ion-icon color="dark" slot='icon-only' size='large' name='close-outline'>
+			</ion-icon>
+		</ion-buttons>
+	</ion-toolbar>
+</ion-header>
+
+<ion-progress-bar *ngIf="searching" type="indeterminate"></ion-progress-bar>
+
+<ion-content color="gray">
+
+	<ion-list class="ion-no-padding" *ngIf="arrGrupoLista.length">
+		<ion-item lines="none" class="ion-margin" (click)="itemSeleccionado(item, pos)"
+			*ngFor="let item of arrGrupoLista; let pos = index;"
+			[ngStyle]="item['AplicoListaChequeo'] ? {'border-left': '4px solid var(--ion-color-success)'} : {}">
+			<ion-label>
+				<h3>{{item['Nombre']}}</h3>
+				<p>Orden: {{item['NumerOrden']}}</p>
+				<p>Ref: {{item['Referencia']}}</p>
+			</ion-label>
+		</ion-item>
+	</ion-list>
+
+	<ion-item class="ion-text-center" *ngIf="!arrGrupoLista.length">
+		<ion-label>{{ mensaje }}</ion-label>
+	</ion-item>
+
+</ion-content>
+
+<ion-footer>
+	<ion-toolbar color="light">
+		<ion-button class="ion-margin-horizontal" (click)="cerrarModal({ listachequeo: true })" [size]="'full'"
+			shape="round">
+			<ion-icon slot="start" name="checkmark"></ion-icon>
+			Finalizar Grupo
+		</ion-button>
+	</ion-toolbar>
+</ion-footer>

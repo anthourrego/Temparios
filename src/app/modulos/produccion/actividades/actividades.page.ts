@@ -12,6 +12,7 @@ import { DetalleActividadComponent } from './detalle-actividad/detalle-actividad
 import { CargadorService } from '../../../servicios/cargador.service';
 import { ProductoTerminadoComponent } from './producto-terminado/producto-terminado.component';
 import { takeUntil } from 'rxjs/operators';
+import { ListaChequeoMultipleComponent } from './lista-chequeo-multiple/lista-chequeo-multiple.component';
 import { ListaChequeoComponent } from './lista-chequeo/lista-chequeo.component';
 
 @Component({
@@ -26,8 +27,7 @@ export class ActividadesPage implements OnInit, OnDestroy {
 	searching: boolean = true;
 	actividades: Array<object> = [];
 	botones: Array<object> = [
-		/* { icono: 'home', color: 'success', accion: 'home' }
-		,*/ { icono: 'swap-horizontal', color: 'secondary', accion: 'cambiar-centro' }
+		{ icono: 'swap-horizontal', color: 'secondary', accion: 'cambiar-centro' }
 		, { icono: 'add', color: 'primary', accion: 'agregar', component: AgregarActividadesComponent }
 		, { icono: 'trending-down', color: 'tertiary', accion: 'parada', component: ParadasComponent }
 		, { icono: 'close-circle-outline', color: 'danger', accion: 'eliminar-multiple' }
@@ -147,7 +147,7 @@ export class ActividadesPage implements OnInit, OnDestroy {
 		});
 	}
 
-	async accionBoton(op, datos?) {
+	async accionBoton(op, datos?, pos?) {
 		if (!op['component']) {
 			if (op['accion'] == 'cambiar-centro') {
 				this.router.navigateByUrl('/modulos/centros-produccion');
@@ -160,7 +160,7 @@ export class ActividadesPage implements OnInit, OnDestroy {
 			centroProduccion: this.dataQuery['centroProd'],
 			nombreCp: this.dataCentroProduccion['nombre']
 		};
-		if (datos && (op['accion'] == 'detalle' || op['accion'] == 'terminado' || op['accion'] == 'lista-chequeo')) {
+		if (datos && (op['accion'] == 'detalle' || op['accion'] == 'terminado' || op['accion'] == 'lista-chequeo' || op['accion'] == 'lista-chequeo-multiple')) {
 			if (datos['GrupoId']) {
 				componentProps['idGrupo'] = datos['GrupoId']
 			}
@@ -174,9 +174,12 @@ export class ActividadesPage implements OnInit, OnDestroy {
 		await modal.present();
 		modal.onWillDismiss().then(({ data, role }) => {
 			if (data) {
-				if (data.listachequeo && data.listar) {
+				if (data.listachequeo) {
+					this.actividades[pos]['AplicoListaChequeo'] = true;
 					this.accionBoton({ accion: 'terminado', component: ProductoTerminadoComponent }, datos);
-					this.obtenerInformacion(false);
+					if (data.listar) {
+						this.obtenerInformacion(false);
+					}
 				} else if (data && (op['accion'] == 'agregar' || op['accion'] == 'detalle' || op['accion'] == 'terminado')) {
 					this.obtenerCentroProd(false);
 				} else {
@@ -188,7 +191,7 @@ export class ActividadesPage implements OnInit, OnDestroy {
 		}, console.error);
 	}
 
-	agregarTiempoActividad(op, cantidad?) {
+	agregarTiempoActividad(op, cantidad?, pos?) {
 		if (!this.searching) {
 			this.searching = true;
 			this.idLogActividadSearch = op['ActividadOperarioId'] != 0 ? op['ActividadOperarioId'] : op['GrupoId'];
@@ -209,7 +212,7 @@ export class ActividadesPage implements OnInit, OnDestroy {
 					this.actividades = actividades;
 					if ((op['GrupoId'] != null) || ((+op['CantiRecib'] + data.Cantidad) == +op['CantidadTotal'])) {
 						op['CantiRecib'] = (+op['CantiRecib'] + data.Cantidad);
-						this.ordenOperacionClick(op);
+						this.ordenOperacionClick(op, pos);
 					}
 				}
 				this.idLogActividadSearch = '';
@@ -369,22 +372,30 @@ export class ActividadesPage implements OnInit, OnDestroy {
 		this.peticionActionSheet('eliminar las actividades', data, 'eliminarActividadOperario');
 	}
 
-	ordenOperacionClick(op) {
+	ordenOperacionClick(op, pos) {
 		if (+op['CantiRecib'] < +op['CantidadTotal']) {
-			this.agregarTiempoActividad(op);
+			this.agregarTiempoActividad(op, null, pos);
 		} else {
-			if (op['AplicaListaChequeo']) {
-				if (op['AplicoListaChequeo']) {
-					this.accionBoton({ accion: 'terminado', component: ProductoTerminadoComponent }, op);
-				} else {
-					if (op['GrupoId'] == null) {
-						this.accionBoton({ accion: 'lista-chequeo', component: ListaChequeoComponent }, op);
+			if (op['GrupoId'] == null) {
+				if (op['AplicaListaChequeo']) {
+					if (op['AplicoListaChequeo']) {
+						this.accionBoton({ accion: 'terminado', component: ProductoTerminadoComponent }, op);
 					} else {
-						console.log("Validar para cuando sea un grupo");
+						this.accionBoton({ accion: 'lista-chequeo', component: ListaChequeoComponent }, op, pos);
 					}
+				} else {
+					this.accionBoton({ accion: 'terminado', component: ProductoTerminadoComponent }, op);
 				}
 			} else {
-				this.accionBoton({ accion: 'terminado', component: ProductoTerminadoComponent }, op);
+				if (op['AplicaListaChequeo'] == null) {
+					this.accionBoton({ accion: 'terminado', component: ProductoTerminadoComponent }, op);
+				} else {
+					if (op['AplicaListaChequeo'] == 1) {
+						this.accionBoton({ accion: 'lista-chequeo', component: ListaChequeoComponent }, op, pos);
+					} else {
+						this.accionBoton({ accion: 'lista-chequeo-multiple', component: ListaChequeoMultipleComponent }, op, pos);
+					}
+				}
 			}
 		}
 	}
