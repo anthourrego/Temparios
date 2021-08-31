@@ -66,16 +66,19 @@
 			</ion-item-divider>
 			<div class="collapse" [id]="'collapse' + pos">
 				<ion-list>
-					<ion-item lines="inset" *ngFor="let item of it['actividades'] ; let po = index">
-						<ion-label>
-							<h2>{{ item['Nombre'] }}</h2>
-							<p>Estado: {{ item['Estado'] }}</p>
-							<p>Cantidad: {{ item['CantiRecib'] ? +item['CantiRecib'] : 0}}</p>
-						</ion-label>
-						<ion-checkbox [id]="'check' + pos + po" [checked]="item['checked']"
-							(ionChange)="opcionCheck($event, pos, po, ('check' + pos + po))">
-						</ion-checkbox>
-					</ion-item>
+					<div *ngFor="let item of it['actividades']; let po = index"
+						[ngClass]="{'content-reproceso' : item['ListaChequeoId']}">
+						<ion-item lines="inset">
+							<ion-label>
+								<h2>{{ item['Nombre'] }}</h2>
+								<p>Estado: {{ item['Estado'] }}</p>
+								<p>Cantidad: {{ item['CantiRecib'] ? +item['CantiRecib'] : 0}}</p>
+							</ion-label>
+							<ion-checkbox [id]="'check' + pos + po" [checked]="item['checked']"
+								(ionChange)="opcionCheck($event, pos, po, ('check' + pos + po))">
+							</ion-checkbox>
+						</ion-item>
+					</div>
 				</ion-list>
 			</div>
 		</div>
@@ -101,22 +104,25 @@
 			<ion-content class="collapse collapse-maquinas" [id]="'collapse' + pos"
 				[ngClass]="{'height-collapse show' : collapseAbierto && pos == posicionAnterior}">
 				<ion-list>
-					<ion-item lines="inset" *ngFor="let item of it['actividades']; let po = index">
-						<ion-avatar>
-							<img class="rounded-circle"
-								[src]="item['Foto'] ? codeBase64 + item['Foto'] : '../../../../../assets/images/nofoto.png'" />
-						</ion-avatar>
-						<ion-label>
-							{{ item['NombreProducto'] }}
-							<p>{{ item['nombreoperacion'] }}</p>
-							<p>Ref: {{ item['Referencia'] }} | Orden: {{ item['NumerOrden'] }} | Cantidad: {{
-								+item['Cantidad'] }}</p>
-							<p>Estado: {{ item['Estado'] }}</p>
-						</ion-label>
-						<ion-checkbox [id]="'check' + pos + po" [checked]="item['checked']"
-							(ionChange)="opcionCheck($event, pos, po, ('check' + pos + po))">
-						</ion-checkbox>
-					</ion-item>
+					<div *ngFor="let item of it['actividades']; let po = index"
+						[ngClass]="{'content-reproceso' : item['ListaChequeoId']}">
+						<ion-item lines="inset">
+							<ion-avatar>
+								<img class="rounded-circle"
+									[src]="item['Foto'] ? codeBase64 + item['Foto'] : '../../../../../assets/images/nofoto.png'" />
+							</ion-avatar>
+							<ion-label>
+								{{ item['NombreProducto'] }}
+								<p>{{ item['nombreoperacion'] }}</p>
+								<p>Ref: {{ item['Referencia'] }} | Orden: {{ item['NumerOrden'] }} | Cantidad: {{
+									+item['Cantidad'] }}</p>
+								<p>Estado: {{ item['Estado'] }}</p>
+							</ion-label>
+							<ion-checkbox [id]="'check' + pos + po" [checked]="item['checked']"
+								(ionChange)="opcionCheck($event, pos, po, ('check' + pos + po))">
+							</ion-checkbox>
+						</ion-item>
+					</div>
 				</ion-list>
 				<ion-list *ngIf="!it['actividades'].length && !searching">
 					<ion-item lines="none">

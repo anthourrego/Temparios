@@ -15,6 +15,7 @@ export class ListaChequeoComponent implements OnInit {
 	arrLista: any = [];
 	formulario: any = true;
 	datosLista: any = {};
+	searching: boolean = false;
 
 	constructor(
 		private modalController: ModalController,
@@ -23,7 +24,6 @@ export class ListaChequeoComponent implements OnInit {
 	) { }
 
 	ngOnInit() {
-		console.log("Datos ", this.datos);
 		this.buscarListaChequeos();
 	}
 
@@ -37,8 +37,8 @@ export class ListaChequeoComponent implements OnInit {
 			OrdeProdOperacionId: this.datos['OperacionId'],
 			grupo: this.datos['GrupoId']
 		};
+		this.searching = true;
 		this.listaChequeoService.informacion(data, 'ListaChequeo/listaWeb').then((resp) => {
-			console.log("Respuesta ", resp);
 			this.datosLista = resp;
 			document.getElementById('listaHTML').innerHTML = this.datosLista.vista;
 
@@ -53,8 +53,10 @@ export class ListaChequeoComponent implements OnInit {
 			document.getElementById('btnVolver').addEventListener('click', () => {
 				this.mostrarSeleccion();
 			});
+			this.searching = false;
 		}).catch((error) => {
 			console.log(error);
+			this.searching = false;
 		});
 	}
 
@@ -183,7 +185,43 @@ export class ListaChequeoComponent implements OnInit {
 		return resultado;
 	};
 
-	async submit() {
+	confirmarCantidadLista() {
+		let cantidadValida = Number(this.datos.CantidadTotal);
+		if (this.datos['GrupoId']) {
+			cantidadValida = Number(this.datosLista['cantidad']);
+		}
+		let botones = [{
+			text: 'Aceptar',
+			handler: (data) => {
+				let cantidad = data.cantidad == '' ? 0 : data.cantidad;
+				cantidad = Number(cantidad);
+				if (cantidad > 0) {
+					if (cantidad <= cantidadValida) {
+						this.submit(cantidad);
+					} else {
+						this.notificacionesService.notificacion(`Ha superado la cantidad maxima que es ${cantidadValida}`);
+						return false;
+					}
+				} else {
+					this.notificacionesService.notificacion("La cantidad debe ser mayor a 0.");
+					return false;
+				}
+			}
+		}, {
+			text: 'Cancelar',
+			role: 'cancel'
+		}];
+		this.notificacionesService.alerta(
+			`¿Que cantidad desea confirmar? <br> Cantidad máxima ${cantidadValida}`
+			, 'Cantidad'
+			, ['alerta-input']
+			, botones
+			, [{ min: 0, max: cantidadValida, type: "number", name: "cantidad" }]
+		);
+	}
+
+	async submit(cantidad?) {
+		this.searching = true;
 		var form2 = document.getElementById("formElements");
 		var $DATA2 = {};
 		var data2 = {};
@@ -193,7 +231,6 @@ export class ListaChequeoComponent implements OnInit {
 		var fecha = date.getFullYear() + "-" + date.getDate() + "-" + (date.getMonth() + 1) + " " + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
 		var $LCOperacion = [];
 		var elementos = document.querySelectorAll('input[LCOperacion][type="radio"]:checked, input[LCOperacion][type="checkbox"]:checked, option[LCOperacion]:checked');
-		console.log(elementos);
 		for (var i = 0; i < elementos.length; i++) {
 			if (elementos[i].hasAttribute('LCOperacion') && elementos[i].getAttribute('LCOperacion') != '[]') {
 				$LCOperacion = $LCOperacion.concat(JSON.parse(elementos[i].getAttribute('LCOperacion')));
@@ -201,25 +238,26 @@ export class ListaChequeoComponent implements OnInit {
 		}
 		var $DATA: any = {
 			lista: JSON.stringify($DATA2)
-			, LoteProductoId: 'this.vehiculo.LoteProductoId'
+			, LoteProductoId: ''
 			, fecha: fecha
 			, LCOperacion: $LCOperacion
-			, HeadProdId: this.datos.HeadProdId //Encabezado del producto
-			, VIN: this.datos.OrdeProdOperacionId //Orden de produccion
+			, HeadProdId: (this.datos['GrupoId'] ? this.datosLista['headprodid'] : this.datos.HeadProdId) //Encabezado del producto
+			, VIN: (this.datos['GrupoId'] ? this.datosLista['OrdeProdOperacionId'] : this.datos.OrdeProdOperacionId) //Orden de produccion
 			, proceso: this.datosLista['nombreActividad']
-			, OrdeProdId: this.datos.OrdeProdId
+			, OrdeProdId: (this.datos['GrupoId'] ? this.datosLista['OrdeProdId'] : this.datos.OrdeProdId)
+			//, cantReproceso: cantidad
 		};
-
 		this.listaChequeoService.informacion($DATA, 'ListaChequeo/Guardar').then((resp) => {
-			console.log("Respuesta ", resp);
 			if (resp.info == 1) {
 				this.notificacionesService.notificacion("Felicitaciones, se ha diligenciado la lista satisfactoriamente");
 				this.cerrarModal({ listar: true, listachequeo: true });
 			} else {
 				this.notificacionesService.notificacion("Lo sentimos, ocurrió un problema al diligenciar la lista");
 			}
+			this.searching = false;
 		}).catch((error) => {
 			console.log(error);
+			this.searching = false;
 		});
 	}
 }

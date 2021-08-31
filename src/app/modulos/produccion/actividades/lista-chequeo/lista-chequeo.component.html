@@ -8,24 +8,32 @@
 	</ion-toolbar>
 </ion-header>
 
+<ion-progress-bar *ngIf="searching" type="indeterminate"></ion-progress-bar>
+
 <ion-content color="gray">
 
-	<p>
-		Nombre:
-		<strong>
-			<ion-text color="dark">{{ datos['GrupoId'] ? datosLista['nombre'] : datos['Nombre'] }}</ion-text>
-		</strong><br>
-		Orden:
-		<strong>
-			<ion-text color="dark">{{ datos['Orden'] }}</ion-text>
-		</strong><br>
-		Cantidad:
-		<strong>
-			<ion-text color="dark">{{ datos['GrupoId'] ? datosLista['cantidad'] : +datos['CantidadTotal'] }}</ion-text>
-		</strong><br>
-	</p>
+	<div class="row m-3">
+		<div class="col-12 border border-bottom-0 text-truncate p-2">
+			{{ datos['GrupoId'] ? datosLista['NombreProducto'] : datos['NombreProducto'] }}
+		</div>
+		<div class="col-12 border border-bottom-0 text-truncate p-2">
+			{{ datos['GrupoId'] ? datosLista['nombre'] : datos['Nombre'] }}
+		</div>
+		<div class="col-6 border border-bottom-0 border-right-0 border-bottom p-2">
+			<strong>Orden: </strong>
+			{{ datos['GrupoId'] ? datosLista['NumerOrden'] : +datos['NumerOrden'] }}
+		</div>
+		<div class="col-6 border p-2">
+			<strong>Cantidad: </strong>
+			{{ datos['GrupoId'] ? datosLista['cantidad'] : +datos['CantidadTotal'] }}
+		</div>
+		<div class="col-6 border border-right border-left border-bottom p-2">
+			<strong>Referencia: </strong>
+			{{ datos['GrupoId'] ? datosLista['Referencia'] : datos['Referencia'] }}
+		</div>
+	</div>
 
-	<div id="listaHTML"></div>
+	<div class="m-3" id="listaHTML"></div>
 
 	<ion-fab vertical="bottom" horizontal="end" slot="fixed" id="btnSubmit" [hidden]="formulario">
 		<ion-fab-button (click)="submit()">

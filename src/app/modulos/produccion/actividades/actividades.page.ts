@@ -101,7 +101,6 @@ export class ActividadesPage implements OnInit, OnDestroy {
 				}
 			});
 		}
-
 		if (op['Ultimo'] == '1') {
 			buttons.push({
 				text: 'Entrega parcial',
@@ -115,19 +114,16 @@ export class ActividadesPage implements OnInit, OnDestroy {
 				}
 			});
 		}
-
 		buttons.push({
 			text: 'Eliminar',
 			icon: 'trash',
 			handler: () => this.peticionActionSheet('eliminar la actividad', [data], 'eliminarActividadOperario')
 		});
-
 		const actionSheet = await this.actionSheetController.create({
 			buttons
 		});
 		await actionSheet.present();
 		const { role } = await actionSheet.onDidDismiss();
-		console.log('onDidDismiss resolved with role', role);
 	}
 
 	async obtenerInformacion(event?, fecha?) {

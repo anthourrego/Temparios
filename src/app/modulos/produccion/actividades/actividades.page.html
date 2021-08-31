@@ -62,9 +62,11 @@
 						'content-eliminar' : op['eliminarMultiple']
 					}">
 					<div class="contenedor">
-						<ion-card-header class="ion-no-padding"
-							[ngClass]="{'opacity3' : searching && (idLogActividadUltimo == op['ActividadOperarioId'] && op['ActividadOperarioId'] != '0') || (idLogActividadUltimo == op['GrupoId'] && op['GrupoId'] != null)}">
-							<ion-item lines="none">
+						<ion-card-header class="ion-no-padding" [ngClass]="{
+							'opacity3' : searching && (idLogActividadUltimo == op['ActividadOperarioId'] && op['ActividadOperarioId'] != '0') || (idLogActividadUltimo == op['GrupoId'] && op['GrupoId'] != null)
+							, 'content-reproceso': op['AplicoListaChequeo'] > 0
+						}">
+							<ion-item lines="none" [ngClass]="{'content-reproceso': op['AplicoListaChequeo'] > 0}">
 								<ion-label class="ion-no-margin"
 									(click)="op['GrupoId'] ? accionBoton({accion: 'detalle', component: compoDetalle}, op) : null">
 									<h6>{{ op['Nombre'] }} {{ op['ListaChequeoId'] ? ' - Reproceso' : '' }}</h6>

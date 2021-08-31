@@ -13,6 +13,11 @@ ion-content {
 				ion-list {
 					padding-left: 10px;
 				}
+				.content-reproceso {
+					ion-item::part(native) {
+						background-color: #feffc8 !important;
+					}
+				}
 			}
 			.height-collapse {
 				height: calc(100vh - 274px) !important;

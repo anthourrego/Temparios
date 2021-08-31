@@ -68,6 +68,11 @@ ion-content {
 								}
 							}
 						}
+						.content-reproceso {
+							ion-item::part(native) {
+								background-color: #feffc8 !important;
+							}
+						}
 						.opacity3 {
 							opacity: 0.3 !important;
 						}

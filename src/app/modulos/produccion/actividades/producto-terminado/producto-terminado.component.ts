@@ -91,7 +91,6 @@ export class ProductoTerminadoComponent implements OnInit {
 		if (this.datos['GrupoId']) {
 			data['consumoGrupo'] = this.productosGrupo;
 		}
-		console.log("Data ", data);
 		this.actividadesService.informacion(data, 'CentrosProduccion/finalizarActividad').then(({ msg, valido, grupoElimino }) => {
 			this.cargadorService.ocultar();
 			if (!valido) {

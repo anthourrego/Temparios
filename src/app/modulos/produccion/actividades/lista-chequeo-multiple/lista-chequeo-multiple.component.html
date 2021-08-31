@@ -17,9 +17,10 @@
 			*ngFor="let item of arrGrupoLista; let pos = index;"
 			[ngStyle]="item['AplicoListaChequeo'] ? {'border-left': '4px solid var(--ion-color-success)'} : {}">
 			<ion-label>
-				<h3>{{item['Nombre']}}</h3>
-				<p>Orden: {{item['NumerOrden']}}</p>
-				<p>Ref: {{item['Referencia']}}</p>
+				<h3>{{ item['NombreProducto'] }}</h3>
+				<p>{{item['Nombre']}}</p>
+				<p>Orden: {{ item['NumerOrden'] }} - Ref: {{ item['Referencia'] }}</p>
+				<p>Cant: {{ +item['CantidadTotal'] }}</p>
 			</ion-label>
 		</ion-item>
 	</ion-list>

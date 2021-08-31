@@ -60,7 +60,7 @@
 			<div *ngIf="item['GrupoActividades']" class="collapse px-0" [id]="'collapse' + pos">
 				<ion-list>
 					<ion-item lines="none" *ngFor="let item of item['GrupoActividades']; let po = index">
-						<ion-label class="ion-margin-start sombra">
+						<ion-label class="ion-margin-start p-2 sombra">
 							<h2 class="ion-padding-start w-75">{{ item['Nombre'] }}</h2>
 							<p class="ion-padding-start">Ref: {{ item['Referencia'] }}</p>
 							<p class="numero-orden">Orden: {{ item['NumerOrden'] }}</p>

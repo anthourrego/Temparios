@@ -189,13 +189,12 @@ export class AgregarActividadesComponent implements OnInit {
 			maqInter: this.maquinariaActual
 		}
 		this.actividadesService.informacion(datos, 'CentrosProduccion/obtenerOrdenProduccion').then(resp => {
-			console.log("respuesta ", resp);
+			console.log("Respuesta ", resp);
 			if (!evento) {
 				this.infoActividades = [];
 			}
 			if (this.maquinariaActual && this.infoActividades[this.posicionAnterior]['collapse']) {
 				this.infoActividades[this.posicionAnterior]['actividades'] = this.infoActividades[this.posicionAnterior]['actividades'].concat(resp);
-
 				if (evento && evento.target) {
 					evento.target.complete();
 				}

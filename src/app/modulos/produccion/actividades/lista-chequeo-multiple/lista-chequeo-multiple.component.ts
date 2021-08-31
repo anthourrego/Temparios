@@ -1,7 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { ModalController } from '@ionic/angular';
 import { ListaChequeoService } from 'src/app/servicios/lista-chequeo.service';
-import { NotificacionesService } from 'src/app/servicios/notificaciones.service';
 import { ListaChequeoComponent } from '../lista-chequeo/lista-chequeo.component';
 
 @Component({
@@ -37,7 +36,6 @@ export class ListaChequeoMultipleComponent implements OnInit {
 		}
 		this.searching = true;
 		this.listaChequeoService.informacion(daticos, 'CentrosProduccion/obtenerGrupoListaChequeo').then(({ valido, datos, msg }) => {
-			console.log("datos ", datos, msg);
 			this.arrGrupoLista = datos;
 			this.mensaje = msg;
 			this.searching = false;
@@ -48,7 +46,6 @@ export class ListaChequeoMultipleComponent implements OnInit {
 	}
 
 	async itemSeleccionado(option, pos) {
-		console.log("OPcion ", option);
 		if (!option['AplicoListaChequeo']) {
 			const modal = await this.modalController.create({
 				component: ListaChequeoComponent
@@ -57,7 +54,6 @@ export class ListaChequeoMultipleComponent implements OnInit {
 			});
 			await modal.present();
 			modal.onWillDismiss().then(({ data, role }) => {
-				console.log("Data ", data);
 				if (data && data.listachequeo) {
 					this.arrGrupoLista[pos]['AplicoListaChequeo'] = true;
 				}
