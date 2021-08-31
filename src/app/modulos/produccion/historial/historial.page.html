@@ -15,7 +15,7 @@
 					<h2 class="ion-text-uppercase w-75">{{ item['Nombre'] }} {{ item['Tipo'] == 'REPROCESO' ? ' - ' +
 						item['Tipo'] : '' }}</h2>
 					<p *ngIf="item['Referencia']">Ref: {{ item['Referencia'] }}</p>
-					<p *ngIf="!item['GrupoId']" class="numero-orden">Orden: {{ item['NumerOrden'] }}</p>
+					<p *ngIf="!item['GrupoId'] && item['Tipo'] != 'INGRESO' && item['Tipo'] != 'SALIDA'" class="numero-orden">Orden: {{ item['NumerOrden'] }}</p>
 					<p>
 						<ion-grid class="pb-0">
 							<ion-row>
