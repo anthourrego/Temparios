@@ -80,7 +80,6 @@ export class ActividadesPage implements OnInit, OnDestroy {
 	async obtenerCentroProd(event) {
 		this.usuarioActual = await this.actividadesService.desencriptar(JSON.parse(await this.storage.get('usuario')));
 		this.dataCentroProduccion = await this.actividadesService.desencriptar(JSON.parse(await this.storage.get('centroProduccion')));
-		console.log("Centro prod ", this.dataCentroProduccion);
 		this.dataQuery = {
 			centroProd: this.dataCentroProduccion['CentroProduccion'],
 		}
@@ -134,7 +133,6 @@ export class ActividadesPage implements OnInit, OnDestroy {
 	async obtenerInformacion(event?, fecha?) {
 		this.searching = true;
 		this.actividadesService.informacion(this.dataQuery, 'CentrosProduccion/obtenerActividadesAsignadas').then((datos) => {
-			console.log("Datos ", datos);
 			if (datos) {
 				this.actividades = datos.datos;
 			}

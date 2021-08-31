@@ -12,9 +12,10 @@
 				[attr.aria-controls]="'collapse' + pos" [attr.data-bs-target]="'collapse' + pos"
 				[attr.data-bs-target]="'#collapse' + pos">
 				<ion-label [ngClass]="item['Tipo']" class="p-2 sombra">
-					<h2 class="ion-text-uppercase">{{ item['Nombre'] }} {{ item['Tipo'] == 'REPROCESO' ? ' - ' +
+					<h2 class="ion-text-uppercase w-75">{{ item['Nombre'] }} {{ item['Tipo'] == 'REPROCESO' ? ' - ' +
 						item['Tipo'] : '' }}</h2>
-					<p *ngIf="item['Referencia']">{{ item['Referencia'] }}</p>
+					<p *ngIf="item['Referencia']">Ref: {{ item['Referencia'] }}</p>
+					<p *ngIf="!item['GrupoId']" class="numero-orden">Orden: {{ item['NumerOrden'] }}</p>
 					<p>
 						<ion-grid class="pb-0">
 							<ion-row>
@@ -61,7 +62,8 @@
 					<ion-item lines="none" *ngFor="let item of item['GrupoActividades']; let po = index">
 						<ion-label class="ion-margin-start sombra">
 							<h2 class="ion-padding-start">{{ item['Nombre'] }}</h2>
-							<p class="ion-padding-start">Referencia: {{ item['Referencia'] }}</p>
+							<p class="ion-padding-start">Ref: {{ item['Referencia'] }}</p>
+							<p class="numero-orden">Orden: {{ item['NumerOrden'] }}</p>
 							<p>
 								<ion-grid class="pb-0">
 									<ion-row>
