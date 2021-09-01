@@ -62,6 +62,7 @@ export class ProductoTerminadoComponent implements OnInit {
 		this.searching = true;
 		this.actividadesService.informacion(info, 'CentrosProduccion/obtenerProductoTerminado').then(({ contMensaje, datos, consumoGrupo }) => {
 			this.productos = datos;
+			console.log("Datos ", datos);
 			this.mostrarMensajeAgrupada = (this.productos.length == contMensaje ? true : false);
 			if ((this.datos['GrupoId'] && this.mostrarMensajeAgrupada) || !this.productos.length) {
 				this.confirmar("¿Desea finalizar la actividad?");

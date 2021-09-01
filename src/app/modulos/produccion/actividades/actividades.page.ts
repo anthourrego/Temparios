@@ -129,6 +129,7 @@ export class ActividadesPage implements OnInit, OnDestroy {
 	async obtenerInformacion(event?, fecha?) {
 		this.searching = true;
 		this.actividadesService.informacion(this.dataQuery, 'CentrosProduccion/obtenerActividadesAsignadas').then((datos) => {
+			console.log("Actividade asignadas", datos);
 			if (datos) {
 				this.actividades = datos.datos;
 			}

@@ -13,5 +13,10 @@ ion-content {
                 }
             }
         }
+		.reproceso {
+			ion-item::part(native) {
+				background-color: #feffc8 !important;
+			}
+		}
     }
 }

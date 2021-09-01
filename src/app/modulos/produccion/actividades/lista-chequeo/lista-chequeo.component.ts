@@ -34,7 +34,8 @@ export class ListaChequeoComponent implements OnInit {
 	buscarListaChequeos() {
 		let data = {
 			headProdId: this.datos['HeadProdId'],
-			OrdeProdOperacionId: this.datos['OperacionId'],
+			OperacionId: this.datos['OperacionId'],
+			OrdeProdOperacionId: this.datos['OrdeProdOperacionId'],
 			grupo: this.datos['GrupoId']
 		};
 		this.searching = true;
@@ -245,7 +246,10 @@ export class ListaChequeoComponent implements OnInit {
 			, VIN: (this.datos['GrupoId'] ? this.datosLista['OrdeProdOperacionId'] : this.datos.OrdeProdOperacionId) //Orden de produccion
 			, proceso: this.datosLista['nombreActividad']
 			, OrdeProdId: (this.datos['GrupoId'] ? this.datosLista['OrdeProdId'] : this.datos.OrdeProdId)
-			//, cantReproceso: cantidad
+			, cantReproceso: cantidad
+			, cantidadTotal: this.datos['GrupoId'] ? this.datosLista['cantidad'] : +this.datos['CantidadTotal']
+			, centroProd: this.centroProduccion
+			, ultimo: this.datos['GrupoId'] ? this.datosLista['Ultimo'] : +this.datos['Ultimo']
 		};
 		this.listaChequeoService.informacion($DATA, 'ListaChequeo/Guardar').then((resp) => {
 			if (resp.info == 1) {

@@ -18,9 +18,10 @@
 
 	<ion-list class="ion-no-padding" *ngIf="detalleActividad.length">
 		<ion-item-sliding class="ion-margin" (click)="slidingDelInvitado('sliding' + pos)" [id]="'sliding' + pos"
-			*ngFor="let item of detalleActividad; let pos = index;">
+			*ngFor="let item of detalleActividad; let pos = index;" [ngClass]="{'reproceso': item['ListaChequeoId']}">
 			<ion-item lines="none"
-				[ngStyle]=" item['EstadoOperacion'] == 'FI' ? {'border-left': '4px solid var(--ion-color-success)'} : {}">
+				[ngStyle]=" item['AplicoListaChequeo'] ? {'border-left': '4px solid var(--ion-color-success)'} : {}">
+				<!-- [ngStyle]=" item['EstadoOperacion'] == 'FI' ? {'border-left': '4px solid var(--ion-color-success)'} : {}" -->
 				<ion-label>
 					<h3>{{item['NombreProd']}}</h3>
 					<p>{{ item['Nombre'] }}</p>

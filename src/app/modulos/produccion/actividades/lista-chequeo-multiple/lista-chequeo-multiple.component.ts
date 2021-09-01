@@ -50,7 +50,7 @@ export class ListaChequeoMultipleComponent implements OnInit {
 			const modal = await this.modalController.create({
 				component: ListaChequeoComponent
 				, backdropDismiss: false
-				, componentProps: { datos: option }
+				, componentProps: { datos: option, centroProduccion: this.centroProduccion }
 			});
 			await modal.present();
 			modal.onWillDismiss().then(({ data, role }) => {
