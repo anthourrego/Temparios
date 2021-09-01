@@ -186,50 +186,7 @@ export class ListaChequeoComponent implements OnInit {
 		return resultado;
 	};
 
-	confirmarCantidadLista() {
-		let cantidadValida = Number(this.datos.CantidadTotal);
-		if (this.datos['GrupoId']) {
-			cantidadValida = Number(this.datosLista['cantidad']);
-		}
-		let botones = [{
-			text: 'Aceptar',
-			handler: (data) => {
-				let cantidad = data.cantidad == '' ? 0 : data.cantidad;
-				cantidad = Number(cantidad);
-				if (cantidad > 0) {
-					if (cantidad <= cantidadValida) {
-						this.submit(cantidad);
-					} else {
-						this.notificacionesService.notificacion(`Ha superado la cantidad maxima que es ${cantidadValida}`);
-						return false;
-					}
-				} else {
-					this.notificacionesService.notificacion("La cantidad debe ser mayor a 0.");
-					return false;
-				}
-			}
-		}, {
-			text: 'Cancelar',
-			role: 'cancel'
-		}];
-		this.notificacionesService.alerta(
-			`¿Que cantidad desea confirmar? <br> Cantidad máxima ${cantidadValida}`
-			, 'Cantidad'
-			, ['alerta-input']
-			, botones
-			, [{ min: 0, max: cantidadValida, type: "number", name: "cantidad" }]
-		);
-	}
-
 	async submit(cantidad?) {
-		this.searching = true;
-		var form2 = document.getElementById("formElements");
-		var $DATA2 = {};
-		var data2 = {};
-		data2 = this.cargarDatos({}, form2['elements']);
-		$DATA2 = data2;
-		var date = new Date();
-		var fecha = date.getFullYear() + "-" + date.getDate() + "-" + (date.getMonth() + 1) + " " + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
 		var $LCOperacion = [];
 		var elementos = document.querySelectorAll('input[LCOperacion][type="radio"]:checked, input[LCOperacion][type="checkbox"]:checked, option[LCOperacion]:checked');
 		for (var i = 0; i < elementos.length; i++) {
@@ -237,6 +194,53 @@ export class ListaChequeoComponent implements OnInit {
 				$LCOperacion = $LCOperacion.concat(JSON.parse(elementos[i].getAttribute('LCOperacion')));
 			}
 		}
+		if ($LCOperacion.length) {
+			let cantidadValida = Number(this.datos.CantidadTotal);
+			if (this.datos['GrupoId']) {
+				cantidadValida = Number(this.datosLista['cantidad']);
+			}
+			let botones = [{
+				text: 'Aceptar',
+				handler: (data) => {
+					let cantidad = data.cantidad == '' ? 0 : data.cantidad;
+					cantidad = Number(cantidad);
+					if (cantidad > 0) {
+						if (cantidad <= cantidadValida) {
+							this.guardarInformacion($LCOperacion, cantidad);
+						} else {
+							this.notificacionesService.notificacion(`Ha superado la cantidad maxima que es ${cantidadValida}`);
+							return false;
+						}
+					} else {
+						this.notificacionesService.notificacion("La cantidad debe ser mayor a 0.");
+						return false;
+					}
+				}
+			}, {
+				text: 'Cancelar',
+				role: 'cancel'
+			}];
+			this.notificacionesService.alerta(
+				`¿Que cantidad desea confirmar? <br> Cantidad máxima ${cantidadValida}`
+				, 'Cantidad'
+				, ['alerta-input']
+				, botones
+				, [{ min: 0, max: cantidadValida, type: "number", name: "cantidad" }]
+			);
+		} else {
+			this.guardarInformacion($LCOperacion, cantidad);
+		}
+	}
+
+	guardarInformacion($LCOperacion, cantidad) {
+		var date = new Date();
+		var fecha = date.getFullYear() + "-" + date.getDate() + "-" + (date.getMonth() + 1) + " " + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
+		this.searching = true;
+		var form2 = document.getElementById("formElements");
+		var $DATA2 = {};
+		var data2 = {};
+		data2 = this.cargarDatos({}, form2['elements']);
+		$DATA2 = data2;
 		var $DATA: any = {
 			lista: JSON.stringify($DATA2)
 			, LoteProductoId: ''
@@ -264,4 +268,5 @@ export class ListaChequeoComponent implements OnInit {
 			this.searching = false;
 		});
 	}
+
 }

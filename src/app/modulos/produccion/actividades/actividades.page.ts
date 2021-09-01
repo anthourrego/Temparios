@@ -170,7 +170,9 @@ export class ActividadesPage implements OnInit, OnDestroy {
 		modal.onWillDismiss().then(({ data, role }) => {
 			if (data) {
 				if (data.listachequeo) {
-					this.actividades[pos]['AplicoListaChequeo'] = true;
+					if (this.actividades[pos]) {
+						this.actividades[pos]['AplicoListaChequeo'] = true;
+					}
 					this.accionBoton({ accion: 'terminado', component: ProductoTerminadoComponent }, datos);
 					if (data.listar) {
 						this.obtenerInformacion(false);
@@ -287,16 +289,16 @@ export class ActividadesPage implements OnInit, OnDestroy {
 		}
 	}
 
-	startCount(datos) {
+	startCount(datos, pos) {
 		this.clickPresionado = !this.clickPresionado;
 		this.timeoutHandler = setTimeout(() => {
 			if (this.clickPresionado) {
-				this.alertaAgregarCantidad(datos);
+				this.alertaAgregarCantidad(datos, pos);
 			}
 		}, 400);
 	}
 
-	alertaAgregarCantidad(datos) {
+	alertaAgregarCantidad(datos, pos) {
 		let cantidadValida = Number(datos.CantidadTotal) - Number(datos.CantiRecib);
 		let botones = [{
 			text: 'Aceptar',
@@ -305,7 +307,7 @@ export class ActividadesPage implements OnInit, OnDestroy {
 				cantidad = Number(cantidad);
 				if (cantidad > 0) {
 					if (cantidad <= cantidadValida) {
-						this.agregarTiempoActividad(datos, cantidad);
+						this.agregarTiempoActividad(datos, cantidad, pos);
 					} else {
 						this.notificacionesService.notificacion(`Ha superado la cantidad maxima que es ${cantidadValida}`);
 						return false;
