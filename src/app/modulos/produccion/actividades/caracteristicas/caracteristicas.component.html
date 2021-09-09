@@ -1,0 +1,33 @@
+<ion-header class="ion-no-border">
+	<ion-toolbar color="ligth">
+		<ion-title color="dark" class="ion-text-center">Características</ion-title>
+		<ion-buttons slot="end" (click)="cerrarModal()">
+			<ion-icon color="dark" slot='icon-only' size='large' name='close-outline'>
+			</ion-icon>
+		</ion-buttons>
+	</ion-toolbar>
+</ion-header>
+
+<ion-progress-bar *ngIf="searching" type="indeterminate"></ion-progress-bar>
+
+<ion-content color="gray">
+  <ion-list>
+    <ion-item-group *ngFor="let llave of caracteristicas">
+			<ion-item-divider sticky="true" color="gray">
+				<ion-label color="dark">
+          {{ llave['NombreProducto'] && llave['NombreProducto'] != '' ? llave['NombreProducto'] : '' }} <br>
+          {{ llave['Nombre'] && llave['Nombre'] != '' ? llave['Nombre'] + ' - ' : '' }} {{ llave['Referencia'] && llave['Referencia'] != '' ? llave['Referencia'] : '' }} <br>
+          Orden: {{ llave['NumerOrden'] && llave['NumerOrden'] != '' ? llave['NumerOrden'] : '' }}
+				</ion-label>
+			</ion-item-divider>
+			<ion-item lines="none" *ngFor="let item of llave['caracteristicas']">
+				<ion-label>
+					<h3 class="my-0"><strong>{{ item['NombrCampo'] }}: </strong> {{ item['NombrCarac'] }}</h3>
+				</ion-label>
+			</ion-item>
+		</ion-item-group>
+		<ion-item lines="none" *ngIf="caracteristicas.length == 0 && !searching">
+			<ion-text class="w-100 ion-text-center">No se encontraron registros</ion-text>
+		</ion-item>
+  </ion-list>
+</ion-content>

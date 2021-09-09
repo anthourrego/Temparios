@@ -14,6 +14,7 @@ import { ProductoTerminadoComponent } from './producto-terminado/producto-termin
 import { takeUntil } from 'rxjs/operators';
 import { ListaChequeoMultipleComponent } from './lista-chequeo-multiple/lista-chequeo-multiple.component';
 import { ListaChequeoComponent } from './lista-chequeo/lista-chequeo.component';
+import { CaracteristicasComponent } from './caracteristicas/caracteristicas.component';
 
 @Component({
 	selector: 'app-actividades',
@@ -33,6 +34,7 @@ export class ActividadesPage implements OnInit, OnDestroy {
 		, { icono: 'close-circle-outline', color: 'danger', accion: 'eliminar-multiple' }
 	];
 	compoDetalle = DetalleActividadComponent;
+	compoCaracteristicas = CaracteristicasComponent;
 	subject = new Subject();
 	tiempo: string = '';
 	dataQuery: object = {};
@@ -114,6 +116,15 @@ export class ActividadesPage implements OnInit, OnDestroy {
 				}
 			});
 		}
+
+		if ((op['PedidoId'] > 0 && op['tipoPedido'] == 'C') || (op['PedidoId'] > 0 && op['GrupoId'] != null)) {
+			buttons.push({
+				text: 'Caracteristicas',
+				icon: 'list-circle-outline',
+				handler: () => this.accionBoton({ accion: 'caracteristicas', component: this.compoCaracteristicas }, op)
+			});
+		}
+
 		buttons.push({
 			text: 'Eliminar',
 			icon: 'trash',
@@ -129,7 +140,6 @@ export class ActividadesPage implements OnInit, OnDestroy {
 	async obtenerInformacion(event?, fecha?) {
 		this.searching = true;
 		this.actividadesService.informacion(this.dataQuery, 'CentrosProduccion/obtenerActividadesAsignadas').then((datos) => {
-			console.log("Actividade asignadas", datos);
 			if (datos) {
 				this.actividades = datos.datos;
 			}
@@ -155,7 +165,7 @@ export class ActividadesPage implements OnInit, OnDestroy {
 			centroProduccion: this.dataQuery['centroProd'],
 			nombreCp: this.dataCentroProduccion['nombre']
 		};
-		if (datos && (op['accion'] == 'detalle' || op['accion'] == 'terminado' || op['accion'] == 'lista-chequeo' || op['accion'] == 'lista-chequeo-multiple')) {
+		if (datos && (op['accion'] == 'detalle' || op['accion'] == 'terminado' || op['accion'] == 'lista-chequeo' || op['accion'] == 'lista-chequeo-multiple') || op['accion'] == 'caracteristicas') {
 			if (datos['GrupoId']) {
 				componentProps['idGrupo'] = datos['GrupoId']
 			}

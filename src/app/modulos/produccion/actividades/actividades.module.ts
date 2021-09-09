@@ -12,6 +12,7 @@ import { ProductoTerminadoComponent } from './producto-terminado/producto-termin
 import { NgxTimerModule } from 'ngx-timer';
 import { ListaChequeoComponent } from './lista-chequeo/lista-chequeo.component';
 import { ListaChequeoMultipleComponent } from './lista-chequeo-multiple/lista-chequeo-multiple.component';
+import { CaracteristicasComponent } from './caracteristicas/caracteristicas.component';
 
 @NgModule({
 	imports: [
@@ -27,6 +28,7 @@ import { ListaChequeoMultipleComponent } from './lista-chequeo-multiple/lista-ch
 		, AgregarActividadesComponent
 		, ParadasComponent
 		, DetalleActividadComponent
+		, CaracteristicasComponent	
 		, ProductoTerminadoComponent
 		, ListaChequeoComponent
 		, ListaChequeoMultipleComponent
