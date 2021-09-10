@@ -59,6 +59,7 @@
 					[ngClass]="{
 						'cargador': (idLogActividadSearch == op['ActividadOperarioId'] && op['ActividadOperarioId'] != '0') || (idLogActividadSearch == op['GrupoId'] && op['GrupoId'] != null), 
 						'content-activo' : (idLogActividadUltimo == op['ActividadOperarioId'] && op['ActividadOperarioId'] != '0') || (idLogActividadUltimo == op['GrupoId'] && op['GrupoId'] != null),
+						'content-pausa' : op['GrupoId'] != null && op['Pausa'],
 						'content-eliminar' : op['eliminarMultiple']
 					}">
 					<div class="contenedor">

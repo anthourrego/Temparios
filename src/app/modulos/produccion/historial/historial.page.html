@@ -11,11 +11,13 @@
 			<ion-item lines="none" (click)="opcionCollapse(pos)" data-bs-toggle="collapse" aria-expanded="false"
 				[attr.aria-controls]="'collapse' + pos" [attr.data-bs-target]="'collapse' + pos"
 				[attr.data-bs-target]="'#collapse' + pos">
-				<ion-label [ngClass]="item['Tipo']" class="p-2 sombra">
-					<h2 class="ion-text-uppercase w-75">{{ item['Nombre'] }} {{ item['Tipo'] == 'REPROCESO' ? ' - ' +
+				<ion-label [ngClass]="item['Tipo']" class="p-2 sombra"
+					[ngClass]="{'border-pausa': item['Tipo'] == 'PAUSA'}">
+					<h2 class="ion-text-uppercase w-75">{{ item['Nombre'] }} {{ (item['Tipo'] == 'REPROCESO' || item['Tipo'] == 'PAUSA') ? ' - ' +
 						item['Tipo'] : '' }}</h2>
 					<p *ngIf="item['Referencia']">Ref: {{ item['Referencia'] }}</p>
-					<p *ngIf="!item['GrupoId'] && item['Tipo'] != 'INGRESO' && item['Tipo'] != 'SALIDA'" class="numero-orden">Orden: {{ item['NumerOrden'] }}</p>
+					<p *ngIf="!item['GrupoId'] && item['Tipo'] != 'INGRESO' && item['Tipo'] != 'SALIDA'"
+						class="numero-orden">Orden: {{ item['NumerOrden'] }}</p>
 					<p>
 						<ion-grid class="pb-0">
 							<ion-row>
@@ -36,7 +38,7 @@
 								<ion-col [size]="item['Tipo'] == 'OPERACION' ? '3' : '4'"
 									*ngIf="item['Tipo'] != 'INGRESO' && item['Tipo'] != 'SALIDA'">
 									<ion-label class="ion-text-center bg-transparent">
-										<p>{{ item['Tipo'] == 'OPERACION' ? item['TiempoHora2'] : item['TiempoHora1'] }}
+										<p>{{ (item['Tipo'] == 'OPERACION' || item['Tipo'] == 'PAUSA') ? item['TiempoHora2'] : item['TiempoHora1'] }}
 										</p>
 										<strong>Tiempo</strong>
 									</ion-label>
@@ -85,7 +87,7 @@
 											*ngIf="item['Tipo'] != 'INGRESO' && item['Tipo'] != 'SALIDA'">
 											<ion-label class="ion-text-center bg-transparent">
 												<p>
-													{{ item['Tipo'] == 'OPERACION' ? item['TiempoHora2'] :
+													{{ (item['Tipo'] == 'PAUSA' || item['Tipo'] == 'OPERACION') ? item['TiempoHora2'] :
 													item['TiempoHora1'] }}
 												</p>
 												<strong>Tiempo</strong>

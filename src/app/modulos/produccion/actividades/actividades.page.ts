@@ -102,6 +102,22 @@ export class ActividadesPage implements OnInit, OnDestroy {
 					this.accionBoton({ accion: 'detalle', component: this.compoDetalle }, op);
 				}
 			});
+			if (+op['CantiRecib'] < +op['CantidadTotal']) {
+				buttons.push({
+					text: 'Pausar',
+					icon: 'pause-outline',
+					handler: () => {
+						let data = {
+							OrdeProdOperacionId: op['OrdeProdOperacionId'],
+							GrupoId: op['GrupoId'],
+							Cantidad: 0,
+							Tipo: 'PAUSA',
+							centroProd: this.dataQuery['centroProd']
+						}
+						this.peticionActionSheet('pausar la actividad', data, 'agregarLogActividad')
+					}
+				});
+			}
 		}
 		if (op['Ultimo'] == '1') {
 			buttons.push({
@@ -116,7 +132,6 @@ export class ActividadesPage implements OnInit, OnDestroy {
 				}
 			});
 		}
-
 		if ((op['PedidoId'] > 0 && op['tipoPedido'] == 'C') || (op['PedidoId'] > 0 && op['GrupoId'] != null)) {
 			buttons.push({
 				text: 'Caracteristicas',
@@ -124,7 +139,6 @@ export class ActividadesPage implements OnInit, OnDestroy {
 				handler: () => this.accionBoton({ accion: 'caracteristicas', component: this.compoCaracteristicas }, op)
 			});
 		}
-
 		buttons.push({
 			text: 'Eliminar',
 			icon: 'trash',
@@ -380,31 +394,52 @@ export class ActividadesPage implements OnInit, OnDestroy {
 	}
 
 	ordenOperacionClick(op, pos) {
-		if (+op['CantiRecib'] < +op['CantidadTotal']) {
-			this.agregarTiempoActividad(op, null, pos);
+		if (op['GrupoId'] != null && op['Pausa'] > 0 && +op['CantiRecib'] < +op['CantidadTotal']) {
+			this.reanudarOperacionPausada(op, pos);
 		} else {
-			if (op['GrupoId'] == null) {
-				if (op['AplicaListaChequeo']) {
-					if (op['AplicoListaChequeo']) {
-						this.accionBoton({ accion: 'terminado', component: ProductoTerminadoComponent }, op);
+			if (+op['CantiRecib'] < +op['CantidadTotal']) {
+				this.agregarTiempoActividad(op, null, pos);
+			} else {
+				if (op['GrupoId'] == null) {
+					if (op['AplicaListaChequeo']) {
+						if (op['AplicoListaChequeo']) {
+							this.accionBoton({ accion: 'terminado', component: ProductoTerminadoComponent }, op);
+						} else {
+							this.accionBoton({ accion: 'lista-chequeo', component: ListaChequeoComponent }, op, pos);
+						}
 					} else {
-						this.accionBoton({ accion: 'lista-chequeo', component: ListaChequeoComponent }, op, pos);
+						this.accionBoton({ accion: 'terminado', component: ProductoTerminadoComponent }, op);
 					}
 				} else {
-					this.accionBoton({ accion: 'terminado', component: ProductoTerminadoComponent }, op);
-				}
-			} else {
-				if (op['AplicaListaChequeo'] == null) {
-					this.accionBoton({ accion: 'terminado', component: ProductoTerminadoComponent }, op);
-				} else {
-					if (op['AplicaListaChequeo'] == 1) {
-						this.accionBoton({ accion: 'lista-chequeo', component: ListaChequeoComponent }, op, pos);
+					if (op['AplicaListaChequeo'] == null) {
+						this.accionBoton({ accion: 'terminado', component: ProductoTerminadoComponent }, op);
 					} else {
-						this.accionBoton({ accion: 'lista-chequeo-multiple', component: ListaChequeoMultipleComponent }, op, pos);
+						if (op['AplicaListaChequeo'] == 1) {
+							this.accionBoton({ accion: 'lista-chequeo', component: ListaChequeoComponent }, op, pos);
+						} else {
+							this.accionBoton({ accion: 'lista-chequeo-multiple', component: ListaChequeoMultipleComponent }, op, pos);
+						}
 					}
 				}
 			}
 		}
+	}
+
+	reanudarOperacionPausada(op, pos) {
+		let botones = [{
+			text: 'Aceptar',
+			handler: (data) => {
+				if (this.actividades[pos]) {
+					this.actividades[pos]['Pausa'] = 0;
+				}
+				this.ordenOperacionClick(op, pos);
+			}
+		}, {
+			text: 'Cancelar',
+			role: 'cancel',
+			handler: () => console
+		}]
+		this.notificacionesService.alerta(`¿Desea reanudar la actividad?`, 'Reanudar actividad', [], botones);
 	}
 
 }
