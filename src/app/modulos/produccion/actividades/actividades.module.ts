@@ -1,6 +1,6 @@
 import { NgModule, NO_ERRORS_SCHEMA } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 import { ActividadesPageRoutingModule } from './actividades-routing.module';
 import { ActividadesPage } from './actividades.page';
@@ -13,6 +13,9 @@ import { NgxTimerModule } from 'ngx-timer';
 import { ListaChequeoComponent } from './lista-chequeo/lista-chequeo.component';
 import { ListaChequeoMultipleComponent } from './lista-chequeo-multiple/lista-chequeo-multiple.component';
 import { CaracteristicasComponent } from './caracteristicas/caracteristicas.component';
+import { RxReactiveFormsModule } from '@rxweb/reactive-form-validators';
+import { DescargueAlmacenComponent } from './producto-terminado/descargue-almacen/descargue-almacen.component';
+import { DescargueLoteComponent } from './producto-terminado/descargue-lote/descargue-lote.component';
 
 @NgModule({
 	imports: [
@@ -22,16 +25,20 @@ import { CaracteristicasComponent } from './caracteristicas/caracteristicas.comp
 		, ActividadesPageRoutingModule
 		, PipesModule
 		, NgxTimerModule
+		, RxReactiveFormsModule
+		, ReactiveFormsModule
 	],
 	declarations: [
 		ActividadesPage
 		, AgregarActividadesComponent
 		, ParadasComponent
 		, DetalleActividadComponent
-		, CaracteristicasComponent	
+		, CaracteristicasComponent
 		, ProductoTerminadoComponent
 		, ListaChequeoComponent
 		, ListaChequeoMultipleComponent
+		, DescargueAlmacenComponent
+		, DescargueLoteComponent
 	],
 	providers: [],
 	schemas: [NO_ERRORS_SCHEMA]

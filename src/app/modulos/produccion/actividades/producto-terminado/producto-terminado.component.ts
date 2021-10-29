@@ -18,12 +18,13 @@ export class ProductoTerminadoComponent implements OnInit {
 	searching: boolean = true;
 	mostrarMensajeAgrupada: boolean = false;
 	productosGrupo: Array<object> = [];
+	productoInvalido: boolean = false;
 
 	constructor(
 		private modalController: ModalController,
 		private actividadesService: ActividadesService,
 		private notificacionesService: NotificacionesService,
-		private cargadorService: CargadorService
+		private cargadorService: CargadorService,
 	) { }
 
 	ngOnInit() {
@@ -61,8 +62,12 @@ export class ProductoTerminadoComponent implements OnInit {
 		}
 		this.searching = true;
 		this.actividadesService.informacion(info, 'CentrosProduccion/obtenerProductoTerminado').then(({ contMensaje, datos, consumoGrupo }) => {
+			console.log(consumoGrupo);
 			this.productos = datos;
-			console.log("Datos ", datos);
+			console.log(this.productos);
+			this.productos.forEach(it => {
+				if (it['ManejaLotes'] == 'S') it['formValido'] = false;
+			});
 			this.mostrarMensajeAgrupada = (this.productos.length == contMensaje ? true : false);
 			if ((this.datos['GrupoId'] && this.mostrarMensajeAgrupada) || !this.productos.length) {
 				this.confirmar("¿Desea finalizar la actividad?");
@@ -80,8 +85,13 @@ export class ProductoTerminadoComponent implements OnInit {
 	}
 
 	finalizarActividades() {
+		let actFinal = this.productos.map(op => {
+			let obj = Object.assign({}, op);
+			delete obj['form'];
+			return obj;
+		});
 		let data = {
-			actFinal: this.productos
+			actFinal: actFinal
 			, OrdeProdOperacionId: this.datos['OrdeProdOperacionId']
 			, ordeprodid: this.datos['OrdeProdId']
 			, NumerOrden: this.datos['NumerOrden']
@@ -90,9 +100,16 @@ export class ProductoTerminadoComponent implements OnInit {
 			, Ultimo: this.datos['Ultimo']
 		}
 		if (this.datos['GrupoId']) {
-			data['consumoGrupo'] = this.productosGrupo;
+			let consumoGrupo = this.productosGrupo.map(op => {
+				let obj2 = Object.assign({}, op);
+				delete obj2['form'];
+				return obj2;
+			});
+			data['consumoGrupo'] = consumoGrupo;
 		}
-		this.actividadesService.informacion(data, 'CentrosProduccion/finalizarActividad').then(({ msg, valido, grupoElimino }) => {
+		console.log(data);
+		 this.actividadesService.informacion(data, 'CentrosProduccion/finalizarActividad').then(({ msg, valido, grupoElimino }) => {
+			 console.log({ msg, valido, grupoElimino });
 			this.cargadorService.ocultar();
 			if (!valido) {
 				this.notificacionesService.notificacion(msg);
@@ -107,7 +124,21 @@ export class ProductoTerminadoComponent implements OnInit {
 			console.error(error);
 			this.cargadorService.ocultar();
 			this.searching = false;
-		});
+		}); 
+	}
+
+	validarBoton({ tipo, valor, pos }) {
+		if (this.datos['GrupoId']) {
+			if (tipo == "form") {
+				this.productosGrupo[pos]['formValido'] = valor;
+				this.productoInvalido = !this.productosGrupo.find(op => op['ManejaLotes'] == 'S' && !op['formValido']);
+			}
+		} else {
+			if (tipo == "form") {
+				this.productos[pos]['formValido'] = valor;
+				this.productoInvalido = !this.productos.find(op => op['ManejaLotes'] == 'S' && !op['formValido']);
+			}
+		}
 	}
 
 }

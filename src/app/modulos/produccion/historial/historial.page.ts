@@ -1,6 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { IonInfiniteScroll, ModalController } from '@ionic/angular';
-import * as moment from 'moment';
 import { HistorialService } from '../../../servicios/historial.service';
 import { FiltrosHistorialComponent } from './filtros-historial/filtros-historial.component';
 

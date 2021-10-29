@@ -2,7 +2,8 @@ ion-content {
 	ion-list {
 		ion-item {
 			ion-label {
-				max-width: unset;
+				min-width: 100%;
+				pointer-events: unset !important;
 				p {
 					ion-item {
 						ion-label {

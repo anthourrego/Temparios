@@ -10,10 +10,13 @@
 
 <ion-toolbar>
 	<ion-segment class="border" mode="md" (ionChange)="cambioSegmento($event)" [(ngModel)]="segmento">
-		<ion-segment-button value="0" [disabled]="segmento == 1 && searching">
+		<ion-segment-button value="0" [disabled]="segmento != 0 && searching">
 			<ion-label>Orden</ion-label>
 		</ion-segment-button>
-		<ion-segment-button value="1" [disabled]="segmento == 0 && searching">
+		<ion-segment-button value="3" [disabled]="segmento != 3 && searching">
+			<ion-label>O/M</ion-label>
+		</ion-segment-button>
+		<ion-segment-button value="1" [disabled]="segmento != 1 && searching">
 			<ion-label>Maquinaria</ion-label>
 		</ion-segment-button>
 	</ion-segment>
@@ -23,15 +26,11 @@
 
 <div class="d-flex align-items-center collapsed" data-bs-toggle="collapse" aria-expanded="false"
 	aria-controls="collSearch" data-bs-target="collSearch" data-bs-target="#collSearch">
-	<ion-searchbar #inputBuscar clearIcon="close-sharp" [enterkeyhint]="'search'"
-		(keyup.enter)="buscarFiltro(inputBuscar)"
-		[placeholder]="segmento == 1 ? (posicionAnterior ? 'Buscar maquinaria' : 'Buscar orden') : 'Buscar orden'">
-	</ion-searchbar>
+	<ion-searchbar #inputBuscar clearIcon="close-sharp" [enterkeyhint]="'search'" (keyup.enter)="buscarFiltro(inputBuscar)" [placeholder]="segmento == 1 ? (posicionAnterior ? 'Buscar maquinaria' : 'Buscar orden') : 'Buscar orden'"></ion-searchbar>
 	<!-- <ion-button (click)="collapseMultiple = !collapseMultiple" color="gray">
 		<ion-icon [name]="!collapseMultiple ? 'arrow-down-outline' : 'arrow-up-outline'"></ion-icon>
 	</ion-button> -->
-	<ion-checkbox class="ion-margin" (ionChange)="checkMultiples($event)" color="success"
-		[(ngModel)]="seleccionMultiple"></ion-checkbox>
+	<ion-checkbox class="ion-margin" (ionChange)="checkMultiples($event)" color="success" [(ngModel)]="seleccionMultiple"></ion-checkbox>
 </div>
 
 <ion-content color="gray">
@@ -48,34 +47,28 @@
 	<ion-list *ngIf="infoActividades.length && !searching && segmento == 0">
 		<div *ngFor="let it of infoActividades; let pos = index">
 			<ion-item-divider [sticky]="it['collapse']" [ngStyle]="{'top': '-2px'}">
-				<ion-item class="item-collapse w-100" lines="none" (click)="opcionCollapse(pos, null)"
-					data-bs-toggle="collapse" aria-expanded="false" [attr.aria-controls]="'collapse' + pos"
-					[attr.data-bs-target]="'collapse' + pos" [attr.data-bs-target]="'#collapse' + pos">
+				<ion-item class="item-collapse w-100" lines="none" (click)="opcionCollapse(pos, null)" data-bs-toggle="collapse" aria-expanded="false" [attr.aria-controls]="'collapse' + pos" [attr.data-bs-target]="'collapse' + pos" [attr.data-bs-target]="'#collapse' + pos">
 					<ion-avatar>
-						<img class="rounded-circle"
-							[src]="it['Foto'] ? codeBase64 + it['Foto'] : '../../../../../assets/images/nofoto.png'" />
+						<img class="rounded-circle" [src]="it['Foto'] ? codeBase64 + it['Foto'] : '../../../../../assets/images/nofoto.png'" />
 					</ion-avatar>
 					<ion-label>
-						{{ it['NombreProducto'] }}
-						<p>Ref: {{ it['Referencia'] }} | Orden: {{ it['NumerOrden'] }} | Cantidad: {{ +it['Cantidad'] }}
-						</p>
+						<!--{{ it['NombreProducto'] }}-->
+						<p class="caracteristicas">Ref: {{ it['Referencia'] }} | Orden: {{ it['NumerOrden'] }} | Cantidad: {{ +it['Cantidad'] }}</p>
+						<p class="caracteristicas">{{ it['caracteristicaWeb'] }}</p>
 					</ion-label>
-					<ion-icon color="dark" slot="end"
-						[name]="it['collapse'] ? 'chevron-up-outline' : 'chevron-down-outline'"></ion-icon>
+					<ion-icon color="dark" slot="end" [name]="it['collapse'] ? 'chevron-up-outline' : 'chevron-down-outline'"></ion-icon>
 				</ion-item>
 			</ion-item-divider>
 			<div class="collapse" [id]="'collapse' + pos">
 				<ion-list>
-					<div *ngFor="let item of it['actividades']; let po = index"
-						[ngClass]="{'content-reproceso' : item['ListaChequeoId']}">
+					<div *ngFor="let item of it['actividades']; let po = index" [ngClass]="{'content-reproceso' : item['ListaChequeoId']}">
 						<ion-item lines="inset">
 							<ion-label>
 								<h2>{{ item['Nombre'] }}</h2>
 								<p>Estado: {{ item['Estado'] }}</p>
 								<p>Cantidad: {{ item['CantiRecib'] ? +item['CantiRecib'] : 0}}</p>
 							</ion-label>
-							<ion-checkbox [id]="'check' + pos + po" [checked]="item['checked']"
-								(ionChange)="opcionCheck($event, pos, po, ('check' + pos + po))">
+							<ion-checkbox [id]="'check' + pos + po" [checked]="item['checked']" (ionChange)="opcionCheck($event, pos, po, ('check' + pos + po))">
 							</ion-checkbox>
 						</ion-item>
 					</div>
@@ -85,38 +78,28 @@
 	</ion-list>
 
 	<ion-list *ngIf="infoActividades.length && !searching && segmento == 1" class="h-100">
-		<div *ngFor="let it of infoActividades; let pos = index" class="div-maquinas"
-			[ngClass]="{'list-maquinas' : collapseAbierto && pos == posicionAnterior}">
-			<ion-item-divider [sticky]="it['collapse']" [ngStyle]="{'top': '-2px'}"
-				[ngClass]="{'sombra' : collapseAbierto && pos == posicionAnterior}">
-				<ion-item *ngIf="it['actividades']" class="item-collapse w-100" lines="full"
-					(click)="opcionCollapse(pos, it['MaquinariaId'])" data-bs-toggle="collapse" lines="none"
-					aria-expanded="false" [attr.aria-controls]="'collapse' + pos"
-					[attr.data-bs-target]="'collapse' + pos" [attr.data-bs-target]="'#collapse' + pos"
-					[ngClass]="{'d-none' : collapseAbierto && pos != posicionAnterior}">
+		<div *ngFor="let it of infoActividades; let pos = index" class="div-maquinas" [ngClass]="{'list-maquinas' : collapseAbierto && pos == posicionAnterior}">
+			<ion-item-divider [sticky]="it['collapse']" [ngStyle]="{'top': '-2px'}" [ngClass]="{'sombra' : collapseAbierto && pos == posicionAnterior}">
+				<ion-item *ngIf="it['actividades']" class="item-collapse w-100" lines="full" (click)="opcionCollapse(pos, it['MaquinariaId'])" data-bs-toggle="collapse" lines="none" aria-expanded="false" [attr.aria-controls]="'collapse' + pos" [attr.data-bs-target]="'collapse' + pos" [attr.data-bs-target]="'#collapse' + pos" [ngClass]="{'d-none' : collapseAbierto && pos != posicionAnterior}">
 					<ion-label>
 						{{ it['Nombre'] }}
 					</ion-label>
-					<ion-icon color="dark" slot="end"
-						[name]="it['collapse'] ? 'chevron-up-outline' : 'chevron-down-outline'"></ion-icon>
+					<ion-icon color="dark" slot="end" [name]="it['collapse'] ? 'chevron-up-outline' : 'chevron-down-outline'"></ion-icon>
 				</ion-item>
 			</ion-item-divider>
-			<ion-content class="collapse collapse-maquinas" [id]="'collapse' + pos"
-				[ngClass]="{'height-collapse show' : collapseAbierto && pos == posicionAnterior}">
+			<ion-content class="collapse collapse-maquinas" [id]="'collapse' + pos" [ngClass]="{'height-collapse show' : collapseAbierto && pos == posicionAnterior}">
 				<ion-list>
-					<div *ngFor="let item of it['actividades']; let po = index"
-						[ngClass]="{'content-reproceso' : item['ListaChequeoId']}">
+					<div *ngFor="let item of it['actividades']; let po = index" [ngClass]="{'content-reproceso' : item['ListaChequeoId']}">
 						<ion-item lines="inset">
 							<ion-avatar>
-								<img class="rounded-circle"
-									[src]="item['Foto'] ? codeBase64 + item['Foto'] : '../../../../../assets/images/nofoto.png'" />
+								<img class="rounded-circle" [src]="item['Foto'] ? codeBase64 + item['Foto'] : '../../../../../assets/images/nofoto.png'" />
 							</ion-avatar>
 							<ion-label>
-								{{ item['NombreProducto'] }}
+								<!--{{ item['NombreProducto'] }}-->
 								<p>{{ item['nombreoperacion'] }}</p>
-								<p>Ref: {{ item['Referencia'] }} | Orden: {{ item['NumerOrden'] }} | Cantidad: {{
-									+item['Cantidad'] }}</p>
+								<p class="caracteristicas">Ref: {{ item['Referencia'] }} | Orden: {{ item['NumerOrden'] }} | Cantidad: {{+item['Cantidad'] }}</p>
 								<p>Estado: {{ item['Estado'] }}</p>
+								<p class="caracteristicas">{{item['caracteristicaWeb']}}</p>
 							</ion-label>
 							<ion-checkbox [id]="'check' + pos + po" [checked]="item['checked']"
 								(ionChange)="opcionCheck($event, pos, po, ('check' + pos + po))">
@@ -127,39 +110,97 @@
 				<ion-list *ngIf="!it['actividades'].length && !searching">
 					<ion-item lines="none">
 						<ion-text color="dark" class="ion-text-center">
-							<h4 class="ion-no-margin">No se encontraron resultados disponibles
-							</h4>
+							<h4 class="ion-no-margin">No se encontraron resultados disponibles</h4>
 						</ion-text>
 					</ion-item>
 				</ion-list>
 				<ion-infinite-scroll threshold="180px" (ionInfinite)="loadDataMaquinaria($event)">
-					<ion-infinite-scroll-content loadingSpinner="lines" loadingText="Obteniendo información...">
-					</ion-infinite-scroll-content>
+					<ion-infinite-scroll-content loadingSpinner="lines" loadingText="Obteniendo información..."></ion-infinite-scroll-content>
 				</ion-infinite-scroll>
 			</ion-content>
+		</div>
+	</ion-list>
+
+	<ion-list *ngIf="infoActividades.length && !searching && segmento == 3">
+		<div *ngFor="let it of infoActividades; let pos = index">
+			<ion-item-divider [sticky]="it['collapse']" [ngStyle]="{'top': '-2px'}">
+				<ion-item class="item-collapse w-100" lines="none" (click)="opcionCollapse(pos, null)" data-bs-toggle="collapse" aria-expanded="false" [attr.aria-controls]="'collapse' + pos" [attr.data-bs-target]="'collapse' + pos" [attr.data-bs-target]="'#collapse' + pos">
+					<ion-avatar>
+						<img class="rounded-circle" [src]="it['Foto'] ? codeBase64 + it['Foto'] : '../../../../../assets/images/nofoto.png'" />
+					</ion-avatar>
+					<ion-label>
+						<!--{{ it['NombreProducto'] }}-->
+						<p class="caracteristicas">Ref: {{ it['Referencia'] }} | Orden: {{ it['NumerOrden'] }} | Cantidad: {{ +it['Cantidad'] }}</p>
+						<p class="caracteristicas">{{ it['caracteristicaWeb'] }}</p>
+					</ion-label>
+					<ion-icon color="dark" slot="end" [name]="it['collapse'] ? 'chevron-up-outline' : 'chevron-down-outline'"></ion-icon>
+				</ion-item>
+			</ion-item-divider>
+			<div class="collapse" [id]="'collapse' + pos">
+				<div class="accordion accordion-flush" [id]="'accordionFlushMaquinaria' + pos">
+					<div class="accordion-item" *ngFor="let item of it['maquinarias']; let po = index">
+						<h2 class="accordion-header mt-0" [id]="'flushHeader' + pos + po">
+							<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" [attr.data-bs-target]="'#flush-collapse' + pos + po" aria-expanded="false" [attr.aria-controls]="'flush-collapse' + pos + po">
+								{{item['Nombre']}}
+							</button>
+						</h2>
+						<div [id]="'flush-collapse' + pos + po" class="accordion-collapse collapse" [attr.aria-labelledby]="'flushHeader' + pos + po" [attr.data-bs-parent]="'#accordionFlushMaquinaria' + pos">
+							<div *ngFor="let itemA of item['actividades']; let p = index" [ngClass]="{'content-reproceso' : itemA['ListaChequeoId']}">
+								<ion-item lines="inset">
+									<ion-label>
+										<h2>{{ itemA['Nombre'] }}</h2>
+										<p>Estado: {{ itemA['Estado'] }}</p>
+										<p>Cantidad: {{ itemA['CantiRecib'] ? +itemA['CantiRecib'] : 0}}</p>
+									</ion-label>
+									<ion-checkbox [id]="'check' + pos + po + p" [checked]="itemA['checked']" (ionChange)="opcionCheck($event, pos, po, ('check' + pos + po + p), p)">
+									</ion-checkbox>
+								</ion-item>
+							</div>
+						</div>
+					</div>
+				</div>
+					<!--<div *ngFor="let item of it['maquinarias']; let po = index">
+						<ion-item-divider>
+							
+							<ion-item *ngIf="item['actividades']" class="item-collapse w-100" lines="full" (click)="opcionCollapse(po, it['MaquinariaId'])" data-bs-toggle="collapse" lines="none" aria-expanded="false" [attr.aria-controls]="'collapseMaqui' + po" [attr.data-bs-target]="'#collapseMaqui' + po">
+								<ion-label>
+									{{ item['Nombre'] }}
+								</ion-label>
+								<ion-icon color="dark" slot="end" [name]="item['collapse'] ? 'chevron-up-outline' : 'chevron-down-outline'"></ion-icon>
+							</ion-item>
+						</ion-item-divider>
+					</div>-->
+					<!--<div *ngFor="let item of it['actividades']; let po = index" [ngClass]="{'content-reproceso' : item['ListaChequeoId']}">
+						<ion-item lines="inset">
+							<ion-label>
+								<h2>{{ item['Nombre'] }}</h2>
+								<p>Estado: {{ item['Estado'] }}</p>
+								<p>Cantidad: {{ item['CantiRecib'] ? +item['CantiRecib'] : 0}}</p>
+							</ion-label>
+							<ion-checkbox [id]="'check' + pos + po" [checked]="item['checked']" (ionChange)="opcionCheck($event, pos, po, ('check' + pos + po))">
+							</ion-checkbox>
+						</ion-item>
+					</div>-->
+			</div>
 		</div>
 	</ion-list>
 
 	<ion-list *ngIf="!infoActividades.length && !searching">
 		<ion-item lines="none">
 			<ion-text color="dark" class="ion-text-center">
-				<h4 class="ion-no-margin">No hay {{segmento == 1 ? 'maquinas' : 'ordenes de producción'}} disponibles
-				</h4>
+				<h4 class="ion-no-margin">No hay {{segmento == 1 ? 'maquinas' : 'ordenes de producción'}} disponibles</h4>
 			</ion-text>
 		</ion-item>
 	</ion-list>
 
 	<ion-infinite-scroll *ngIf="segmento != 1 && !collapseAbierto" threshold="180px" (ionInfinite)="loadData($event)">
-		<ion-infinite-scroll-content loadingSpinner="lines" loadingText="Obteniendo información...">
-		</ion-infinite-scroll-content>
+		<ion-infinite-scroll-content loadingSpinner="lines" loadingText="Obteniendo información..."></ion-infinite-scroll-content>
 	</ion-infinite-scroll>
-
 </ion-content>
 
 <ion-footer>
 	<ion-toolbar color="light">
-		<ion-button class="ion-margin-horizontal" [disabled]="!actividadesSeleccionadas.length"
-			(click)="agregarActividades()" [size]="'full'" shape="round">
+		<ion-button class="ion-margin-horizontal" [disabled]="!actividadesSeleccionadas.length" (click)="agregarActividades()" [size]="'full'" shape="round">
 			<ion-icon slot="start" name="add"></ion-icon>
 			Guardar
 		</ion-button>

@@ -27,128 +27,132 @@
 @import "~animate.css/animate.min.css";
 
 .ionic-selectable-item {
-    border-bottom: 1px solid rgba(0, 0, 0, 0.13);
-    --border-color: transparent;
+	border-bottom: 1px solid rgba(0, 0, 0, 0.13);
+	--border-color: transparent;
 }
 
 .fontSize {
-    font-size: var(--default-font) !important;
+	font-size: var(--default-font) !important;
 }
 
 p {
-    color: var(--ion-color-dark);
+	color: var(--ion-color-dark);
 }
 
 .text-truncate {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
 }
 
 .w-100 {
-    width: 100% !important;
+	width: 100% !important;
 }
 
 ion-range {
-    --bar-background: var(--ion-color-dark);
-    --bar-background-active: var(--ion-color-dark);
+	--bar-background: var(--ion-color-dark);
+	--bar-background-active: var(--ion-color-dark);
 }
 
 ion-checkbox {
-    --border-color: var(--ion-color-dark);
+	--border-color: var(--ion-color-dark);
 }
 
 ion-button {
-    --border-radius: 10px !important;
+	--border-radius: 10px !important;
 }
 
 .modal-color {
-    .alert-title,
-    .alert-radio-label,
-    .alert-button {
-        color: var(--ion-color-dark) !important;
-    }
-    .alert-head {
-        text-align: center;
-    }
-    .alert-wrapper {
-        background-color: var(--ion-background-color) !important;
-    }
+	.alert-title,
+	.alert-radio-label,
+	.alert-button {
+		color: var(--ion-color-dark) !important;
+	}
+	.alert-head {
+		text-align: center;
+	}
+	.alert-wrapper {
+		background-color: var(--ion-background-color) !important;
+	}
 }
 
 modal-color {
-    .alert-wrapper {
-        .alert-message {
-            color: var(--ion-color-dark) !important;
-        }
-    }
+	.alert-wrapper {
+		.alert-message {
+			color: var(--ion-color-dark) !important;
+		}
+	}
 }
 
 .color-picker {
-    .picker-button,
-    .picker-opt {
-        color: var(--ion-color-dark);
-    }
+	.picker-button,
+	.picker-opt {
+		color: var(--ion-color-dark);
+	}
 }
 
 .header-modal {
-    color: var(--ion-color-dark);
-    background: var(--toolbar-menu);
+	color: var(--ion-color-dark);
+	background: var(--toolbar-menu);
 }
 
 ion-segment-button {
-    color: var(--ion-color-dark);
+	color: var(--ion-color-dark);
 }
 
 ion-searchbar {
-    color: var(--ion-color-dark) !important;
+	color: var(--ion-color-dark) !important;
 }
 
 ion-loading {
-    .loading-wrapper {
-        background-color: var(--ion-color-light) !important;
-        .loading-content {
-            color: var(--ion-color-dark) !important;
-        }
-    }
+	.loading-wrapper {
+		background-color: var(--ion-color-light) !important;
+		.loading-content {
+			color: var(--ion-color-dark) !important;
+		}
+	}
 }
 
 ion-action-sheet {
-    .action-sheet-wrapper {
-        .action-sheet-container {
-            .action-sheet-group {
-                button {
-                    color: var(--ion-color-dark);
-                    .action-sheet-button-inner {
-                        ion-icon {
-                            color: var(--ion-color-dark);
-                        }
-                    }
-                }
-            }
-        }
-    }
+	.action-sheet-wrapper {
+		.action-sheet-container {
+			.action-sheet-group {
+				button {
+					color: var(--ion-color-dark);
+					.action-sheet-button-inner {
+						ion-icon {
+							color: var(--ion-color-dark);
+						}
+					}
+				}
+			}
+		}
+	}
 }
 
 .alerta-error {
-    .alert-wrapper{
-        max-width: 90% !important;
-        width: 100%;
-        height: 93vh !important;
-        max-height: 93vh;
+	.alert-wrapper {
+		max-width: 90% !important;
+		width: 100%;
+		height: 93vh !important;
+		max-height: 93vh;
 
-        .alert-message{
-            max-height: 100%;
+		.alert-message {
+			max-height: 100%;
 			height: 90vh;
-        }
-    }
+		}
+	}
 }
 
 .alerta-input {
-    .alert-message{
-        padding-bottom: 0px !important;
-    }
-    .alert-input-group {
-        padding-top: 0px !important;
-    }
+	.alert-message {
+		padding-bottom: 0px !important;
+	}
+	.alert-input-group {
+		padding-top: 0px !important;
+	}
+}
+
+.select-producto-terminado {
+	--min-width: 80vw !important;
 }

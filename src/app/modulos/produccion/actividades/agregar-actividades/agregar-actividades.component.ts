@@ -1,4 +1,4 @@
-import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
+import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { IonInfiniteScroll, IonInput, ModalController } from '@ionic/angular';
 import { ActividadesService } from 'src/app/servicios/actividades.service';
 import { CargadorService } from '../../../../servicios/cargador.service';
@@ -79,13 +79,6 @@ export class AgregarActividadesComponent implements OnInit {
 			this.maquinariaActual = id;
 			this.posicionAnterior = x;
 		}
-
-		/* if (this.segmento == 1) {
-			setTimeout(() => {
-				let alto = +document.getElementById("listado" + x).getElementsByTagName('ion-list').item(0).offsetHeight;
-				document.getElementById("collapse" + x).setAttribute('style', `height: ${alto}px !important`);
-			}, 100);
-		} */
 	}
 
 	cerrarModal(listar?) {
@@ -102,31 +95,60 @@ export class AgregarActividadesComponent implements OnInit {
 		}
 	}
 
-	opcionCheck(evento, pos1, pos2, element) {
+	opcionCheck(evento, pos1, pos2, element, pos3?) {
 		if (this.seleccionMultiple) {
 			if (this.datosMultiple) {
-				if (this.datosMultiple['ActividadProduccionId'] !== this.infoActividades[pos1]['actividades'][pos2]['ActividadProduccionId']) {
+				let validaMultiple = true;
+				if(this.segmento != 3){
+					validaMultiple = this.datosMultiple['ActividadProduccionId'] !== this.infoActividades[pos1]['actividades'][pos2]['ActividadProduccionId'];
+				}else {
+					validaMultiple = this.datosMultiple['ActividadProduccionId'] !== this.infoActividades[pos1]['maquinarias'][pos2]['actividades'][pos3]['ActividadProduccionId'];
+				}
+
+				if (validaMultiple) {
 					this.notificcacionesService.notificacion("No es un producto valido para multiple.");
 					let ele = document.getElementById(element);
 					ele['checked'] = false;
 					return;
 				}
 			} else {
-				this.datosMultiple = this.infoActividades[pos1]['actividades'][pos2];
+				if(this.segmento != 3){
+					this.datosMultiple = this.infoActividades[pos1]['actividades'][pos2];
+				} else {
+					this.datosMultiple = this.infoActividades[pos1]['maquinarias'][pos2]['actividades'][pos3]; 
+				}
 			}
 		}
-		this.infoActividades[pos1]['actividades'][pos2]['checked'] = evento.detail.checked;
+		
+		if (this.segmento != 3) {
+			this.infoActividades[pos1]['actividades'][pos2]['checked'] = evento.detail.checked;
+		} else {
+			this.infoActividades[pos1]['maquinarias'][pos2]['actividades'][pos3]['checked'] = evento.detail.checked;
+		}
+
 		let dataOrde = this.infoActividades[pos1];
-		let dataActi = this.infoActividades[pos1]['actividades'][pos2];
+		let dataActi;
+
+		if (this.segmento != 3) {
+			dataActi = this.infoActividades[pos1]['actividades'][pos2];
+		} else {
+			dataActi = this.infoActividades[pos1]['maquinarias'][pos2]['actividades'][pos3];
+		}
+		
 		let index = -1;
-		if (this.segmento == 0) {
+		if (this.segmento != 1) {
 			index = this.actividadesSeleccionadas.findIndex(op => op['OrdeProdId'] == dataOrde['OrdeProdId']);
 		} else {
 			index = this.actividadesSeleccionadas.findIndex(op => op['MaquinariaId'] == dataOrde['MaquinariaId']);
 		}
+
 		if (evento.detail.checked) {
 			let info = { ...dataActi, multiple: this.seleccionMultiple, tipoMultiple: 'Multiple' + this.cantMultiple };
-			dataOrde['actividades'][pos2] = info;
+			if(this.segmento != 3){
+				dataOrde['actividades'][pos2] = info;
+			} else {
+				dataOrde['maquinarias'][pos2]['actividades'][pos3] = info;
+			}
 			if (index != -1) {
 				this.actividadesSeleccionadas[index] = dataOrde;
 			} else {
@@ -134,7 +156,16 @@ export class AgregarActividadesComponent implements OnInit {
 			}
 		} else {
 			if (index != -1) {
-				let cant = this.actividadesSeleccionadas[index]['actividades'].filter(op => op.checked).length;
+				let cant = 0;
+				if(this.segmento != 3){
+					cant = this.actividadesSeleccionadas[index]['actividades'].filter(op => op.checked).length;
+					
+				} else {
+					this.actividadesSeleccionadas[index]['maquinarias'].forEach(element => {
+						cant += element['actividades'].filter(op => op.checked).length;
+					});
+				}
+
 				if (cant <= 0) {
 					this.actividadesSeleccionadas.splice(index, 1);
 				}
@@ -155,7 +186,7 @@ export class AgregarActividadesComponent implements OnInit {
 	}
 
 	refrescar(event?, total?) {
-		if (this.segmento == 0) {
+		if (this.segmento != 1) {
 			this.posicionAnterior = -1;
 			this.maquinariaActual = null;
 		}
@@ -189,7 +220,6 @@ export class AgregarActividadesComponent implements OnInit {
 			maqInter: this.maquinariaActual
 		}
 		this.actividadesService.informacion(datos, 'CentrosProduccion/obtenerOrdenProduccion').then(resp => {
-			console.log("Respuesta ", resp);
 			if (!evento) {
 				this.infoActividades = [];
 			}
@@ -250,19 +280,37 @@ export class AgregarActividadesComponent implements OnInit {
 
 	organizarDataGuardar() {
 		let multiples = {}, individuales = [];
-		this.actividadesSeleccionadas.forEach(x => {
-			x['actividades'].forEach(op => {
-				let data = { OrdeProdOperacionId: op['OrdeProdOperacionId'] };
-				if (op['multiple']) {
-					if (!multiples[op['tipoMultiple']]) {
-						multiples[op['tipoMultiple']] = [];
+		if(this.segmento != 3) {
+			this.actividadesSeleccionadas.forEach(x => {
+				x['actividades'].forEach(op => {
+					let data = { OrdeProdOperacionId: op['OrdeProdOperacionId'] };
+					if (op['multiple']) {
+						if (!multiples[op['tipoMultiple']]) {
+							multiples[op['tipoMultiple']] = [];
+						}
+						multiples[op['tipoMultiple']].push(data);
+					} else if (op['checked']) {
+						individuales.push(data);
 					}
-					multiples[op['tipoMultiple']].push(data);
-				} else if (op['checked']) {
-					individuales.push(data);
-				}
+				});
 			});
-		});
+		} else {
+			this.actividadesSeleccionadas.forEach(element => {
+				element['maquinarias'].forEach(x => {
+					x['actividades'].forEach(op => {
+						let data = { OrdeProdOperacionId: op['OrdeProdOperacionId'] };
+						if (op['multiple']) {
+							if (!multiples[op['tipoMultiple']]) {
+								multiples[op['tipoMultiple']] = [];
+							}
+							multiples[op['tipoMultiple']].push(data);
+						} else if (op['checked']) {
+							individuales.push(data);
+						}
+					});
+				});
+			});
+		}
 		return { multiples, individuales, grupo: this.idGrupo ? this.idGrupo : null };
 	}
 

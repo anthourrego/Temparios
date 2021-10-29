@@ -1,0 +1,10 @@
+<h3>{{ datos['Nombre']}}</h3>
+<p>Cantidad {{ +datos['cantidad'] }}</p>
+<p>
+	<ion-item>
+		<ion-label position="floating">Cantidad consumida</ion-label>
+		<ion-input [id]="'prod'+posArray" clearInput="true" required="true" (ionChange)="actualizarTotal()"
+			[(ngModel)]="+datos['cantireal']" type="number" placeholder="Cantidad">
+		</ion-input>
+	</ion-item>
+</p>

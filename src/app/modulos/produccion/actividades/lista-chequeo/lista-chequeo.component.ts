@@ -221,7 +221,7 @@ export class ListaChequeoComponent implements OnInit {
 				role: 'cancel'
 			}];
 			this.notificacionesService.alerta(
-				`¿Que cantidad desea confirmar? <br> Cantidad máxima ${cantidadValida}`
+				`¿Confirme cantidad a reprocesar? <br> Cantidad máxima ${cantidadValida}`
 				, 'Cantidad'
 				, ['alerta-input']
 				, botones
