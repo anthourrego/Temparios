@@ -92,9 +92,11 @@ export class DescargueLoteComponent implements OnInit {
 		}
 		if (lote && (lote['InvenActua'] >= (+lote['InvenReal']) || lote['InvenActua'] < 0 || lote['InvenActua'] == null)) {
 			lote['InvenActua'] = (lote['InvenActua'] == null ? 0 : (+lote['InvenReal']));
-			document.getElementById('lote' + lote['Numerolote'])['value'] = lote['InvenActua'];
-			document.getElementById('lote' + lote['Numerolote']).getElementsByTagName('input')[0]['value'] = lote['InvenActua'];
 		}
+		
+		lote['InvenActua'] = Number(lote['InvenActua']);
+		document.getElementById('lote' + lote['Numerolote'])['value'] = lote['InvenActua'];
+		document.getElementById('lote' + lote['Numerolote']).getElementsByTagName('input')[0]['value'] = lote['InvenActua'];
 	}
 
 }

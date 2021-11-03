@@ -22,9 +22,10 @@ export class DescargueAlmacenComponent implements OnInit {
 	actualizarTotal() {
 		if (this.datos['cantireal'] < 0 || this.datos['cantireal'] == null) {
 			this.datos['cantireal'] = (this.datos['cantireal'] == null ? 0 : (+this.datos['cantidad']));
-			document.getElementById('prod' + this.posArray)['value'] = this.datos['cantireal'];
-			document.getElementById('prod' + this.posArray).getElementsByTagName('input')[0]['value'] = this.datos['cantireal'];
 		}
+		this.datos['cantireal'] = Number(this.datos['cantireal']);
+		document.getElementById('prod' + this.posArray)['value'] = this.datos['cantireal'];
+		document.getElementById('prod' + this.posArray).getElementsByTagName('input')[0]['value'] = this.datos['cantireal'];
 		this.salidas.emit({
 			tipo: 'form'
 			, valor: true
