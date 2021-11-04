@@ -94,7 +94,8 @@ export class DescargueLoteComponent implements OnInit {
 			lote['InvenActua'] = (lote['InvenActua'] == null ? 0 : (+lote['InvenReal']));
 		}
 		if(lote){
-			document.getElementById('lote' + lote['InveProdLoteId'])['value'] = Number(lote['InvenActua']).toString();
+			lote['InvenActua'] = Number(lote['InvenActua']);
+			document.getElementById('lote' + lote['InveProdLoteId'])['value'] = lote['InvenActua'];
 			document.getElementById('lote' + lote['InveProdLoteId']).getElementsByTagName('input')[0]['value'] = lote['InvenActua'];
 		}
 	}
