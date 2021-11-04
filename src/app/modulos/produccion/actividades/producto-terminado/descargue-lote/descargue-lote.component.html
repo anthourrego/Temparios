@@ -37,7 +37,7 @@
 </p>
 <p>
 	<ion-item *ngFor="let lote of datos['lotes'];" [ngClass]="{'d-none': !lote.checked}">
-		<ion-label position="floating">{{ lote['InveProdLoteId'] }}</ion-label>
+		<ion-label position="floating">{{ lote['Numerolote'] }}</ion-label>
 		<ion-input [id]="'lote'+lote['InveProdLoteId']" (ionChange)="actualizarTotal(lote)" [max]="+lote['InvenReal']"
 			min="0" clearInput="true" required="true" [(ngModel)]="+lote['InvenActua']" type="number"
 			placeholder="Cantidad">
