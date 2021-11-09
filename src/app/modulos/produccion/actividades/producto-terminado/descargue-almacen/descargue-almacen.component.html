@@ -4,7 +4,7 @@
 	<ion-item>
 		<ion-label position="floating">Cantidad consumida</ion-label>
 		<ion-input [id]="'prod'+posArray" clearInput="true" required="true" (ionChange)="actualizarTotal()"
-			[(ngModel)]="+datos['cantireal']" type="number" placeholder="Cantidad">
+			[(ngModel)]="+datos['cantireal']" inputmode="decimal" placeholder="Cantidad">
 		</ion-input>
 	</ion-item>
 </p>
