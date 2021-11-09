@@ -93,8 +93,15 @@ export class DescargueLoteComponent implements OnInit {
 		if (lote && (lote['InvenActua'] >= (+lote['InvenReal']) || lote['InvenActua'] < 0 || lote['InvenActua'] == null)) {
 			lote['InvenActua'] = (lote['InvenActua'] == null ? 0 : (+lote['InvenReal']));
 		}
-		if(lote && Number.parseFloat(lote['InvenActua']) > 0){
-			lote['InvenActua'] = Number.parseFloat(lote['InvenActua']);
+
+		let valor = document.getElementById('lote' + lote['InveProdLoteId'])['value'];
+		valor = valor > lote['InvenReal'] ? Number(lote['InvenReal']) : valor;
+		if (valor && valor.length) {
+			valor = valor.length > 1 ? (valor > 1 ? valor.replace(/^(0+)/g, '') : valor) : valor;
+			document.getElementById('lote' + lote['InveProdLoteId'])['value'] = valor;
+			document.getElementById('lote' + lote['InveProdLoteId']).getElementsByTagName('input')[0]['value'] = valor;
+		} else {
+			lote['InvenActua'] = Number(lote['InvenActua']);
 			document.getElementById('lote' + lote['InveProdLoteId'])['value'] = lote['InvenActua'];
 			document.getElementById('lote' + lote['InveProdLoteId']).getElementsByTagName('input')[0]['value'] = lote['InvenActua'];
 		}

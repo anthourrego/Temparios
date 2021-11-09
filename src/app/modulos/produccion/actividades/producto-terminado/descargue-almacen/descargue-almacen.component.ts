@@ -16,15 +16,21 @@ export class DescargueAlmacenComponent implements OnInit {
 	ngOnInit() {
 		setTimeout(() => {
 			this.actualizarTotal();
-		}, 100);
+		}, 500);
 	}
 
 	actualizarTotal() {
 		if (this.datos['cantireal'] < 0 || this.datos['cantireal'] == null) {
 			this.datos['cantireal'] = (this.datos['cantireal'] == null ? 0 : (+this.datos['cantidad']));
 		}
-		this.datos['cantireal'] = Number(this.datos['cantireal']);
-		if (this.datos['cantireal'] > 0) {
+
+		let valor = document.getElementById('prod' + this.posArray)['value'];
+		if (valor && valor.length) {
+			valor = valor.length > 1 ? (valor > 1 ? valor.replace(/^(0+)/g, '') : valor) : valor;
+			document.getElementById('prod' + this.posArray)['value'] = valor;
+			document.getElementById('prod' + this.posArray).getElementsByTagName('input')[0]['value'] = valor;
+		} else {
+			this.datos['cantireal'] = Number(this.datos['cantireal']);
 			document.getElementById('prod' + this.posArray)['value'] = this.datos['cantireal'];
 			document.getElementById('prod' + this.posArray).getElementsByTagName('input')[0]['value'] = this.datos['cantireal'];
 		}
