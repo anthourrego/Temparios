@@ -12,7 +12,13 @@ import { CambioCentroProduccionService } from 'src/app/config/suscripciones/camb
 })
 export class CentrosProduccionPage implements OnInit {
 
+	segmentos: Array<{ titulo: String, valor: String }> = [{
+		titulo: 'Centro Producción', valor: 'centro_produccion'
+	}, {
+		titulo: 'Configuración', valor: 'configuracion'
+	}];
 	centrosProduccion: Array<object> = [];
+	valorDefecto: string = 'centro_produccion';
 
 	constructor(
 		private router: Router,
@@ -52,6 +58,10 @@ export class CentrosProduccionPage implements OnInit {
 
 	async regresar() {
 		this.storage.limpiarTodo(true);
+	}
+
+	segmentChanged(evento) {
+		this.valorDefecto = evento.detail.value;
 	}
 
 }

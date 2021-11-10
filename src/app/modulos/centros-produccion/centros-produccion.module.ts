@@ -7,13 +7,15 @@ import { IonicModule } from '@ionic/angular';
 import { CentrosProduccionPageRoutingModule } from './centros-produccion-routing.module';
 
 import { CentrosProduccionPage } from './centros-produccion.page';
+import { ConfiguracionPageModule } from '../produccion/configuracion/configuracion.module';
 
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
     IonicModule,
-    CentrosProduccionPageRoutingModule
+    CentrosProduccionPageRoutingModule,
+	ConfiguracionPageModule
   ],
   declarations: [CentrosProduccionPage]
 })

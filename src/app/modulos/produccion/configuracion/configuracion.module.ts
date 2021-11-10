@@ -9,12 +9,13 @@ import { ConfiguracionPageRoutingModule } from './configuracion-routing.module';
 import { ConfiguracionPage } from './configuracion.page';
 
 @NgModule({
-  imports: [
-    CommonModule,
-    FormsModule,
-    IonicModule,
-    ConfiguracionPageRoutingModule
-  ],
-  declarations: [ConfiguracionPage]
+	imports: [
+		CommonModule,
+		FormsModule,
+		IonicModule,
+		ConfiguracionPageRoutingModule
+	],
+	declarations: [ConfiguracionPage],
+	exports: [ConfiguracionPage]
 })
-export class ConfiguracionPageModule {}
+export class ConfiguracionPageModule { }

@@ -1,12 +1,22 @@
-<ion-header class="ion-no-border" *ngIf="centrosProduccion.length">
-	<ion-toolbar color="ligth">
-		<ion-title color="dark" class="ion-text-center">Elije el centro de producción</ion-title>
+<ion-header>
+	<ion-toolbar>
+		<ion-segment mode="md" (ionChange)="segmentChanged($event)" [(ngModel)]="valorDefecto">
+			<ion-segment-button *ngFor="let it of segmentos;" [value]="it.valor">
+				<ion-label>{{ it.titulo }}</ion-label>
+			</ion-segment-button>
+		</ion-segment>
 	</ion-toolbar>
 </ion-header>
 
-<ion-content class="ion-padding" color="gray">
+<ion-content [ngSwitch]="valorDefecto" [color]="valorDefecto == 'configuracion' ? '' : 'gray'"
+	[ngClass]="valorDefecto == 'configuracion' ? '' : 'ion-padding'">
 
-	<ion-grid>
+	<ion-grid *ngSwitchCase="'centro_produccion'">
+		<ion-row *ngIf="centrosProduccion.length">
+			<ion-col size="12">
+				<ion-title color="dark" class="ion-text-center">Elije el centro de producción</ion-title>
+			</ion-col>
+		</ion-row>
 		<ion-row *ngIf="centrosProduccion.length">
 			<ion-col size="12" *ngFor="let it of centrosProduccion" (click)="irCentroProduccion(it)">
 				<ion-item detail [ngStyle]="{'border-left': 'solid 5px ' + it['borde']}" lines="none">
@@ -28,5 +38,7 @@
 			</ion-col>
 		</ion-row>
 	</ion-grid>
+
+	<app-configuracion *ngSwitchCase="'configuracion'"></app-configuracion>
 
 </ion-content>
