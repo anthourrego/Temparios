@@ -21,10 +21,17 @@ export class DescargueAlmacenComponent implements OnInit {
 
 	actualizarTotal() {
 		if (this.datos['cantireal'] < 0 || this.datos['cantireal'] == null) {
-			this.datos['cantireal'] = (this.datos['cantireal'] == null ? 0 : (+this.datos['cantidad']));
+			//this.datos['cantireal'] = (this.datos['cantireal'] == null ? 0 : (+this.datos['cantidad']));
+			this.datos['cantireal'] = 0;
 		}
 
 		let valor = document.getElementById('prod' + this.posArray)['value'];
+
+		if((('' + valor).split('') || []).filter(x => x == '.').length > 1) {
+			valor = valor.slice(0, -1);
+			this.datos['cantireal'] = valor;
+		}
+
 		if (valor && valor.length) {
 			valor = valor.length > 1 ? (valor > 1 ? valor.replace(/^(0+)/g, '') : valor) : valor;
 			document.getElementById('prod' + this.posArray)['value'] = valor;
