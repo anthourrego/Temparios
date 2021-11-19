@@ -86,7 +86,7 @@ export class DescargueLoteComponent implements OnInit {
 	actualizarTotal(lote) {
 		if (this.datos['form'].valid) {
 			let tempTotal = 0;
-			this.datos['lotes'].filter(op => op.checked).forEach(it => tempTotal += (+it['InvenActua']));
+			this.datos['lotes'].filter(op => op.checked).forEach(it => tempTotal +=  Number(+it['InvenActua']));
 			this.datos['cantireal'] = tempTotal;
 		} else {
 			this.datos['cantireal'] = this.datos['cantirealsugerida'];
