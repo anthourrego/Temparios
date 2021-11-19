@@ -91,7 +91,7 @@ export class DescargueLoteComponent implements OnInit {
 		} else {
 			this.datos['cantireal'] = this.datos['cantirealsugerida'];
 		}
-		if (lote && (lote['InvenActua'] >= (+lote['InvenReal']) || lote['InvenActua'] < 0 || lote['InvenActua'] == null)) {
+		if (lote && (lote['InvenActua'] > (+lote['InvenReal']) || lote['InvenActua'] < 0 || lote['InvenActua'] == null)) {
 			//lote['InvenActua'] = (lote['InvenActua'] == null ? 0 : (+lote['InvenReal']));
 			lote['InvenActua'] = 0;
 		}
