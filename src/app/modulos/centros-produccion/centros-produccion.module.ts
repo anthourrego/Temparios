@@ -8,6 +8,7 @@ import { CentrosProduccionPageRoutingModule } from './centros-produccion-routing
 
 import { CentrosProduccionPage } from './centros-produccion.page';
 import { ConfiguracionPageModule } from '../produccion/configuracion/configuracion.module';
+import { ComponentesModule } from '../../componentes/componentes.module';
 
 @NgModule({
   imports: [
@@ -15,7 +16,8 @@ import { ConfiguracionPageModule } from '../produccion/configuracion/configuraci
     FormsModule,
     IonicModule,
     CentrosProduccionPageRoutingModule,
-	ConfiguracionPageModule
+	ConfiguracionPageModule,
+	ComponentesModule
   ],
   declarations: [CentrosProduccionPage]
 })

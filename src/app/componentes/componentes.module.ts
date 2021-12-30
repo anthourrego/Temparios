@@ -3,16 +3,19 @@ import { CommonModule } from '@angular/common';
 import { HeaderComponent } from './header/header.component';
 import { IonicModule } from '@ionic/angular';
 import { FormsModule } from '@angular/forms';
+import { FooterVersionComponent } from './footer-version/footer-version.component';
+import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
 
 
 
 @NgModule({
-	declarations: [HeaderComponent],
+	declarations: [HeaderComponent, FooterVersionComponent],
 	imports: [
 		IonicModule,
 		CommonModule,
 		FormsModule
 	],
-	exports: [HeaderComponent]
+	exports: [HeaderComponent, FooterVersionComponent],
+	providers: [AppVersion]
 })
 export class ComponentesModule { }
