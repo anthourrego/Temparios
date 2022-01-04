@@ -76,8 +76,9 @@ export class PeticionService {
 		const Conexion = await this.storageService.get('conexion').then(resp => resp);
 		const Cedula = await this.storageService.get('nroDocumento').then(resp => resp);
 		const indice = await this.storageService.get('indice').then(resp => resp);
+		const Version = await this.storageService.get('version').then(resp => resp);
 		let nit = await this.desencriptar(JSON.parse(await this.storageService.get('usuario').then(resp => resp)));
-		const headers = new HttpHeaders({ Token: '' + nit.OperarioId, Conexion, Cedula, Nit: environment.nit, Usuario: '' + nit.OperarioId, indice });
+		const headers = new HttpHeaders({ Token: '' + nit.OperarioId, Conexion, Cedula, Nit: environment.nit, Usuario: '' + nit.OperarioId, indice, Version: Version || '' });
 		return await this.ejecutarPeticion('post', uri, data, headers).toPromise().then(async resp => {
 			const desencriptado = await this.desencriptar(resp);
 			if (desencriptado.activoLogueo) {
@@ -151,6 +152,7 @@ export class PeticionService {
 			clave: data.password,
 			nit: environment.nit,
 			RASTREO: FuncionesGenerales.rastreo('Ingresa al Sistema Process App', 'Ingreso Sistema'),
+			version: await this.storageService.get('version').then(resp => resp)
 		};
 		return await this.ejecutarPeticion('post', `${this.url}Login/ingresoOperario`, data).toPromise().then(
 			resp => resp
@@ -167,7 +169,8 @@ export class PeticionService {
 			ingreso: ingreso.IngresoId,
 			usuario: ingreso.usuarioId
 		};
-		const headers = new HttpHeaders({ Conexion, Token: ingreso.IngresoId });
+		const Version = await this.storageService.get('version').then(resp => resp);
+		const headers = new HttpHeaders({ Conexion, Token: ingreso.IngresoId, Version: Version || '' });
 		return await this.ejecutarPeticion('post', `${this.url}Login/cierreMovil`, data, headers).toPromise().then(
 			resp => this.desencriptar(resp)
 		).catch(error => {

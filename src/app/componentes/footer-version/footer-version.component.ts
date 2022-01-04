@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { VersionAppService } from 'src/app/servicios/version-app.service';
+import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
+import { StorageService } from 'src/app/servicios/storage.service';
 
 @Component({
 	selector: 'app-footer-version',
@@ -8,11 +9,12 @@ import { VersionAppService } from 'src/app/servicios/version-app.service';
 })
 export class FooterVersionComponent implements OnInit {
 
-	nameApp: any;
-	versionNumber: any;
+	nameApp: string = "";
+	versionNumber: string = ""
 
 	constructor(
-		private appVersion: VersionAppService
+		private appVersion: AppVersion,
+		private storage: StorageService
 	) { }
 
 	ngOnInit() {
@@ -20,8 +22,13 @@ export class FooterVersionComponent implements OnInit {
 	}
 
 	async obtenerVersion() {
-		this.nameApp = this.appVersion.appName();
-		this.versionNumber = this.appVersion.versionNUmber();
+		this.appVersion.getAppName().then(op => this.nameApp = op);
+		/* this.appVersion.getPackageName().then(op => { console.log(op) });
+		this.appVersion.getVersionCode().then(op => { console.log(op) }); */
+		this.appVersion.getVersionNumber().then(op => {
+			this.versionNumber = op;
+			this.storage.set('version', this.versionNumber);
+		});
 	}
 
 }

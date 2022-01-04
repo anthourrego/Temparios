@@ -36,10 +36,12 @@ export class StorageService {
 
 	limpiarTodo(logout?) {
 		let tema = this.get('theme');
+		let version = this.get('version');
 		this.storage.clear();
 		if (!logout) this.notifcaciones.alerta("Error de conexión", '', [], [{ text: 'Cerrar', role: 'aceptar' }]);
 		if (!this.modalController) this.modalController.dismiss();
 		this.set('theme', tema);
+		this.set('version', version);
 		this.router.navigateByUrl('login');
 	}
 
