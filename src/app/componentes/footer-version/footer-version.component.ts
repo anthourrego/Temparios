@@ -8,8 +8,8 @@ import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
 })
 export class FooterVersionComponent implements OnInit {
 
-	nameApp: string = "Holaaa";
-	versionNumber: string = "Si aqui"
+	nameApp: string = "";
+	versionNumber: string = ""
 
 	constructor(
 		private appVersion: AppVersion
