@@ -1,8 +1,8 @@
 {
 	"name": "TemparioApp",
 	"version": "0.0.1",
-	"author": "Ionic Framework",
-	"homepage": "https://ionicframework.com/",
+	"author": "Casa de Software Prosof",
+	"homepage": "https://prosof.com.co/",
 	"scripts": {
 		"ng": "ng",
 		"start": "ng serve",
