@@ -31,8 +31,8 @@ export class DetalleActividadComponent implements OnInit {
 		this.obtenerInformacion();
 	}
 
-	cerrarModal() {
-		this.modalController.dismiss(this.listarAnterior);
+	cerrarModal(datos?) {
+		this.modalController.dismiss(datos || this.listarAnterior);
 	}
 
 	slidingDelInvitado(ref) {
@@ -106,7 +106,7 @@ export class DetalleActividadComponent implements OnInit {
 		const modal = await this.modalController.create({ ...datos, backdropDismiss: false });
 		await modal.present();
 		modal.onWillDismiss().then(({ data }) => {
-			if(data.grupoElimino) {
+			if (data.grupoElimino) {
 				this.listarAnterior = true;
 				setTimeout(() => {
 					this.cerrarModal();
@@ -116,6 +116,39 @@ export class DetalleActividadComponent implements OnInit {
 				this.obtenerInformacion();
 			}
 		}, console.error);
+	}
+
+	agregarCantidad(option) {
+		if (!this.searching) {
+			this.searching = true;
+			let data = {
+				OrdeProdOperacionId: option['OrdeProdOperacionId'],
+				GrupoId: null,
+				Cantidad: 1,
+				Tipo: (option['ListaChequeoId'] ? 'REPROCESO' : 'OPERACION'),
+				centroProd: this.centroProduccion,
+				contadorGrupo: (option['Contador'] == 0 ? 0 : 1),
+				grupoId: this.idGrupo,
+				actProd: this.datos['ActividadProduccionId'],
+				detalleGrupo: true
+			}
+			this.actividadesService.informacion(data, 'CentrosProduccion/agregarLogActividad').then(({ msg, valido, detalleGrupo }) => {
+				this.searching = false;
+				if (!valido) {
+					this.notificacionesService.notificacion(msg);
+				} else {
+					this.listarAnterior = true;
+					this.detalleActividad = detalleGrupo;
+					let enc = this.detalleActividad.find(it => +it['CantiRecib'] != +it['CantidadTotal']);
+					if (!enc) {
+						this.cerrarModal({ GrupoERP: true });
+					}
+				}
+			}).catch((error) => {
+				console.log(error);
+				this.searching = false;
+			});
+		}
 	}
 
 }

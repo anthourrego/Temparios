@@ -1,6 +1,6 @@
 <ion-header class="ion-no-border">
 	<ion-toolbar color="ligth">
-		<ion-title color="dark" class="ion-text-center">Grupo Nro {{idGrupo}}</ion-title>
+		<ion-title color="dark" class="ion-text-center">{{ datos['Nombre'] }}</ion-title>
 		<ion-buttons slot="end" (click)="cerrarModal()">
 			<ion-icon color="dark" slot='icon-only' size='large' name='close-outline'>
 			</ion-icon>
@@ -17,8 +17,10 @@
 	</ion-refresher>
 
 	<ion-list class="ion-no-padding" *ngIf="detalleActividad.length">
-		<ion-item-sliding class="ion-margin" (click)="slidingDelInvitado('sliding' + pos)" [id]="'sliding' + pos"
-			*ngFor="let item of detalleActividad; let pos = index;" [ngClass]="{'reproceso': item['ListaChequeoId']}">
+		<ion-item-sliding class="ion-margin"
+			(click)="item['Contador'] == 1 && +item['CantiRecib'] < (+item['CantidadTotal']) ? agregarCantidad(item) : slidingDelInvitado('sliding' + pos)"
+			[id]="'sliding' + pos" *ngFor="let item of detalleActividad; let pos = index;"
+			[ngClass]="{'reproceso': item['ListaChequeoId']}">
 			<ion-item lines="none"
 				[ngStyle]=" item['AplicoListaChequeo'] ? {'border-left': '4px solid var(--ion-color-success)'} : {}">
 				<!-- [ngStyle]=" item['EstadoOperacion'] == 'FI' ? {'border-left': '4px solid var(--ion-color-success)'} : {}" -->

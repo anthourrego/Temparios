@@ -99,9 +99,9 @@ export class AgregarActividadesComponent implements OnInit {
 		if (this.seleccionMultiple) {
 			if (this.datosMultiple) {
 				let validaMultiple = true;
-				if(this.segmento != 3){
+				if (this.segmento != 3) {
 					validaMultiple = this.datosMultiple['ActividadProduccionId'] !== this.infoActividades[pos1]['actividades'][pos2]['ActividadProduccionId'];
-				}else {
+				} else {
 					validaMultiple = this.datosMultiple['ActividadProduccionId'] !== this.infoActividades[pos1]['maquinarias'][pos2]['actividades'][pos3]['ActividadProduccionId'];
 				}
 
@@ -112,14 +112,14 @@ export class AgregarActividadesComponent implements OnInit {
 					return;
 				}
 			} else {
-				if(this.segmento != 3){
+				if (this.segmento != 3) {
 					this.datosMultiple = this.infoActividades[pos1]['actividades'][pos2];
 				} else {
-					this.datosMultiple = this.infoActividades[pos1]['maquinarias'][pos2]['actividades'][pos3]; 
+					this.datosMultiple = this.infoActividades[pos1]['maquinarias'][pos2]['actividades'][pos3];
 				}
 			}
 		}
-		
+
 		if (this.segmento != 3) {
 			this.infoActividades[pos1]['actividades'][pos2]['checked'] = evento.detail.checked;
 		} else {
@@ -134,9 +134,11 @@ export class AgregarActividadesComponent implements OnInit {
 		} else {
 			dataActi = this.infoActividades[pos1]['maquinarias'][pos2]['actividades'][pos3];
 		}
-		
+
 		let index = -1;
-		if (this.segmento != 1) {
+		if (this.segmento == 4) {
+			index = this.actividadesSeleccionadas.findIndex(op => op['Grupo'] == dataOrde['Grupo']);
+		} else if (this.segmento != 1) {
 			index = this.actividadesSeleccionadas.findIndex(op => op['OrdeProdId'] == dataOrde['OrdeProdId']);
 		} else {
 			index = this.actividadesSeleccionadas.findIndex(op => op['MaquinariaId'] == dataOrde['MaquinariaId']);
@@ -144,7 +146,7 @@ export class AgregarActividadesComponent implements OnInit {
 
 		if (evento.detail.checked) {
 			let info = { ...dataActi, multiple: this.seleccionMultiple, tipoMultiple: 'Multiple' + this.cantMultiple };
-			if(this.segmento != 3){
+			if (this.segmento != 3) {
 				dataOrde['actividades'][pos2] = info;
 			} else {
 				dataOrde['maquinarias'][pos2]['actividades'][pos3] = info;
@@ -157,9 +159,8 @@ export class AgregarActividadesComponent implements OnInit {
 		} else {
 			if (index != -1) {
 				let cant = 0;
-				if(this.segmento != 3){
+				if (this.segmento != 3) {
 					cant = this.actividadesSeleccionadas[index]['actividades'].filter(op => op.checked).length;
-					
 				} else {
 					this.actividadesSeleccionadas[index]['maquinarias'].forEach(element => {
 						cant += element['actividades'].filter(op => op.checked).length;
@@ -204,7 +205,11 @@ export class AgregarActividadesComponent implements OnInit {
 		this.infiniteScroll.disabled = false;
 		this.cantidadAgregada = 0;
 		this.searching = true;
-		this.obtenerActividades(event);
+		if (this.segmento == 4) {
+			this.obtenerOrdenesAgrupadas(event);
+		} else {
+			this.obtenerActividades(event);
+		}
 	}
 
 	obtenerActividades(evento?, maquinaria?) {
@@ -279,18 +284,42 @@ export class AgregarActividadesComponent implements OnInit {
 	}
 
 	organizarDataGuardar() {
+		let multiGrupERP = 0;
 		let multiples = {}, individuales = [];
-		if(this.segmento != 3) {
+		if (this.segmento != 3) {
 			this.actividadesSeleccionadas.forEach(x => {
 				x['actividades'].forEach(op => {
-					let data = { OrdeProdOperacionId: op['OrdeProdOperacionId'] };
+					let data = { OrdeProdOperacionId: op['OrdeProdOperacionId'], Contador: null };
 					if (op['multiple']) {
 						if (!multiples[op['tipoMultiple']]) {
 							multiples[op['tipoMultiple']] = [];
 						}
 						multiples[op['tipoMultiple']].push(data);
 					} else if (op['checked']) {
-						individuales.push(data);
+						if (this.segmento == 4) {
+							if (op.Operaciones != '') {
+								let operaciones = (op.Operaciones.split(',') || []);
+								if (operaciones.length == 1) {
+									operaciones.forEach((OrdeProdOperacionId) => {
+										individuales.push({
+											OrdeProdOperacionId
+											, Contador: op.Contador
+										});
+									});
+								} else {
+									multiples['Multiple' + multiGrupERP] = [];
+									operaciones.forEach((OrdeProdOperacionId) => {
+										multiples['Multiple' + multiGrupERP].push({
+											OrdeProdOperacionId
+											, Contador: op.Contador
+										});
+									});
+									multiGrupERP++;
+								}
+							}
+						} else {
+							individuales.push(data);
+						}
 					}
 				});
 			});
@@ -330,6 +359,31 @@ export class AgregarActividadesComponent implements OnInit {
 		this.inicioMaquinaria += this.cantidad;
 		this.finMaquinaria += this.cantidad;
 		this.obtenerActividades(evento);
+	}
+
+	obtenerOrdenesAgrupadas(evento?) {
+		let datos = {
+			inicio: this.inicio,
+			fin: this.fin,
+			centroProd: this.centroProduccion,
+			buscar: this.valorBuscar,
+			segmento: this.segmento
+		}
+		this.actividadesService.informacion(datos, 'CentrosProduccion/gruposOrdenes').then(resp => {
+			if (!evento) {
+				this.infoActividades = [];
+			}
+			this.infoActividades = this.infoActividades.concat(resp);
+			if (resp.length && this.fin >= +this.infoActividades[this.infoActividades.length - 1]['totCol']) {
+				if (evento && evento.target) evento.target.disabled = true;
+			}
+			if (evento && evento.target) evento.target.complete();
+			this.searching = false;
+		}, (error) => {
+			if (evento && evento.target) evento.target.complete();
+			this.searching = false;
+			console.error(error);
+		});
 	}
 
 }

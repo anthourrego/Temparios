@@ -201,6 +201,9 @@ export class ActividadesPage implements OnInit, OnDestroy {
 					if (data.listar) {
 						this.obtenerInformacion(false);
 					}
+				} else if (data.GrupoERP) {
+					this.accionBoton({ accion: 'terminado', component: ProductoTerminadoComponent }, datos);
+					this.obtenerCentroProd(false);
 				} else if (data && (op['accion'] == 'agregar' || op['accion'] == 'detalle' || op['accion'] == 'terminado')) {
 					this.obtenerCentroProd(false);
 				} else {
@@ -222,7 +225,8 @@ export class ActividadesPage implements OnInit, OnDestroy {
 				GrupoId: op['GrupoId'],
 				Cantidad: op['GrupoId'] == null ? (cantidad ? cantidad : 1) : op['CantidadTotal'],
 				Tipo: (op['ListaChequeoId'] ? 'REPROCESO' : 'OPERACION'),
-				centroProd: this.dataQuery['centroProd']
+				centroProd: this.dataQuery['centroProd'],
+				contadorGrupo: (op['ContadorGrupo'] == 0 ? 0 : 1)
 			}
 			this.actividadesService.informacion(data, 'CentrosProduccion/agregarLogActividad').then(({ datos, msg, valido, actividades }) => {
 				this.idLogActividad = datos;
@@ -231,7 +235,7 @@ export class ActividadesPage implements OnInit, OnDestroy {
 					this.notificacionesService.notificacion(msg);
 				} else {
 					this.actividades = actividades;
-					if ((op['GrupoId'] != null) || ((+op['CantiRecib'] + data.Cantidad) == +op['CantidadTotal'])) {
+					if (((op['GrupoId'] != null) || ((+op['CantiRecib'] + data.Cantidad) == +op['CantidadTotal'])) && op['ContadorGrupo'] != 0) {
 						op['CantiRecib'] = (+op['CantiRecib'] + data.Cantidad);
 						this.ordenOperacionClick(op, pos);
 					}
@@ -397,27 +401,31 @@ export class ActividadesPage implements OnInit, OnDestroy {
 		if (op['GrupoId'] != null && op['Pausa'] > 0 && +op['CantiRecib'] < +op['CantidadTotal']) {
 			this.reanudarOperacionPausada(op, pos);
 		} else {
-			if (+op['CantiRecib'] < +op['CantidadTotal']) {
+			if (op['GrupoERP'] > 0 && op['ContadorGrupo'] == 0) {
 				this.agregarTiempoActividad(op, null, pos);
 			} else {
-				if (op['GrupoId'] == null) {
-					if (op['AplicaListaChequeo']) {
-						if (op['AplicoListaChequeo']) {
-							this.accionBoton({ accion: 'terminado', component: ProductoTerminadoComponent }, op);
+				if (+op['CantiRecib'] < +op['CantidadTotal']) {
+					this.agregarTiempoActividad(op, null, pos);
+				} else {
+					if (op['GrupoId'] == null) {
+						if (op['AplicaListaChequeo']) {
+							if (op['AplicoListaChequeo']) {
+								this.accionBoton({ accion: 'terminado', component: ProductoTerminadoComponent }, op);
+							} else {
+								this.accionBoton({ accion: 'lista-chequeo', component: ListaChequeoComponent }, op, pos);
+							}
 						} else {
-							this.accionBoton({ accion: 'lista-chequeo', component: ListaChequeoComponent }, op, pos);
+							this.accionBoton({ accion: 'terminado', component: ProductoTerminadoComponent }, op);
 						}
 					} else {
-						this.accionBoton({ accion: 'terminado', component: ProductoTerminadoComponent }, op);
-					}
-				} else {
-					if (op['AplicaListaChequeo'] == null) {
-						this.accionBoton({ accion: 'terminado', component: ProductoTerminadoComponent }, op);
-					} else {
-						if (op['AplicaListaChequeo'] == 1) {
-							this.accionBoton({ accion: 'lista-chequeo', component: ListaChequeoComponent }, op, pos);
+						if (op['AplicaListaChequeo'] == null) {
+							this.accionBoton({ accion: 'terminado', component: ProductoTerminadoComponent }, op);
 						} else {
-							this.accionBoton({ accion: 'lista-chequeo-multiple', component: ListaChequeoMultipleComponent }, op, pos);
+							if (op['AplicaListaChequeo'] == 1) {
+								this.accionBoton({ accion: 'lista-chequeo', component: ListaChequeoComponent }, op, pos);
+							} else {
+								this.accionBoton({ accion: 'lista-chequeo-multiple', component: ListaChequeoMultipleComponent }, op, pos);
+							}
 						}
 					}
 				}

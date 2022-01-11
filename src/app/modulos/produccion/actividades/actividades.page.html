@@ -64,8 +64,9 @@
 					}">
 					<div class="contenedor">
 						<ion-card-header class="ion-no-padding" [ngClass]="{
-							'opacity3' : searching && (idLogActividadUltimo == op['ActividadOperarioId'] && op['ActividadOperarioId'] != '0') || (idLogActividadUltimo == op['GrupoId'] && op['GrupoId'] != null)
+							'opacity3' : searching && (idLogActividadUltimo == op['ActividadOperarioId'] && op['ActividadOperarioId'] != '0') || (idLogActividadUltimo == op['GrupoId'] && op['GrupoId'] != null) && op['ContadorGrupo'] != 0
 							, 'content-reproceso': (!op['GrupoId'] && op['ListaChequeoId']) || (op['GrupoId'] && op['ListaChequeoId'] > 0)
+							, 'fondo-grupo-contador' : op['ContadorGrupo'] == 1
 						}">
 							<ion-item lines="none" [ngClass]="{'content-reproceso': op['AplicoListaChequeo'] > 0}">
 								<ion-label class="ion-no-margin"
@@ -80,14 +81,16 @@
 							</ion-item>
 						</ion-card-header>
 						<ion-card-content class="ion-no-padding"
-							[ngClass]="{'opacity3' : searching && (idLogActividadUltimo == op['ActividadOperarioId'] && op['ActividadOperarioId'] != '0') || (idLogActividadUltimo == op['GrupoId'] && op['GrupoId'] != null)}">
+							[ngClass]="{
+								'opacity3' : searching && (idLogActividadUltimo == op['ActividadOperarioId'] && op['ActividadOperarioId'] != '0') || (idLogActividadUltimo == op['GrupoId'] && op['GrupoId'] != null) && op['ContadorGrupo'] != 0}">
 							<ion-grid>
 								<ion-row class="ion-justify-content-evenly">
 									<ion-col size="5"
 										(touchend)="!op['GrupoId'] && +op['CantiRecib'] < +op['CantidadTotal'] ? endCount() : null"
-										(touchstart)="!op['GrupoId'] && +op['CantiRecib'] < +op['CantidadTotal'] ? startCount(op, posi) : null"
-										(click)="ordenOperacionClick(op, posi)">
-										<div class="cantidad-proceso">
+										(touchstart)="!op['GrupoId'] && +op['CantiRecib'] < +op['CantidadTotal'] ? startCount(op, posi) : null">
+										<div class="cantidad-proceso h-100 contador-progress"
+											*ngIf="op['ContadorGrupo'] == null || op['ContadorGrupo'] == 1"
+											(click)="op['ContadorGrupo'] == 1 && (+op['CantiRecib'] < +op['CantidadTotal']) ? accionBoton({accion: 'detalle', component: compoDetalle}, op) : ordenOperacionClick(op, posi)">
 											<p class="conteo-accion">{{ +op['CantiRecib'] }}</p>
 											<ion-progress-bar color="secondary"
 												[color]="+op['valProgress'] < 0.40 ? 'danger' : (+op['valProgress'] > 0.84 ? 'success' : 'warning')"
@@ -95,10 +98,18 @@
 											</ion-progress-bar>
 											<p>{{ +op['CantidadTotal'] }}</p>
 										</div>
+										<div *ngIf="op['ContadorGrupo'] == 0" class="cantidad-proceso h-100"
+											(click)="ordenOperacionClick(op, posi)">
+											<ion-icon class="h-100 w-100" name="time-outline"></ion-icon>
+										</div>
 									</ion-col>
-									<ion-col size="5">
-										<div class="ion-text-center">
-											<div class="cantidad-proceso letra-reproceso">
+									<ion-col size="5" [ngClass]="{
+										'solo-tiempo' : op['ContadorGrupo'] == 0
+									}">
+										<div class="ion-text-center h-100 reproceso-contenedor"
+											[ngClass]="op['ContadorGrupo'] == 0 ? 'justify-content-center' : 'justify-content-between'">
+											<div class="cantidad-proceso letra-reproceso h-75"
+												*ngIf="op['ContadorGrupo'] == null || op['ContadorGrupo'] == 1">
 												<strong>{{ +op['CantReproceso'] }}</strong> Reprocesos
 											</div>
 											<div class="tiempo">

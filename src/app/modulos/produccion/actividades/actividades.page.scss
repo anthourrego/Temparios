@@ -76,10 +76,16 @@ ion-content {
 						.opacity3 {
 							opacity: 0.3 !important;
 						}
+						.fondo-grupo-contador {
+							ion-item::part(native) {
+								background-color: #c9f4ffa1 !important;
+							}
+						}
 						ion-card-content {
 							ion-grid {
 								ion-row {
 									ion-col {
+										min-height: 60px;
 										font-size: 13px;
 										.cantidad-proceso {
 											border: 1px solid var(--ion-color-medium);
@@ -93,6 +99,9 @@ ion-content {
 										}
 										.letra-reproceso {
 											font-size: 11px;
+											display: flex;
+											flex-direction: column;
+											justify-content: space-around;
 										}
 										strong {
 											color: var(--ion-color-dark);
@@ -101,6 +110,19 @@ ion-content {
 											display: flex;
 											justify-content: center;
 										}
+										.contador-progress {
+											display: flex;
+											flex-direction: column;
+											justify-content: space-around;
+										}
+									}
+									.solo-tiempo {
+										display: flex;
+										align-items: center;
+									}
+									.reproceso-contenedor {
+										display: flex;
+										flex-direction: column;
 									}
 								}
 							}

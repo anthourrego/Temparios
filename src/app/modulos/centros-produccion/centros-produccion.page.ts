@@ -37,6 +37,7 @@ export class CentrosProduccionPage implements OnInit {
 		let datos = await this.storage.get('centrosProduccion');
 		this.centrosProduccion = [];
 		datos = await this.centroProduccionService.desencriptar(JSON.parse(datos));
+		console.log(datos);
 		this.centrosProduccion = datos.map(it => {
 			it.borde = FuncionesGenerales.generarColorAutomatico();
 			return it;

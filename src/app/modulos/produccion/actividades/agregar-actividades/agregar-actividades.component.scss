@@ -43,9 +43,12 @@ ion-content {
 			width: 100%;
 			height: 100%;
 		}
+		.fondo-grupo-contador {
+			--background: #c9f4ffa1;
+		}
 	}
 }
 
-.accordion-flush .accordion-item:last-child{
+.accordion-flush .accordion-item:last-child {
 	border: 1px solid rgba(0, 0, 0, 0.125);
 }

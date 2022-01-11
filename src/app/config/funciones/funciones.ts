@@ -41,6 +41,7 @@ export class FuncionesGenerales {
 
 	static rastreo(cambio, programa) {
 		const date = new Date();
+		console.log((date.getMonth() + 1));
 		let fecha = date.getFullYear() + "-" + date.getDate() + "-" + (date.getMonth() + 1) + " " + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
 		return { fecha, programa, cambio };
 	}
