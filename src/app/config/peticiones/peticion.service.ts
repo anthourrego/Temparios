@@ -71,22 +71,23 @@ export class PeticionService {
 	async informacion(body: object | string | Array<any> | number, controlador: string) {
 		const data = {
 			encriptado: await this.encriptar(body)
-			, RASTREO: FuncionesGenerales.rastreo('', '')
+			, RASTREO: FuncionesGenerales.rastreo('', 'TemparioApp')
 		}
 		const uri = this.construirUrl(controlador);
 		const Conexion = await this.storageService.get('conexion').then(resp => resp);
 		const Cedula = await this.storageService.get('nroDocumento').then(resp => resp);
 		const indice = await this.storageService.get('indice').then(resp => resp);
 		const Version = await this.storageService.get('version').then(resp => resp);
-		let nit = await this.desencriptar(JSON.parse(await this.storageService.get('usuario').then(resp => resp)));
+		let user = await this.desencriptar(JSON.parse(await this.storageService.get('usuario').then(resp => resp)));
 		const headers = new HttpHeaders({
-			Token: '' + nit.OperarioId
+			Token: '' + user.OperarioId
 			, Conexion
 			, Cedula
 			, Nit: environment.nit
-			, Usuario: '' + nit.OperarioId
+			, Usuario: '' + user.OperarioId
 			, indice
 			, Version: (Version || '')
+			, NomUsuario: user.nombre
 		});
 		return await this.ejecutarPeticion('post', uri, data, headers).toPromise().then(async resp => {
 			const desencriptado = await this.desencriptar(resp);
@@ -164,7 +165,7 @@ export class PeticionService {
 			user: data.nroDocumento,
 			clave: data.password,
 			nit: environment.nit,
-			RASTREO: FuncionesGenerales.rastreo('Ingresa al Sistema Process App', 'Ingreso Sistema')
+			RASTREO: FuncionesGenerales.rastreo('Ingresa al Sistema Process App', 'TemparioApp')
 		};
 		const headers = new HttpHeaders({ Version });
 		return await this.ejecutarPeticion('post', `${this.url}Login/ingresoOperario`, data, headers).toPromise().then(
@@ -180,7 +181,8 @@ export class PeticionService {
 
 		let data = {
 			ingreso: ingreso.IngresoId,
-			usuario: ingreso.usuarioId
+			usuario: ingreso.usuarioId,
+			RASTREO: FuncionesGenerales.rastreo('', 'TemparioApp')
 		};
 		const Version = await this.storageService.get('version').then(resp => resp);
 		const headers = new HttpHeaders({ Conexion, Token: ingreso.IngresoId, Version: Version || '' });

@@ -228,11 +228,10 @@ export class AgregarActividadesComponent implements OnInit {
 			if (!evento) {
 				this.infoActividades = [];
 			}
+			console.log(resp);
 			if (this.maquinariaActual && this.infoActividades[this.posicionAnterior]['collapse']) {
 				this.infoActividades[this.posicionAnterior]['actividades'] = this.infoActividades[this.posicionAnterior]['actividades'].concat(resp);
-				if (evento && evento.target) {
-					evento.target.complete();
-				}
+				if (evento && evento.target) evento.target.complete();
 				/* && this.finMaquinaria >= +this.infoActividades[this.infoActividades.length - 1]['totCol'] */
 				if (!resp.length) {
 					if (evento && evento.target) {
@@ -280,7 +279,7 @@ export class AgregarActividadesComponent implements OnInit {
 	loadData(event) {
 		this.inicio += this.cantidad;
 		this.fin += this.cantidad;
-		if(this.segmento == 4){
+		if (this.segmento == 4) {
 			this.obtenerOrdenesAgrupadas(event);
 		} else {
 			this.obtenerActividades(event);

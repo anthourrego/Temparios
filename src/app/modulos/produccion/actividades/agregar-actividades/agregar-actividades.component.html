@@ -64,7 +64,7 @@
 					<ion-label>
 						<!--{{ it['NombreProducto'] }}-->
 						<p class="caracteristicas">Ref: {{ it['Referencia'] }} | Orden: {{ it['NumerOrden'] }} |
-							Cantidad: {{ +it['Cantidad'] }}</p>
+							Cantidad: {{ +it['Cantidad'] }} | Prioridad: {{ it['Prioridad'] }}</p>
 						<p class="caracteristicas">{{ it['caracteristicaWeb'] }}</p>
 					</ion-label>
 					<ion-icon color="dark" slot="end"
@@ -122,7 +122,7 @@
 								<!--{{ item['NombreProducto'] }}-->
 								<p>{{ item['nombreoperacion'] }}</p>
 								<p class="caracteristicas">Ref: {{ item['Referencia'] }} | Orden: {{ item['NumerOrden']
-									}} | Cantidad: {{+item['Cantidad'] }}</p>
+									}} | Cantidad: {{+item['Cantidad'] }} | Prioridad: {{ item['Prioridad'] }}</p>
 								<p>Estado: {{ item['Estado'] }}</p>
 								<p class="caracteristicas">{{item['caracteristicaWeb']}}</p>
 							</ion-label>
@@ -160,7 +160,7 @@
 					<ion-label>
 						<!--{{ it['NombreProducto'] }}-->
 						<p class="caracteristicas">Ref: {{ it['Referencia'] }} | Orden: {{ it['NumerOrden'] }} |
-							Cantidad: {{ +it['Cantidad'] }}</p>
+							Cantidad: {{ +it['Cantidad'] }} | Prioridad: {{ it['Prioridad'] }}</p>
 						<p class="caracteristicas">{{ it['caracteristicaWeb'] }}</p>
 					</ion-label>
 					<ion-icon color="dark" slot="end"
@@ -258,8 +258,7 @@
 	<ion-list *ngIf="!infoActividades.length && !searching">
 		<ion-item lines="none">
 			<ion-text color="dark" class="ion-text-center">
-				<h4 class="ion-no-margin">No hay {{segmento == 1 ? 'maquinas' : (segmento == 4 ? 'grupo de ordenes de
-					producción' : 'ordenes de producción') }} disponibles</h4>
+				<h4 class="ion-no-margin">No hay {{segmento == 1 ? 'maquinas' : (segmento == 4 ? 'grupo de ordenes de producción' : 'ordenes de producción') }} disponibles</h4>
 			</ion-text>
 		</ion-item>
 	</ion-list>
