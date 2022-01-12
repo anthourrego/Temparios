@@ -93,10 +93,12 @@ export class ConfiguracionPage implements OnInit {
 	}
 
 	ejecutarPeticionLog(terminar) {
+		console.log(terminar);
 		let data = {
 			Tipo: 'SALIDA', //INGRESO
 			TipoParada: null,
-			idParada: -1
+			idParada: -1,
+			TerminarTurno: terminar
 		}
 		this.loginService.informacion(data, 'CentrosProduccion/agregarLogParada').then(({ valido, msg }) => {
 			if (valido) {

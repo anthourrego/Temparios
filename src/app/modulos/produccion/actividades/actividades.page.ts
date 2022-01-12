@@ -49,6 +49,7 @@ export class ActividadesPage implements OnInit, OnDestroy {
 	timeoutHandler;
 	clickPresionado: boolean = false;
 	eliminarMultiple: boolean = false;
+	ingresoModulo: boolean = true;
 
 	constructor(
 		private actionSheetController: ActionSheetController,
@@ -62,6 +63,7 @@ export class ActividadesPage implements OnInit, OnDestroy {
 	) {
 		this.cambioCentroProduccionService.suscripcion().pipe(takeUntil(this.subject)).subscribe(respu => {
 			this.actividades = [];
+			this.ingresoModulo = true;
 			this.obtenerCentroProd(false);
 		});
 	}
@@ -84,6 +86,7 @@ export class ActividadesPage implements OnInit, OnDestroy {
 		this.dataCentroProduccion = await this.actividadesService.desencriptar(JSON.parse(await this.storage.get('centroProduccion')));
 		this.dataQuery = {
 			centroProd: this.dataCentroProduccion['CentroProduccion'],
+			ingresoModulo: this.ingresoModulo
 		}
 		this.obtenerInformacion(event, true);
 	}
@@ -159,6 +162,7 @@ export class ActividadesPage implements OnInit, OnDestroy {
 			}
 			if (event) event.target.complete();
 			this.searching = false;
+			this.ingresoModulo = false;
 		}).catch((error) => {
 			if (event) event.target.complete();
 			this.searching = false;
