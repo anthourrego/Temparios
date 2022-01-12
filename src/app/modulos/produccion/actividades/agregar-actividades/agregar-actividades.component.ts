@@ -280,7 +280,11 @@ export class AgregarActividadesComponent implements OnInit {
 	loadData(event) {
 		this.inicio += this.cantidad;
 		this.fin += this.cantidad;
-		this.obtenerActividades(event);
+		if(this.segmento == 4){
+			this.obtenerOrdenesAgrupadas(event);
+		} else {
+			this.obtenerActividades(event);
+		}
 	}
 
 	organizarDataGuardar() {
@@ -350,6 +354,7 @@ export class AgregarActividadesComponent implements OnInit {
 		this.collapseAbierto = false;
 		this.inicio = 1;
 		this.fin = this.cantidad;
+		this.seleccionMultiple = false;
 		this.actividadesSeleccionadas = [];
 		this.verRecargar = true;
 		this.refrescar(null, true);

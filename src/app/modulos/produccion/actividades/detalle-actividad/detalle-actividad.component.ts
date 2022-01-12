@@ -19,6 +19,7 @@ export class DetalleActividadComponent implements OnInit {
 	detalleActividad: Array<object> = [];
 	searching: boolean = true;
 	listarAnterior: boolean = false;
+	valueBuscador: string = '';
 
 	constructor(
 		private modalController: ModalController,
@@ -142,6 +143,8 @@ export class DetalleActividadComponent implements OnInit {
 					let enc = this.detalleActividad.find(it => +it['CantiRecib'] != +it['CantidadTotal']);
 					if (!enc) {
 						this.cerrarModal({ GrupoERP: true });
+					} else {
+						this.buscarFiltro({ value: this.valueBuscador });
 					}
 				}
 			}).catch((error) => {
@@ -149,6 +152,21 @@ export class DetalleActividadComponent implements OnInit {
 				this.searching = false;
 			});
 		}
+	}
+
+	buscarFiltro(evento) {
+		this.valueBuscador = evento.value.toLowerCase();
+		this.detalleActividad.forEach(op => {
+			op['visible'] = false;
+			if (
+				op['NombreProd'].toLowerCase().includes(this.valueBuscador) ||
+				op['Nombre'].toLowerCase().includes(this.valueBuscador) ||
+				(op['NumerOrden'] + '').toLowerCase().includes(this.valueBuscador) ||
+				op['Referencia'].toLowerCase().includes(this.valueBuscador)
+			) {
+				op['visible'] = true;
+			}
+		});
 	}
 
 }

@@ -39,12 +39,9 @@ export class FuncionesGenerales {
 		});
 	}
 
-	static rastreo(cambio, programa) {
-		const date = new Date();
-		console.log((date.getMonth() + 1));
-		let fecha = date.getFullYear() + "-" + date.getDate() + "-" + (date.getMonth() + 1) + " " + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
-		return { fecha, programa, cambio };
-	}
+	static rastreo = (cambio, programa) => {
+		return { fecha: moment().format('YYYY-DD-M HH:mm:ss'), programa, cambio }
+	};
 
 	static generarColorAutomatico() {
 		const VALORESCOLORES = "0123456789ABCDEF";

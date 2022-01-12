@@ -2,7 +2,7 @@
 	<ion-toolbar color="ligth">
 		<ion-title color="dark" class="ion-text-center">{{ datos['Nombre'] }}</ion-title>
 		<ion-buttons slot="end" (click)="cerrarModal()">
-			<ion-icon color="dark" slot='icon-only' size='large' name='close-outline'>
+			<ion-icon color="dark" slot='iconp-only' size='large' name='close-outline'>
 			</ion-icon>
 		</ion-buttons>
 	</ion-toolbar>
@@ -12,6 +12,10 @@
 
 <ion-content color="gray">
 
+	<ion-searchbar #inputBuscar clearIcon="close-sharp" [enterkeyhint]="'search'"
+		(keyup.enter)="buscarFiltro(inputBuscar)" [placeholder]="'Buscar operacion'">
+	</ion-searchbar>
+
 	<ion-refresher slot="fixed" (ionRefresh)="obtenerInformacion($event)">
 		<ion-refresher-content></ion-refresher-content>
 	</ion-refresher>
@@ -20,7 +24,7 @@
 		<ion-item-sliding class="ion-margin"
 			(click)="item['Contador'] == 1 && +item['CantiRecib'] < (+item['CantidadTotal']) ? agregarCantidad(item) : slidingDelInvitado('sliding' + pos)"
 			[id]="'sliding' + pos" *ngFor="let item of detalleActividad; let pos = index;"
-			[ngClass]="{'reproceso': item['ListaChequeoId']}">
+			[ngClass]="{'reproceso': item['ListaChequeoId'], 'd-none' : !item['visible']}">
 			<ion-item lines="none"
 				[ngStyle]=" item['AplicoListaChequeo'] ? {'border-left': '4px solid var(--ion-color-success)'} : {}">
 				<!-- [ngStyle]=" item['EstadoOperacion'] == 'FI' ? {'border-left': '4px solid var(--ion-color-success)'} : {}" -->

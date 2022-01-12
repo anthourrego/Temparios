@@ -36,7 +36,7 @@
 	<!-- <ion-button (click)="collapseMultiple = !collapseMultiple" color="gray">
 		<ion-icon [name]="!collapseMultiple ? 'arrow-down-outline' : 'arrow-up-outline'"></ion-icon>
 	</ion-button> -->
-	<ion-checkbox [disabled]="segmento == 4" class="ion-margin" (ionChange)="checkMultiples($event)" color="success"
+	<ion-checkbox *ngIf="segmento != 4" class="ion-margin" (ionChange)="checkMultiples($event)" color="success"
 		[(ngModel)]="seleccionMultiple"></ion-checkbox>
 </div>
 

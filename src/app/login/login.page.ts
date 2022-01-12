@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
 import { RxFormGroup } from '@rxweb/reactive-form-validators';
 import { FuncionesGenerales } from '../config/funciones/funciones';
 import { CargadorService } from '../servicios/cargador.service';
@@ -20,6 +21,7 @@ export class LoginPage implements OnInit {
 	claseDocumento: string = '';
 	claseUsuario: string = '';
 	verPassword: Boolean = false;
+	versionNumber: string = '';
 
 	constructor(
 		private router: Router,
@@ -28,7 +30,12 @@ export class LoginPage implements OnInit {
 		private storageService: StorageService,
 		private cargadorService: CargadorService,
 		private theme: ThemeService,
-	) { }
+		private appVersion: AppVersion,
+	) {
+		this.appVersion.getVersionNumber().then(op => {
+			this.versionNumber = op;
+		});
+	}
 
 	ngOnInit() {
 		this.configForm();
@@ -63,7 +70,7 @@ export class LoginPage implements OnInit {
 		if (this.formLogin.formulario.valid) {
 			this.cargadorService.presentar().then(resp => {
 				const data = Object.assign({}, this.formLogin.formulario.value);
-				this.loginService.iniciarSesionUser(data).then(async ({ mensaje, db, usuario, valido, indice, centrosProduccion, crypt, password }) => {
+				this.loginService.iniciarSesionUser(data, this.versionNumber).then(async ({ mensaje, db, usuario, valido, indice, centrosProduccion, crypt, password }) => {
 					if (valido) {
 						this.storageService.set('conexion', JSON.stringify(db));
 						this.storageService.set('nroDocumento', data.nroDocumento);

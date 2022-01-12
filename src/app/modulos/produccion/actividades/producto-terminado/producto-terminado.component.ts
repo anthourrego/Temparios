@@ -62,9 +62,7 @@ export class ProductoTerminadoComponent implements OnInit {
 		}
 		this.searching = true;
 		this.actividadesService.informacion(info, 'CentrosProduccion/obtenerProductoTerminado').then(({ contMensaje, datos, consumoGrupo }) => {
-			console.log(consumoGrupo);
 			this.productos = datos;
-			console.log(this.productos);
 			this.productos.forEach(it => {
 				if (it['ManejaLotes'] == 'S') it['formValido'] = false;
 			});
@@ -98,6 +96,7 @@ export class ProductoTerminadoComponent implements OnInit {
 			, centroproduccionid: this.centroProduccion
 			, grupoId: this.datos['GrupoId']
 			, Ultimo: this.datos['Ultimo']
+			, GrupoERP: null
 		}
 		if (this.datos['GrupoId']) {
 			let consumoGrupo = this.productosGrupo.map(op => {
@@ -107,9 +106,11 @@ export class ProductoTerminadoComponent implements OnInit {
 			});
 			data['consumoGrupo'] = consumoGrupo;
 		}
-		console.log(data);
-		 this.actividadesService.informacion(data, 'CentrosProduccion/finalizarActividad').then(({ msg, valido, grupoElimino }) => {
-			 console.log({ msg, valido, grupoElimino });
+		if (this.datos['GrupoERP'] > 0) {
+			data.GrupoERP = this.datos['GrupoERP'];
+			data['ContadorGrupoERP'] = this.datos['ContadorGrupo'];
+		}
+		this.actividadesService.informacion(data, 'CentrosProduccion/finalizarActividad').then(({ msg, valido, grupoElimino }) => {
 			this.cargadorService.ocultar();
 			if (!valido) {
 				this.notificacionesService.notificacion(msg);
@@ -124,7 +125,7 @@ export class ProductoTerminadoComponent implements OnInit {
 			console.error(error);
 			this.cargadorService.ocultar();
 			this.searching = false;
-		}); 
+		});
 	}
 
 	validarBoton({ tipo, valor, pos }) {

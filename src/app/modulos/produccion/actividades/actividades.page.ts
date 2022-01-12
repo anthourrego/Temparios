@@ -226,7 +226,7 @@ export class ActividadesPage implements OnInit, OnDestroy {
 				Cantidad: op['GrupoId'] == null ? (cantidad ? cantidad : 1) : op['CantidadTotal'],
 				Tipo: (op['ListaChequeoId'] ? 'REPROCESO' : 'OPERACION'),
 				centroProd: this.dataQuery['centroProd'],
-				contadorGrupo: (op['ContadorGrupo'] == 0 ? 0 : 1)
+				contadorGrupo: (op['GrupoERP'] > 0 ? (op['ContadorGrupo'] == 0 ? 0 : 1) : 1)
 			}
 			this.actividadesService.informacion(data, 'CentrosProduccion/agregarLogActividad').then(({ datos, msg, valido, actividades }) => {
 				this.idLogActividad = datos;

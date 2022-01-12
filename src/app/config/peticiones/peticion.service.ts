@@ -71,6 +71,7 @@ export class PeticionService {
 	async informacion(body: object | string | Array<any> | number, controlador: string) {
 		const data = {
 			encriptado: await this.encriptar(body)
+			, RASTREO: FuncionesGenerales.rastreo('', '')
 		}
 		const uri = this.construirUrl(controlador);
 		const Conexion = await this.storageService.get('conexion').then(resp => resp);
@@ -78,7 +79,15 @@ export class PeticionService {
 		const indice = await this.storageService.get('indice').then(resp => resp);
 		const Version = await this.storageService.get('version').then(resp => resp);
 		let nit = await this.desencriptar(JSON.parse(await this.storageService.get('usuario').then(resp => resp)));
-		const headers = new HttpHeaders({ Token: '' + nit.OperarioId, Conexion, Cedula, Nit: environment.nit, Usuario: '' + nit.OperarioId, indice, Version: Version || '' });
+		const headers = new HttpHeaders({
+			Token: '' + nit.OperarioId
+			, Conexion
+			, Cedula
+			, Nit: environment.nit
+			, Usuario: '' + nit.OperarioId
+			, indice
+			, Version: (Version || '')
+		});
 		return await this.ejecutarPeticion('post', uri, data, headers).toPromise().then(async resp => {
 			const desencriptado = await this.desencriptar(resp);
 			if (desencriptado.activoLogueo) {
@@ -109,7 +118,9 @@ export class PeticionService {
 								text: 'Cerrar',
 								role: 'aceptar',
 								handler: () => {
-									this.storageService.limpiarTodo(true);
+									if (environment.nit != '111111111') {
+										this.storageService.limpiarTodo(true);
+									}
 								}
 							}]
 						);
@@ -118,7 +129,9 @@ export class PeticionService {
 					text: 'Cerrar',
 					role: 'cancel',
 					handler: () => {
-						this.storageService.limpiarTodo(true);
+						if (environment.nit != '111111111') {
+							this.storageService.limpiarTodo(true);
+						}
 					}
 				}];
 			} else {
@@ -146,15 +159,15 @@ export class PeticionService {
 		return this.url + this.categoria + controlador;
 	}
 
-	async iniciarSesionUser(data) {
+	async iniciarSesionUser(data, Version) {
 		data = {
 			user: data.nroDocumento,
 			clave: data.password,
 			nit: environment.nit,
-			RASTREO: FuncionesGenerales.rastreo('Ingresa al Sistema Process App', 'Ingreso Sistema'),
-			version: await this.storageService.get('version').then(resp => resp)
+			RASTREO: FuncionesGenerales.rastreo('Ingresa al Sistema Process App', 'Ingreso Sistema')
 		};
-		return await this.ejecutarPeticion('post', `${this.url}Login/ingresoOperario`, data).toPromise().then(
+		const headers = new HttpHeaders({ Version });
+		return await this.ejecutarPeticion('post', `${this.url}Login/ingresoOperario`, data, headers).toPromise().then(
 			resp => resp
 		).catch(error => {
 			this.validarAlertaError(error);
