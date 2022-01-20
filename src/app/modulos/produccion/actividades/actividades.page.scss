@@ -63,8 +63,15 @@ ion-content {
 							}
 							ion-item {
 								border-radius: 7px !important;
+								--inner-padding-end: 3px;
 								ion-icon {
-									margin-inline-start: 5px;
+									margin-inline-start: 2px;
+									margin-inline-end: 0px;
+								}
+								ion-label {
+									p {
+										font-size: 12px;
+									}
 								}
 							}
 						}
