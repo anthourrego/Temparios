@@ -68,11 +68,11 @@ ion-content {
 									margin-inline-start: 2px;
 									margin-inline-end: 0px;
 								}
-								ion-label {
+								/* ion-label {
 									p {
 										font-size: 12px;
 									}
-								}
+								} */
 							}
 						}
 						.content-reproceso {
@@ -191,5 +191,53 @@ ion-footer {
 @keyframes shine {
 	to {
 		background-position: -200% center;
+	}
+}
+
+@media (max-width: 350px) {
+	ion-content {
+		ion-grid {
+			ion-row {
+				ion-col {
+					ion-card {
+						.contenedor {
+							ion-card-header {
+								ion-item {
+									ion-label {
+										p {
+											font-size: 9px;
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+@media (min-width: 351px) and (max-width: 576px) {
+	ion-content {
+		ion-grid {
+			ion-row {
+				ion-col {
+					ion-card {
+						.contenedor {
+							ion-card-header {
+								ion-item {
+									ion-label {
+										p {
+											font-size: 11px;
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
 	}
 }
