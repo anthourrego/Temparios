@@ -64,6 +64,7 @@ export class ActividadesPage implements OnInit, OnDestroy {
 		this.cambioCentroProduccionService.suscripcion().pipe(takeUntil(this.subject)).subscribe(respu => {
 			this.actividades = [];
 			this.ingresoModulo = true;
+			this.notificacionesService.notificacion("Entrada suscribe", 5000, "top");
 			this.obtenerCentroProd(false);
 		});
 	}
@@ -78,6 +79,7 @@ export class ActividadesPage implements OnInit, OnDestroy {
 		this.idLogActividadSearch = '';
 		this.idLogActividadUltimo = '';
 		// this.actividades = [];
+		this.notificacionesService.notificacion("Entrada view did entrer", 5000, "bottom");
 		this.obtenerCentroProd(false);
 	}
 
