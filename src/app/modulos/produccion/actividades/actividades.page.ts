@@ -64,7 +64,6 @@ export class ActividadesPage implements OnInit, OnDestroy {
 		this.cambioCentroProduccionService.suscripcion().pipe(takeUntil(this.subject)).subscribe(respu => {
 			this.actividades = [];
 			this.ingresoModulo = true;
-			this.notificacionesService.notificacion("Entrada suscribe", 5000, "top");
 			this.obtenerCentroProd(false);
 		});
 	}
@@ -78,8 +77,7 @@ export class ActividadesPage implements OnInit, OnDestroy {
 	ionViewDidEnter() {
 		this.idLogActividadSearch = '';
 		this.idLogActividadUltimo = '';
-		// this.actividades = [];
-		this.notificacionesService.notificacion("Entrada view did entrer", 5000, "bottom");
+		this.actividades = [];
 		this.obtenerCentroProd(false);
 	}
 
@@ -240,7 +238,9 @@ export class ActividadesPage implements OnInit, OnDestroy {
 				if (!valido) {
 					this.notificacionesService.notificacion(msg);
 				} else {
-					this.actividades = actividades;
+					if (pos && actividades[pos] && this.actividades[pos]) {
+						this.actividades[pos] = actividades[pos];
+					}
 					if (((op['GrupoId'] != null) || ((+op['CantiRecib'] + data.Cantidad) == +op['CantidadTotal'])) && op['ContadorGrupo'] != 0) {
 						op['CantiRecib'] = (+op['CantiRecib'] + data.Cantidad);
 						this.ordenOperacionClick(op, pos);
