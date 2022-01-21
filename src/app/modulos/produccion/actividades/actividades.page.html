@@ -55,7 +55,7 @@
 			<ion-col size="6" sizeMd="4" sizeLg="3" *ngFor="let op of actividades; let posi = index;"
 				(click)="agregarEliminarActividad(op, posi)">
 				<ion-card class="content-cargador"
-					[disabled]="searching && (idLogActividadUltimo == op['ActividadOperarioId'] && op['ActividadOperarioId'] != '0') || (idLogActividadUltimo == op['GrupoId'] && op['GrupoId'] != null) || eliminarMultiple"
+					[disabled]="searching && ((idLogActividadUltimo == op['ActividadOperarioId'] && op['ActividadOperarioId'] != '0') || (idLogActividadUltimo == op['GrupoId'] && op['GrupoId'] != null) || eliminarMultiple)"
 					[ngClass]="{
 						'cargador': (idLogActividadSearch == op['ActividadOperarioId'] && op['ActividadOperarioId'] != '0') || (idLogActividadSearch == op['GrupoId'] && op['GrupoId'] != null), 
 						'content-activo' : (idLogActividadUltimo == op['ActividadOperarioId'] && op['ActividadOperarioId'] != '0') || (idLogActividadUltimo == op['GrupoId'] && op['GrupoId'] != null),

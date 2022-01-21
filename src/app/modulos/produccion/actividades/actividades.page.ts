@@ -77,7 +77,7 @@ export class ActividadesPage implements OnInit, OnDestroy {
 	ionViewDidEnter() {
 		this.idLogActividadSearch = '';
 		this.idLogActividadUltimo = '';
-		this.actividades = [];
+		// this.actividades = [];
 		this.obtenerCentroProd(false);
 	}
 
