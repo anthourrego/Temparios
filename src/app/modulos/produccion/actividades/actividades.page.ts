@@ -26,7 +26,7 @@ export class ActividadesPage implements OnInit, OnDestroy {
 	tituloEficiencia: Array<string> = ['Hora', 'Diaria', 'Mensual'];
 	valoresEficiencia: Array<string> = ['0%', '0%', '0%'];
 	searching: boolean = true;
-	actividades: Array<object> = [];
+	actividadesLista: Array<object> = [];
 	botones: Array<object> = [
 		{ icono: 'swap-horizontal', color: 'secondary', accion: 'cambiar-centro' }
 		, { icono: 'add', color: 'primary', accion: 'agregar', component: AgregarActividadesComponent }
@@ -62,7 +62,7 @@ export class ActividadesPage implements OnInit, OnDestroy {
 		private cargadorService: CargadorService
 	) {
 		this.cambioCentroProduccionService.suscripcion().pipe(takeUntil(this.subject)).subscribe(respu => {
-			this.actividades = [];
+			this.actividadesLista = [];
 			this.ingresoModulo = true;
 			this.obtenerCentroProd(false);
 		});
@@ -77,7 +77,7 @@ export class ActividadesPage implements OnInit, OnDestroy {
 	ionViewDidEnter() {
 		this.idLogActividadSearch = '';
 		this.idLogActividadUltimo = '';
-		this.actividades = [];
+		this.actividadesLista = [];
 		this.obtenerCentroProd(false);
 	}
 
@@ -158,7 +158,7 @@ export class ActividadesPage implements OnInit, OnDestroy {
 		this.searching = true;
 		this.actividadesService.informacion(this.dataQuery, 'CentrosProduccion/obtenerActividadesAsignadas').then((datos) => {
 			if (datos) {
-				this.actividades = datos.datos;
+				this.actividadesLista = datos.datos;
 			}
 			if (event) event.target.complete();
 			this.searching = false;
@@ -198,8 +198,8 @@ export class ActividadesPage implements OnInit, OnDestroy {
 		modal.onWillDismiss().then(({ data, role }) => {
 			if (data) {
 				if (data.listachequeo) {
-					if (this.actividades[pos]) {
-						this.actividades[pos]['AplicoListaChequeo'] = true;
+					if (this.actividadesLista[pos]) {
+						this.actividadesLista[pos]['AplicoListaChequeo'] = true;
 					}
 					this.accionBoton({ accion: 'terminado', component: ProductoTerminadoComponent }, datos);
 					if (data.listar) {
@@ -238,8 +238,8 @@ export class ActividadesPage implements OnInit, OnDestroy {
 				if (!valido) {
 					this.notificacionesService.notificacion(msg);
 				} else {
-					if (pos && actividades[pos] && this.actividades[pos]) {
-						this.actividades[pos] = actividades[pos];
+					if (pos >= 0 && actividades[pos] && this.actividadesLista[pos]) {
+						this.actividadesLista[pos] = actividades[pos];
 					}
 					if (((op['GrupoId'] != null) || ((+op['CantiRecib'] + data.Cantidad) == +op['CantidadTotal'])) && op['ContadorGrupo'] != 0) {
 						op['CantiRecib'] = (+op['CantiRecib'] + data.Cantidad);
@@ -290,7 +290,7 @@ export class ActividadesPage implements OnInit, OnDestroy {
 							}
 
 							this.actividadesService.informacion(datico, 'CentrosProduccion/entregaParcial').then((datos) => {
-								this.actividades = datos.actividades;
+								this.actividadesLista = datos.actividades;
 								this.notificacionesService.notificacion(datos.msg);
 								this.cargadorService.ocultar();
 							}).catch((error) => {
@@ -372,19 +372,19 @@ export class ActividadesPage implements OnInit, OnDestroy {
 			this.eliminarMultiple = false;
 		}
 		this.actividadesEliminar = [];
-		this.actividades.forEach(it => it['eliminarMultiple'] = false);
+		this.actividadesLista.forEach(it => it['eliminarMultiple'] = false);
 	}
 
 	async agregarEliminarActividad(op, pos) {
 		if (this.eliminarMultiple) {
-			if (this.actividades[pos]['eliminarMultiple']) {
+			if (this.actividadesLista[pos]['eliminarMultiple']) {
 				let index = this.actividadesEliminar.findIndex(op2 => op2['ActividadOperarioId'] == op.ActividadOperarioId);
 				if (index != -1) {
-					this.actividades[pos]['eliminarMultiple'] = false;
+					this.actividadesLista[pos]['eliminarMultiple'] = false;
 					this.actividadesEliminar.splice(index, 1);
 				}
 			} else {
-				this.actividades[pos]['eliminarMultiple'] = true;
+				this.actividadesLista[pos]['eliminarMultiple'] = true;
 				this.actividadesEliminar.push(op);
 			}
 		} else {
@@ -443,8 +443,8 @@ export class ActividadesPage implements OnInit, OnDestroy {
 		let botones = [{
 			text: 'Aceptar',
 			handler: (data) => {
-				if (this.actividades[pos]) {
-					this.actividades[pos]['Pausa'] = 0;
+				if (this.actividadesLista[pos]) {
+					this.actividadesLista[pos]['Pausa'] = 0;
 				}
 				this.ordenOperacionClick(op, pos);
 			}

@@ -51,11 +51,11 @@
 	</ion-buttons>
 
 	<ion-grid class="ion-no-padding">
-		<ion-row *ngIf="actividades.length">
-			<ion-col size="6" sizeMd="4" sizeLg="3" *ngFor="let op of actividades; let posi = index;"
+		<ion-row *ngIf="actividadesLista.length">
+			<ion-col size="6" sizeMd="4" sizeLg="3" *ngFor="let op of actividadesLista; let posi = index;"
 				(click)="agregarEliminarActividad(op, posi)">
 				<ion-card class="content-cargador"
-					[disabled]="searching && ((idLogActividadUltimo == op['ActividadOperarioId'] && op['ActividadOperarioId'] != '0') || (idLogActividadUltimo == op['GrupoId'] && op['GrupoId'] != null) || eliminarMultiple)"
+					[disabled]="(searching && ((idLogActividadUltimo == op['ActividadOperarioId'] && op['ActividadOperarioId'] != '0') || (idLogActividadUltimo == op['GrupoId'] && op['GrupoId'] != null))) || eliminarMultiple"
 					[ngClass]="{
 						'cargador': (idLogActividadSearch == op['ActividadOperarioId'] && op['ActividadOperarioId'] != '0') || (idLogActividadSearch == op['GrupoId'] && op['GrupoId'] != null), 
 						'content-activo' : (idLogActividadUltimo == op['ActividadOperarioId'] && op['ActividadOperarioId'] != '0') || (idLogActividadUltimo == op['GrupoId'] && op['GrupoId'] != null),
@@ -108,14 +108,19 @@
 									}">
 										<div class="ion-text-center h-100 reproceso-contenedor"
 											[ngClass]="op['ContadorGrupo'] == 0 ? 'justify-content-center' : 'justify-content-between'">
-											<div class="cantidad-proceso letra-reproceso h-75" *ngIf="op['ContadorGrupo'] == null || op['ContadorGrupo'] == 1">
+											<div class="cantidad-proceso letra-reproceso h-75"
+												*ngIf="op['ContadorGrupo'] == null || op['ContadorGrupo'] == 1">
 												<strong>{{ +op['CantReproceso'] }}</strong> Reprocesos
 											</div>
-											<div class="tiempo" *ngIf="op['ContadorGrupo'] == null || op['ContadorGrupo'] == 1">
-												<strong>{{ (op['Tiempo'] ? +op['Tiempo'] : 0) + ' ' }}</strong>&nbsp;Minutos
+											<div class="tiempo"
+												*ngIf="op['ContadorGrupo'] == null || op['ContadorGrupo'] == 1">
+												<strong>{{ (op['Tiempo'] ? +op['Tiempo'] : 0) + ' '
+													}}</strong>&nbsp;Minutos
 											</div>
-											<div class="tiempo" *ngIf="op['ContadorGrupo'] != null && op['ContadorGrupo'] != 1">
-												<div><strong>{{ (op['Tiempo'] ? +op['Tiempo'] : 0) + ' ' }}</strong>&nbsp;Minutos</div>
+											<div class="tiempo"
+												*ngIf="op['ContadorGrupo'] != null && op['ContadorGrupo'] != 1">
+												<div><strong>{{ (op['Tiempo'] ? +op['Tiempo'] : 0) + ' '
+														}}</strong>&nbsp;Minutos</div>
 											</div>
 										</div>
 									</ion-col>
@@ -127,7 +132,7 @@
 			</ion-col>
 		</ion-row>
 
-		<ion-row *ngIf="!searching && !actividades.length">
+		<ion-row *ngIf="!searching && !actividadesLista.length">
 			<ion-col size="12" class="ion-text-center">
 				<ion-label color="dark">No hay actividades agregadas</ion-label>
 			</ion-col>
@@ -149,11 +154,11 @@
 							[color]="it['color']">
 							<ion-icon [name]="it['icono']"></ion-icon>
 						</ion-fab-button>
-						<ion-fab-button [disabled]="!actividades.length" *ngIf="it['accion'] == 'eliminar-multiple'"
-							data-bs-toggle="collapse" aria-expanded="false" [attr.aria-controls]="'collapseEliminar'"
-							[attr.data-bs-target]="'collapseEliminar'" [attr.data-bs-target]="'#collapseEliminar'"
-							(click)="accionEliminarMultiple()" class="ion-no-margin" mode="ios" size="small"
-							[color]="it['color']">
+						<ion-fab-button [disabled]="!actividadesLista.length"
+							*ngIf="it['accion'] == 'eliminar-multiple'" data-bs-toggle="collapse" aria-expanded="false"
+							[attr.aria-controls]="'collapseEliminar'" [attr.data-bs-target]="'collapseEliminar'"
+							[attr.data-bs-target]="'#collapseEliminar'" (click)="accionEliminarMultiple()"
+							class="ion-no-margin" mode="ios" size="small" [color]="it['color']">
 							<ion-icon [name]="it['icono']"></ion-icon>
 						</ion-fab-button>
 					</ion-col>
