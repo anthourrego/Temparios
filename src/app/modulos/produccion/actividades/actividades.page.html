@@ -75,7 +75,7 @@
 									<p *ngIf="!op['GrupoId']">{{ (!op['Referencia'] || op['Referencia'] == '' ? '' :
 										op['Referencia'] + ' - ') }} {{ op['NumerOrden'] }}3</p>
 								</ion-label>
-								<ion-icon color="dark" (click)="presentActionSheet(op)" name="ellipsis-vertical"
+								<ion-icon color="dark" (click)="presentActionSheet(op, posi)" name="ellipsis-vertical"
 									slot="end">
 								</ion-icon>
 							</ion-item>

@@ -23,8 +23,6 @@ export class FooterVersionComponent implements OnInit {
 
 	async obtenerVersion() {
 		this.appVersion.getAppName().then(op => this.nameApp = op);
-		/* this.appVersion.getPackageName().then(op => { console.log(op) });
-		this.appVersion.getVersionCode().then(op => { console.log(op) }); */
 		this.appVersion.getVersionNumber().then(op => {
 			this.versionNumber = op;
 			this.storage.set('version', this.versionNumber);

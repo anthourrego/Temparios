@@ -91,7 +91,7 @@ export class ActividadesPage implements OnInit, OnDestroy {
 		this.obtenerInformacion(event, true);
 	}
 
-	async presentActionSheet(op) {
+	async presentActionSheet(op, pos) {
 		let data = {
 			ActividadOperarioId: op['ActividadOperarioId'],
 			GrupoId: op['GrupoId']
@@ -115,9 +115,10 @@ export class ActividadesPage implements OnInit, OnDestroy {
 							GrupoId: op['GrupoId'],
 							Cantidad: 0,
 							Tipo: 'PAUSA',
+							contadorGrupo: 0, //op['GrupoERP'],
 							centroProd: this.dataQuery['centroProd']
 						}
-						this.peticionActionSheet('pausar la actividad', data, 'agregarLogActividad')
+						this.peticionActionSheet('pausar la actividad', data, 'agregarLogActividad', pos)
 					}
 				});
 			}
@@ -145,7 +146,7 @@ export class ActividadesPage implements OnInit, OnDestroy {
 		buttons.push({
 			text: 'Eliminar',
 			icon: 'trash',
-			handler: () => this.peticionActionSheet('eliminar la actividad', [data], 'eliminarActividadOperario')
+			handler: () => this.peticionActionSheet('eliminar la actividad', [data], 'eliminarActividadOperario', pos)
 		});
 		const actionSheet = await this.actionSheetController.create({
 			buttons
@@ -254,16 +255,24 @@ export class ActividadesPage implements OnInit, OnDestroy {
 		}
 	}
 
-	peticionActionSheet(accion, datos, funcion) {
+	peticionActionSheet(accion, datos, funcion, pos?) {
 		this.notificacionesService.alerta(`¿Está seguro de ${accion}?`).then(({ data, role }) => {
 			if (role === 'aceptar') {
 				this.cargadorService.presentar().then(() => {
-					this.actividadesService.informacion(datos, 'CentrosProduccion/' + funcion).then(({ valido, msg }) => {
+					this.actividadesService.informacion(datos, 'CentrosProduccion/' + funcion).then(({ msg, valido, actividades }) => {
 						this.notificacionesService.notificacion(msg);
 						if (valido) {
 							this.accionEliminarMultiple(true);
-							this.obtenerInformacion();
+							if (pos >= 0) {
+								if (actividades && actividades[pos] && this.actividadesLista[pos]) {
+									this.actividadesLista[pos] = actividades[pos];
+								} else if (funcion == 'eliminarActividadOperario') {
+									this.actividadesLista.splice(pos, 1);
+								}
+							}
 						}
+
+
 						this.cargadorService.ocultar();
 					}).catch((error) => {
 						this.cargadorService.ocultar();

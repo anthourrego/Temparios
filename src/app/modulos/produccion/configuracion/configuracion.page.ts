@@ -93,7 +93,6 @@ export class ConfiguracionPage implements OnInit {
 	}
 
 	ejecutarPeticionLog(terminar) {
-		console.log(terminar);
 		let data = {
 			Tipo: 'SALIDA', //INGRESO
 			TipoParada: null,
