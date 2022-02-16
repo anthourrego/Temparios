@@ -94,7 +94,8 @@ export class ActividadesPage implements OnInit, OnDestroy {
 	async presentActionSheet(op, pos) {
 		let data = {
 			ActividadOperarioId: op['ActividadOperarioId'],
-			GrupoId: op['GrupoId']
+			GrupoId: op['GrupoId'],
+			centroProd: this.dataCentroProduccion['CentroProduccion'],
 		};
 		let buttons = [];
 		if (op['GrupoId'] != null) {
@@ -264,17 +265,15 @@ export class ActividadesPage implements OnInit, OnDestroy {
 						if (valido) {
 							this.accionEliminarMultiple(true);
 							if (pos >= 0) {
-								if (actividades && actividades[pos] && this.actividadesLista[pos]) {
-									this.actividadesLista[pos] = actividades[pos];
-								} else if (funcion == 'eliminarActividadOperario') {
+								if (funcion == 'eliminarActividadOperario') {
 									this.actividadesLista.splice(pos, 1);
+								} else if (actividades && actividades[pos] && this.actividadesLista[pos]) {
+									this.actividadesLista[pos] = actividades[pos];
 								}
 							} else {
 								this.actividadesLista = actividades;
 							}
 						}
-
-
 						this.cargadorService.ocultar();
 					}).catch((error) => {
 						this.cargadorService.ocultar();
@@ -408,7 +407,8 @@ export class ActividadesPage implements OnInit, OnDestroy {
 		this.actividadesEliminar.forEach(op => {
 			data.push({
 				ActividadOperarioId: op['ActividadOperarioId'],
-				GrupoId: op['GrupoId']
+				GrupoId: op['GrupoId'],
+				centroProd: this.dataCentroProduccion['CentroProduccion'],
 			});
 		});
 		this.peticionActionSheet('eliminar las actividades', data, 'eliminarActividadOperario');
