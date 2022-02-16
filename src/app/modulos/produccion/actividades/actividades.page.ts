@@ -269,6 +269,8 @@ export class ActividadesPage implements OnInit, OnDestroy {
 								} else if (funcion == 'eliminarActividadOperario') {
 									this.actividadesLista.splice(pos, 1);
 								}
+							} else {
+								this.actividadesLista = actividades;
 							}
 						}
 
