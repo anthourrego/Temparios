@@ -38,6 +38,10 @@ ion-content {
 						ion-img::part(image) {
 							border-radius: 10px;
 						}
+						.nombreusuario {
+							font-size: 13px;
+							color: var(--ion-color-dark);
+						}
 					}
 					.columna-eficiencia {
 						display: flex;

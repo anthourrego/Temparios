@@ -10,6 +10,11 @@
 		<ion-card-content class="ion-no-padding">
 			<ion-grid class="ion-no-padding">
 				<ion-row>
+					<ion-col class="mt-1 ml-3" size="12">
+						<div class="nombreusuario mx-3 text-truncate">
+							{{ usuarioActual['OperarioId'] }} - {{ usuarioActual['nombre'] }}
+						</div>
+					</ion-col>
 					<ion-col class="columna-eficiencia" size="8">
 						<ion-grid class="ion-no-padding">
 							<ion-row>
@@ -73,7 +78,7 @@
 									(click)="op['GrupoId'] ? accionBoton({accion: 'detalle', component: compoDetalle}, op) : null">
 									<h6>{{ op['Nombre'] }} {{ op['ListaChequeoId'] ? ' - Reproceso' : '' }}</h6>
 									<p *ngIf="!op['GrupoId']">{{ (!op['Referencia'] || op['Referencia'] == '' ? '' :
-										op['Referencia'] + ' - ') }} {{ op['NumerOrden'] }}3</p>
+										op['Referencia'] + ' - ') }} {{ op['NumerOrden'] }}</p>
 								</ion-label>
 								<ion-icon color="dark" (click)="presentActionSheet(op, posi)" name="ellipsis-vertical"
 									slot="end">

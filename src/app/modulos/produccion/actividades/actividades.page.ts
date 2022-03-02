@@ -83,6 +83,7 @@ export class ActividadesPage implements OnInit, OnDestroy {
 
 	async obtenerCentroProd(event) {
 		this.usuarioActual = await this.actividadesService.desencriptar(JSON.parse(await this.storage.get('usuario')));
+		console.log(this.usuarioActual);
 		this.dataCentroProduccion = await this.actividadesService.desencriptar(JSON.parse(await this.storage.get('centroProduccion')));
 		this.dataQuery = {
 			centroProd: this.dataCentroProduccion['CentroProduccion'],
