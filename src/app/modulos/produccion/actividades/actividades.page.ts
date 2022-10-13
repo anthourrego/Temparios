@@ -83,7 +83,6 @@ export class ActividadesPage implements OnInit, OnDestroy {
 
 	async obtenerCentroProd(event) {
 		this.usuarioActual = await this.actividadesService.desencriptar(JSON.parse(await this.storage.get('usuario')));
-		console.log(this.usuarioActual);
 		this.dataCentroProduccion = await this.actividadesService.desencriptar(JSON.parse(await this.storage.get('centroProduccion')));
 		this.dataQuery = {
 			centroProd: this.dataCentroProduccion['CentroProduccion'],
@@ -138,6 +137,18 @@ export class ActividadesPage implements OnInit, OnDestroy {
 				}
 			});
 		}
+
+		if (op.PendientesInsumos) {
+			buttons.push({
+				text: 'Descargar Insumos',
+				icon: 'flask-outline',
+				handler: () => {
+					let info = { ...op, descargueInsumo: true };
+					this.accionBoton({ accion: 'terminado', component: ProductoTerminadoComponent }, info);
+				}
+			});
+		}
+
 		if ((op['PedidoId'] > 0 && op['tipoPedido'] == 'C') || (op['PedidoId'] > 0 && op['GrupoId'] != null)) {
 			buttons.push({
 				text: 'Caracteristicas',
@@ -163,6 +174,7 @@ export class ActividadesPage implements OnInit, OnDestroy {
 			if (datos) {
 				this.actividadesLista = datos.datos;
 			}
+			console.log(this.actividadesLista);
 			if (event) event.target.complete();
 			this.searching = false;
 			this.ingresoModulo = false;

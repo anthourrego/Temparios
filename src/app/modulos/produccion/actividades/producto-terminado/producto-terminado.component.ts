@@ -3,6 +3,7 @@ import { ModalController } from '@ionic/angular';
 import { ActividadesService } from '../../../../servicios/actividades.service';
 import { NotificacionesService } from '../../../../servicios/notificaciones.service';
 import { CargadorService } from '../../../../servicios/cargador.service';
+import { AlertInput } from '@ionic/core/dist/types/components/alert/alert-interface';
 
 @Component({
 	selector: 'app-producto-terminado',
@@ -19,6 +20,7 @@ export class ProductoTerminadoComponent implements OnInit {
 	mostrarMensajeAgrupada: boolean = false;
 	productosGrupo: Array<object> = [];
 	productoInvalido: boolean = false;
+	datosMontaje: object = {};
 
 	constructor(
 		private modalController: ModalController,
@@ -41,9 +43,35 @@ export class ProductoTerminadoComponent implements OnInit {
 	confirmar(mensaje: string) {
 		this.notificacionesService.alerta(mensaje).then(({ data, role }) => {
 			if (role === 'aceptar') {
-				this.cargadorService.presentar().then(() => {
-					this.finalizarActividades();
-				}, () => this.cargadorService.ocultar());
+
+				let posInd = this.productos.findIndex(it => {
+					if (it['lotes'] && it['lotes'].length) {
+						let posLote = it['lotes'].findIndex(op => op.checked && +op.InvenActua <= 0)
+						return posLote > -1;
+					}
+					return it['cantireal'] <= 0;
+				});
+
+				if (posInd >= 0) {
+
+					mensaje = 'El proceso tiene productos en 0. ¿Desea realizar el descargue?';
+
+					this.notificacionesService.alerta(mensaje).then(({ data, role }) => {
+						if (role === 'aceptar') {
+							if (this.datosMontaje['DescargaInsumoCero'] == 'S') {
+								this.solicitarUsuario();
+							} else {
+								this.finalizarActividades();
+							}
+						}
+					});
+
+				} else {
+					this.cargadorService.presentar().then(() => {
+						this.finalizarActividades();
+					}, () => this.cargadorService.ocultar());
+				}
+
 			} else if (role == "cancelar") this.cerrarModal();
 		}, console.error);
 	}
@@ -60,9 +88,15 @@ export class ProductoTerminadoComponent implements OnInit {
 		if (this.detalleActividad) {
 			info['detalle'] = this.detalleActividad;
 		}
+		if (this.datos['descargueInsumo']) {
+			info['descargueInsumo'] = 1;
+		}
 		this.searching = true;
-		this.actividadesService.informacion(info, 'CentrosProduccion/obtenerProductoTerminado').then(({ contMensaje, datos, consumoGrupo }) => {
+		console.log(info);
+		this.actividadesService.informacion(info, 'CentrosProduccion/obtenerProductoTerminado').then(({ contMensaje, datos, consumoGrupo, montaje }) => {
 			this.productos = datos;
+			console.log(datos)
+			this.datosMontaje = montaje;
 			this.productos.forEach(it => {
 				if (it['ManejaLotes'] == 'S') it['formValido'] = false;
 			});
@@ -82,7 +116,7 @@ export class ProductoTerminadoComponent implements OnInit {
 		});
 	}
 
-	finalizarActividades() {
+	finalizarActividades(extra?) {
 		let actFinal = this.productos.map(op => {
 			let obj = Object.assign({}, op);
 			delete obj['form'];
@@ -110,12 +144,26 @@ export class ProductoTerminadoComponent implements OnInit {
 			data.GrupoERP = this.datos['GrupoERP'];
 			data['ContadorGrupoERP'] = this.datos['ContadorGrupo'];
 		}
-		this.actividadesService.informacion(data, 'CentrosProduccion/finalizarActividad').then(({ msg, valido, grupoElimino }) => {
+
+		if (extra) {
+			data = { ...data, ...extra };
+		}
+
+		if (this.datos['descargueInsumo']) {
+			data['descargueInsumo'] = 1;
+		}
+
+		this.actividadesService.informacion(data, 'CentrosProduccion/finalizarActividad').then(({ msg, valido, grupoElimino, respUsuario }) => {
 			this.cargadorService.ocultar();
-			if (!valido) {
+
+			if (respUsuario) {
 				this.notificacionesService.notificacion(msg);
 			} else {
-				this.cerrarModal(true, grupoElimino);
+				if (!valido) {
+					this.notificacionesService.notificacion(msg);
+				} else {
+					this.cerrarModal(true, grupoElimino);
+				}
 			}
 		}, err => {
 			console.error(err);
@@ -140,6 +188,26 @@ export class ProductoTerminadoComponent implements OnInit {
 				this.productoInvalido = !this.productos.find(op => op['ManejaLotes'] == 'S' && !op['formValido']);
 			}
 		}
+	}
+
+	solicitarUsuario() {
+		let inputs: AlertInput[] = [{
+			name: "userVal",
+			type: "text",
+			placeholder: "Usuario"
+		}, {
+			name: "passVal",
+			type: "password",
+			placeholder: "Contraseña"
+		}];
+
+		this.notificacionesService.alerta('', 'Autorización Operación en 0', ['alerta-input'], null, inputs).then(({ data, role }) => {
+			if (role === 'aceptar') {
+				this.cargadorService.presentar().then(() => {
+					this.finalizarActividades({ ...data.values, validaUsuario: 1, permiso: 2628 });
+				}, () => this.cargadorService.ocultar());
+			}
+		});
 	}
 
 }

@@ -1,5 +1,5 @@
 <h3>{{ datos['Nombre']}}</h3>
-<p>Cantidad {{ +datos['cantidad'] }}</p>
+<p>Cantidad {{ (+datos['cantidad'] < 0 ? 0 : +datos['cantidad']) }}</p>
 <p>
 	<ion-item>
 		<ion-label position="floating">Cantidad consumida</ion-label>

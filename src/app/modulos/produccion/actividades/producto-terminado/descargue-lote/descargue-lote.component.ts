@@ -54,7 +54,7 @@ export class DescargueLoteComponent implements OnInit {
 		let cantTotal = this.datos['cantireal'] < this.datos['cantirealsugerida'] ? +this.datos['cantireal'] : +this.datos['cantirealsugerida'];
 		let info = this.datos['lotes'].filter(op => op.checked);
 		info.forEach(lote => {
-			
+
 			if (lote['InvenActua'] > cantTotal) {
 				if (+lote['InvenReal'] < cantTotal) {
 					lote['InvenActua'] = cantTotal;
@@ -86,24 +86,24 @@ export class DescargueLoteComponent implements OnInit {
 	actualizarTotal(lote) {
 		if (this.datos['form'].valid) {
 			let tempTotal = 0;
-			this.datos['lotes'].filter(op => op.checked).forEach(it => tempTotal +=  Number(+it['InvenActua']));
+			this.datos['lotes'].filter(op => op.checked).forEach(it => tempTotal += Number(+it['InvenActua']));
 			this.datos['cantireal'] = tempTotal;
 		} else {
-			this.datos['cantireal'] = this.datos['cantirealsugerida'];
+			// this.datos['cantireal'] = this.datos['cantirealsugerida'];
 		}
 		if (lote && (lote['InvenActua'] > (+lote['InvenReal']) || lote['InvenActua'] < 0 || lote['InvenActua'] == null)) {
 			//lote['InvenActua'] = (lote['InvenActua'] == null ? 0 : (+lote['InvenReal']));
 			lote['InvenActua'] = 0;
 		}
 
-		if(lote){
+		if (lote) {
 			let valor = document.getElementById('lote' + lote['InveProdLoteId'])['value'];
 
-			if((('' + valor).split('') || []).filter(x => x == '.').length > 1) {
+			if ((('' + valor).split('') || []).filter(x => x == '.').length > 1) {
 				valor = valor.slice(0, -1);
 				lote['InvenActua'] = valor;
 			}
-			
+
 			valor = valor > lote['InvenReal'] ? lote['InvenReal'] : valor;
 			if (valor && ('' + valor).length && ('' + valor)[0] == '0') {
 				valor = valor.length > 1 ? (valor >= 1 ? valor.replace(/^(0+)/g, '') : valor) : valor;
