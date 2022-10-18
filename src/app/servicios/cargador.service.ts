@@ -2,20 +2,20 @@ import { Injectable } from '@angular/core';
 import { LoadingController } from '@ionic/angular';
 
 @Injectable({
-  providedIn: 'root'
+	providedIn: 'root'
 })
 export class CargadorService {
 
-  private cargador;
+	private cargador;
 
-  constructor(private loadingController: LoadingController) { }
+	constructor(private loadingController: LoadingController) { }
 
-  async presentar(message: string = 'Cargando...', duration?: number) {
-    this.cargador = await this.loadingController.create({ message, duration, spinner: 'lines-small' });
-    await this.cargador.present();
-  }
+	async presentar(message: string = 'Cargando...', duration?: number) {
+		this.cargador = await this.loadingController.create({ message, duration, spinner: 'lines-small' });
+		await this.cargador.present();
+	}
 
-  async ocultar() {
-    return this.cargador.dismiss();
-  }
+	async ocultar() {
+		if (this.cargador) return this.cargador.dismiss();
+	}
 }

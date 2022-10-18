@@ -91,6 +91,9 @@ export class ProductoTerminadoComponent implements OnInit {
 		if (this.datos['descargueInsumo']) {
 			info['descargueInsumo'] = 1;
 		}
+		if (this.datos['cantidadParcial'] && this.datos['cantidadParcial'] > 0) {
+			info['cantiParcial'] = this.datos['cantidadParcial'];
+		}
 		this.searching = true;
 		console.log(info);
 		this.actividadesService.informacion(info, 'CentrosProduccion/obtenerProductoTerminado').then(({ contMensaje, datos, consumoGrupo, montaje }) => {
@@ -153,6 +156,9 @@ export class ProductoTerminadoComponent implements OnInit {
 			data['descargueInsumo'] = 1;
 		}
 
+		if (this.datos['cantidadParcial'] && this.datos['cantidadParcial'] > 0) {
+			data['cantiParcial'] = this.datos['cantidadParcial'];
+		}
 		this.actividadesService.informacion(data, 'CentrosProduccion/finalizarActividad').then(({ msg, valido, grupoElimino, respUsuario }) => {
 			this.cargadorService.ocultar();
 

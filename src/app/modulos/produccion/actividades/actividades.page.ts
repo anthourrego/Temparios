@@ -138,7 +138,7 @@ export class ActividadesPage implements OnInit, OnDestroy {
 			});
 		}
 
-		if (op.PendientesInsumos) {
+		if (op['Ultimo'] != '1' && op.PendientesInsumos) {
 			buttons.push({
 				text: 'Descargar Insumos',
 				icon: 'flask-outline',
@@ -305,23 +305,8 @@ export class ActividadesPage implements OnInit, OnDestroy {
 				cantidad = Number(cantidad);
 				if (cantidad > 0) {
 					if (cantidad <= datos.CantidadMinima) {
-						this.cargadorService.presentar().then(() => {
-							let datico = {
-								ordeProdId: datos['OrdeProdId']
-								, centroProdId: this.dataQuery['centroProd']
-								, Cantidad: cantidad
-							}
-
-							this.actividadesService.informacion(datico, 'CentrosProduccion/entregaParcial').then((datos) => {
-								this.actividadesLista = datos.actividades;
-								this.notificacionesService.notificacion(datos.msg);
-								this.cargadorService.ocultar();
-							}).catch((error) => {
-								this.cargadorService.ocultar();
-								console.log(error);
-							});
-						}, () => this.cargadorService.ocultar());
-
+						let info = { ...datos, cantidadParcial: cantidad };
+						this.accionBoton({ accion: 'terminado', component: ProductoTerminadoComponent }, info);
 					} else {
 						this.notificacionesService.notificacion(`Ha superado la cantidad maxima a entregar ${Number(datos.CantidadMinima)}`);
 						return false;
