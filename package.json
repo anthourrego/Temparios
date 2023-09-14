@@ -1,6 +1,6 @@
 {
 	"name": "TemparioApp",
-	"version": "0.0.1",
+	"version": "2.3.2",
 	"author": "Casa de Software Prosof",
 	"homepage": "https://prosof.com.co/",
 	"scripts": {
@@ -35,6 +35,7 @@
 		"bootstrap": "^5.0.1",
 		"cordova-plugin-app-version": "^0.1.12",
 		"crypto-js": "^4.0.0",
+		"jetifier": "^2.0.0",
 		"moment": "^2.29.1",
 		"ngx-timer": "^1.0.6",
 		"rxjs": "~6.6.0",

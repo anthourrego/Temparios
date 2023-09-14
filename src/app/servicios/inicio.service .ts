@@ -13,9 +13,10 @@ export class InicioService extends PeticionService {
 		private router: Router
 	) {
 		super();
+		this.verificarCierreSesion();
 	}
 
-	async veificarCierreSesion() {
+	async verificarCierreSesion() {
 		const conexion = await this.storage.get('conexion');
 		if (conexion) {
 			this.informacion([], 'CentrosProduccion/inicioCierreForzado').then(({ valido, msg}) => {
