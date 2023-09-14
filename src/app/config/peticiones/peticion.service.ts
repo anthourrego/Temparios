@@ -16,12 +16,12 @@ export class CustomInjectorService {
 })
 export class PeticionService {
 
+	public categoria = 'API/';
+	protected notificacionesService: NotificacionesService;
 	private storageService: StorageService;
-	private notificacionesService: NotificacionesService;
 	private httpClient: HttpClient;
 	private url: string = environment.urlBack;
 	//private llaveEncriptar: string = environment.secretoPeticion;
-	public categoria: string = 'API/';
 
 	constructor(
 	) {
@@ -88,6 +88,7 @@ export class PeticionService {
 			, indice
 			, Version: (Version || '')
 			, NomUsuario: user.nombre
+			, TurnoId: (user.TurnoId || '')
 		});
 		return await this.ejecutarPeticion('post', uri, data, headers).toPromise().then(async resp => {
 			const desencriptado = await this.desencriptar(resp);
@@ -103,23 +104,22 @@ export class PeticionService {
 	}
 
 	private validarAlertaError(request) {
-		if (request.error != '' && request.error != undefined) {
-			let encabezado = "Se ha producido un problema";
+		if (request.error !== '' && request.error != undefined) {
+			let encabezado = 'Se ha producido un problema';
 			let encabezado2 = 'Error';
 			let opciones = [];
-			let mensaje = `Para obtener más información de este problema y posibles correcciones, pulse el botón "Ver Detalle" y comuniquese a la línea de servicio al cliente.`;
-			if (request.error.text != '' && request.error.text != undefined) {
-				mensaje = `Para obtener más información de este problema y posibles correcciones, pulse el botón "Ver Detalle" y comuniquese a la línea de servicio al cliente.`;
-
+			let mensaje = 'Para obtener más información de este problema y posibles correcciones, pulse el botón "Ver Detalle" y comuniquese a la línea de servicio al cliente.';
+			if (request.error.text !== '' && request.error.text != undefined) {
+				mensaje = 'Para obtener más información de este problema y posibles correcciones, pulse el botón "Ver Detalle" y comuniquese a la línea de servicio al cliente.';
 				opciones = [{
 					text: 'Ver Detalle',
 					handler: () => {
-						this.notificacionesService.alerta(request.error.text, "Error", ['alerta-error'],
+						this.notificacionesService.alerta(request.error.text, 'Error', ['alerta-error'],
 							[{
 								text: 'Cerrar',
 								role: 'aceptar',
 								handler: () => {
-									if (environment.nit != '111111111') {
+									if (environment.nit !== '111111111') {
 										this.storageService.limpiarTodo(true);
 									}
 								}
@@ -130,7 +130,7 @@ export class PeticionService {
 					text: 'Cerrar',
 					role: 'cancel',
 					handler: () => {
-						if (environment.nit != '111111111') {
+						if (environment.nit !== '111111111') {
 							this.storageService.limpiarTodo(true);
 						}
 					}

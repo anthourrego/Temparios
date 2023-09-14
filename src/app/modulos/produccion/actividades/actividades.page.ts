@@ -173,8 +173,7 @@ export class ActividadesPage implements OnInit, OnDestroy {
 		this.actividadesService.informacion(this.dataQuery, 'CentrosProduccion/obtenerActividadesAsignadas').then((datos) => {
 			if (datos) {
 				this.actividadesLista = datos.datos;
-			}
-			console.log(this.actividadesLista);
+			};
 			if (event) event.target.complete();
 			this.searching = false;
 			this.ingresoModulo = false;

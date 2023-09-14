@@ -1,7 +1,7 @@
 <ion-list mode="ios" lines="full">
 	<ion-item [ngClass]='fontSize' color='light'>
 		<ion-label>Tema</ion-label>
-		<ion-select interface="popover" cancelText="Cancelar" okText="Aceptar" placeholder="Opciones"
+		<ion-select interface="action-sheet" cancelText="Cancelar" okText="Aceptar" placeholder="Opciones"
 			(ionChange)="setTema($event)" [(ngModel)]='theme.temaActual'>
 			<ion-select-option color='light' *ngFor="let item of temas;" [value]="item.valor">{{ item.titulo }}
 			</ion-select-option>
