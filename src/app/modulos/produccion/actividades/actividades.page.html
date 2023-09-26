@@ -6,7 +6,7 @@
 		<ion-refresher-content></ion-refresher-content>
 	</ion-refresher>
 
-	<ion-card>
+	<ion-card  (click)="verEficiencia()">
 		<ion-card-content class="ion-no-padding">
 			<ion-grid class="ion-no-padding">
 				<ion-row>
@@ -24,8 +24,8 @@
 								</ion-col>
 							</ion-row>
 							<ion-row>
-								<ion-col *ngFor="let op of valoresEficiencia" class="ion-text-center indicador">
-									{{ op }}
+								<ion-col *ngFor="let op of valoresEficiencia" class="ion-text-center indicador" [ngStyle]="{'color': op.color}">
+									{{ op.valor }} %
 								</ion-col>
 							</ion-row>
 							<ion-row>

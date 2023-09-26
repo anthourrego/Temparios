@@ -15,6 +15,8 @@ import { takeUntil } from 'rxjs/operators';
 import { ListaChequeoMultipleComponent } from './lista-chequeo-multiple/lista-chequeo-multiple.component';
 import { ListaChequeoComponent } from './lista-chequeo/lista-chequeo.component';
 import { CaracteristicasComponent } from './caracteristicas/caracteristicas.component';
+import { EficienciaService } from 'src/app/servicios/eficiencia.service';
+import { HeaderService } from 'src/app/servicios/header.service';
 
 @Component({
 	selector: 'app-actividades',
@@ -24,7 +26,7 @@ import { CaracteristicasComponent } from './caracteristicas/caracteristicas.comp
 export class ActividadesPage implements OnInit, OnDestroy {
 
 	tituloEficiencia: Array<string> = ['Hora', 'Diaria', 'Mensual'];
-	valoresEficiencia: Array<string> = ['0%', '0%', '0%'];
+	valoresEficiencia: Array<any> = [];
 	searching: boolean = true;
 	actividadesLista: Array<object> = [];
 	botones: Array<object> = [
@@ -59,7 +61,9 @@ export class ActividadesPage implements OnInit, OnDestroy {
 		private storage: StorageService,
 		private router: Router,
 		private cambioCentroProduccionService: CambioCentroProduccionService,
-		private cargadorService: CargadorService
+		private cargadorService: CargadorService,
+		private eficienciaService: EficienciaService,
+		private headerService: HeaderService
 	) {
 		this.cambioCentroProduccionService.suscripcion().pipe(takeUntil(this.subject)).subscribe(respu => {
 			this.actividadesLista = [];
@@ -72,7 +76,15 @@ export class ActividadesPage implements OnInit, OnDestroy {
 		this.subject.next(true);
 	}
 
-	ngOnInit() { }
+	ngOnInit() {
+		this.eficienciaService.eficiencia$.subscribe((valor: any) => {
+			this.valoresEficiencia = [
+				{ valor: valor.hora.Eficiencia == null ? '0' : valor.hora.Eficiencia, color: valor.hora.Color },
+				{ valor: valor.dia.Eficiencia == null ? '0' : valor.dia.Eficiencia, color: valor.dia.Color },
+				{ valor: valor.mensual.Eficiencia == null ? '0' : valor.mensual.Eficiencia, color: valor.mensual.Color }
+			]
+		})
+	}
 
 	ionViewDidEnter() {
 		this.idLogActividadSearch = '';
@@ -462,6 +474,11 @@ export class ActividadesPage implements OnInit, OnDestroy {
 			handler: () => console
 		}]
 		this.notificacionesService.alerta(`¿Desea reanudar la actividad?`, 'Reanudar actividad', [], botones);
+	}
+
+	verEficiencia() {
+		this.headerService.setRuta('eficiencia');
+		this.router.navigateByUrl(`modulos/produccion/eficiencia`);
 	}
 
 }

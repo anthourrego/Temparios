@@ -1,0 +1,39 @@
+<ion-content>
+
+  <div class="eficiencia-div-btn">
+
+    <div *ngFor="let card of cards" class="eficiencia-card" [ngClass]="tiempoSeleccionado?.id === card.id ? 'card-seleccionada' : ''" [ngStyle]="{'background-color': card.color}" (click)="seleccionarRangoTiempo(card)">
+      <ion-label>
+        <div class="eficiencia-card-text">
+          <p>{{ card.porcentaje }} %</p>
+          <p style="text-transform: capitalize;">{{ card.tiempo }}</p>
+        </div>
+      </ion-label>
+    </div>
+
+    <ion-card class="eficiencia-card card-fecha">
+      <div class="eficiencia-card-text">
+        <ion-label style="color: #ffffff;">Fecha</ion-label>
+        <ion-datetime displayFormat="YYYY MM D" presentation="date" id="FechaProg" doneText="Aceptar" cancelText="Cancelar" [(ngModel)]="fechaActual" style="padding: 0; font-size: 10px; color: #ffffff;" (ionChange)="cambioFecha()"></ion-datetime>
+      </div>
+    </ion-card>
+
+  </div>
+
+  <ion-grid class="eficiencia-grid">
+    <ion-row class="eficiencia-row">
+      <ion-col class="eficiencia-col">{{ modo === 'dia' ? 'Horas' : modo === 'semana' ? 'Semana' : 'Dia' }}</ion-col>
+      <ion-col class="eficiencia-col">Minutos</ion-col>
+      <ion-col class="eficiencia-col">Reportado</ion-col>
+      <ion-col class="eficiencia-col">Eficiencia</ion-col>
+    </ion-row>
+
+    <ion-row *ngFor="let dato of datos" style="place-items: center;" >
+      <ion-col class="eficiencia-col" *ngIf="modo === 'semana'" (click)="verPopover(dato)"><ion-button>{{ dato.semana }}</ion-button></ion-col>
+      <ion-col class="eficiencia-col" *ngIf="modo !== 'semana'">{{ dato.Tiempo }}</ion-col>
+      <ion-col class="eficiencia-col">{{ dato.Minutos }}</ion-col>
+      <ion-col class="eficiencia-col">{{ dato.Estimado }}</ion-col>
+      <ion-col class="eficiencia-col" [ngStyle]="{ 'background-color': dato.Color }">{{ dato.Eficiencia }} %</ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>
