@@ -17,6 +17,7 @@ export class EficienciaComponent implements OnInit {
   fechaActual: any;
   fechaSeleccionada: any;
   fechaInicial: any;
+  datos: any;
 
   cards = [
     {
@@ -29,8 +30,6 @@ export class EficienciaComponent implements OnInit {
       id: 3, color: '', porcentaje: '0', tiempo: 'mes'
     }
   ]
-
-  datos: any;
 
   constructor(
     private eficienciaService: EficienciaService,

@@ -89,9 +89,16 @@ export class EficienciaService {
 			encriptado: await this.encriptar({ modo: 'dia', fecha})
 			, RASTREO: FuncionesGenerales.rastreo('', 'TemparioApp')
 		}
-		this.httpClient.post(this.url, data, { headers: this.headers}).subscribe(async resp => {
-			const respuesta = await this.desencriptar(resp);
-			this.eficiencia.next(respuesta);
+		this.httpClient.post(this.url, data, { headers: this.headers}).subscribe({
+			next: resp => {
+				const respuesta = this.desencriptar(resp);
+				respuesta.then( resp => {
+					this.eficiencia.next(resp);
+				})
+			},
+			error: (error) => {
+				this.validarAlertaError(error);
+			}
 		})
 	}
 
@@ -101,9 +108,11 @@ export class EficienciaService {
 			, RASTREO: FuncionesGenerales.rastreo('', 'TemparioApp')
 		}
 		this.httpClient.post(this.url, data, { headers: this.headers}).subscribe({
-			next: async resp => {
-				const respuesta = await this.desencriptar(resp);
-				this.eficienciaModo.next(respuesta);
+			next: resp => {
+				const respuesta = this.desencriptar(resp);
+				respuesta.then( resp => {
+					this.eficienciaModo.next(resp);
+				})
 			},
 			error: (error) => {
 				this.validarAlertaError(error);
