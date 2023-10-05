@@ -6,6 +6,7 @@ import { environment } from 'src/environments/environment';
 import * as CryptoJS from 'Crypto-js';
 import * as moment from 'moment';
 import { FuncionesGenerales } from '../config/funciones/funciones';
+import { NotificacionesService } from './notificaciones.service';
 
 @Injectable({
 	providedIn: 'root'
@@ -20,8 +21,9 @@ export class EficienciaService {
 	eficienciaModo$ = this.eficienciaModo.asObservable();
 
 	constructor(
-		private httpClient: HttpClient,
-		private storageService: StorageService
+		private 	httpClient				: HttpClient,
+		private 	storageService			: StorageService,
+		protected	notificacionesService	: NotificacionesService
 	) {
 		this.obtenerHeaders().then( () => {
 			this.obtenerEficiencia();
@@ -78,7 +80,7 @@ export class EficienciaService {
 	obtenerEficiencia() { //900000 = 15 min
 		setInterval(() => {
 			this.peticion();
-		}, 10000)
+		}, 900000)
 	}
 
 	async peticion() {
@@ -87,11 +89,9 @@ export class EficienciaService {
 			encriptado: await this.encriptar({ modo: 'dia', fecha})
 			, RASTREO: FuncionesGenerales.rastreo('', 'TemparioApp')
 		}
-		this.httpClient.post(this.url, data, { headers: this.headers}).subscribe( resp => {
-			const respuesta = this.desencriptar(resp);
-			respuesta.then((resp) => {
-				this.eficiencia.next(resp);
-			});
+		this.httpClient.post(this.url, data, { headers: this.headers}).subscribe(async resp => {
+			const respuesta = await this.desencriptar(resp);
+			this.eficiencia.next(respuesta);
 		})
 	}
 
@@ -100,11 +100,66 @@ export class EficienciaService {
 			encriptado: await this.encriptar(datos)
 			, RASTREO: FuncionesGenerales.rastreo('', 'TemparioApp')
 		}
-		this.httpClient.post(this.url, data, { headers: this.headers}).subscribe( resp => {
-			const respuesta = this.desencriptar(resp);
-			respuesta.then((resp) => {
-				this.eficienciaModo.next(resp);
-			});
+		this.httpClient.post(this.url, data, { headers: this.headers}).subscribe({
+			next: async resp => {
+				const respuesta = await this.desencriptar(resp);
+				this.eficienciaModo.next(respuesta);
+			},
+			error: (error) => {
+				this.validarAlertaError(error);
+			}
 		})
+	}
+
+	private validarAlertaError(request) {
+		if (request.error !== '' && request.error != undefined) {
+			let encabezado = 'Se ha producido un problema';
+			let encabezado2 = 'Error';
+			let opciones = [];
+			let mensaje = 'Para obtener más información de este problema y posibles correcciones, pulse el botón "Ver Detalle" y comuniquese a la línea de servicio al cliente.';
+			if (request.error.text !== '' && request.error.text != undefined) {
+				mensaje = 'Para obtener más información de este problema y posibles correcciones, pulse el botón "Ver Detalle" y comuniquese a la línea de servicio al cliente.';
+				opciones = [{
+					text: 'Ver Detalle',
+					handler: () => {
+						this.notificacionesService.alerta(request.error.text, 'Error', ['alerta-error'],
+							[{
+								text: 'Cerrar',
+								role: 'aceptar',
+								handler: () => {
+									if (environment.nit !== '111111111') {
+										this.storageService.limpiarTodo(true);
+									}
+								}
+							}]
+						);
+					}
+				}, {
+					text: 'Cerrar',
+					role: 'cancel',
+					handler: () => {
+						if (environment.nit !== '111111111') {
+							this.storageService.limpiarTodo(true);
+						}
+					}
+				}];
+			} else {
+				if (request.error.includes('DELETE') && request.error.includes('REFERENCE') && request.error.includes('FK')) {
+					mensaje = 'No se puede eliminar, el registro se encuentra referenciado en otras tablas.';
+					encabezado = 'Error de Integridad';
+					encabezado2 = encabezado;
+				}
+				opciones = [{
+					text: 'Ver Detalle',
+					handler: () => {
+						this.notificacionesService.alerta(request.error, "Error", ['alerta-error'], [{ text: 'Cerrar', role: 'aceptar' }]);
+					}
+				}, {
+					text: 'Cerrar',
+					role: 'cancel'
+				}];
+			}
+			this.notificacionesService.alerta(mensaje, encabezado, [], opciones);
+		}
 	}
 }

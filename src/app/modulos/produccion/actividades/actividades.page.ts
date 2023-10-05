@@ -77,6 +77,11 @@ export class ActividadesPage implements OnInit, OnDestroy {
 	}
 
 	ngOnInit() {
+		setTimeout(() => {
+			if (this.valoresEficiencia.length === 0) {
+				this.eficienciaService.peticion();
+			} 
+		}, 1500)
 		this.eficienciaService.eficiencia$.subscribe((valor: any) => {
 			this.valoresEficiencia = [
 				{ valor: valor.hora.Eficiencia == null ? '0' : valor.hora.Eficiencia, color: valor.hora.Color },

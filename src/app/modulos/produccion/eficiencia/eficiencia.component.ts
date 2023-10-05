@@ -12,20 +12,21 @@ import { SemanasComponent } from 'src/app/componentes/semanas/semanas.component'
 export class EficienciaComponent implements OnInit {
 
   tiempoSeleccionado: any = { id: 1, color: '', porcentaje: '0%', tiempo: 'dia' };
-  fechaActual: any;
   searching: boolean;
   modo: 'dia' | 'semana' | 'mes' = 'dia';
-  fecha: any;
+  fechaActual: any;
+  fechaSeleccionada: any;
+  fechaInicial: any;
 
   cards = [
     {
-      id: 1, color: '', porcentaje: '0%', tiempo: 'dia'
+      id: 1, color: '', porcentaje: '0', tiempo: 'dia'
     },
     {
-      id: 2, color: '', porcentaje: '0%', tiempo: 'semana'
+      id: 2, color: '', porcentaje: '0', tiempo: 'semana'
     },
     {
-      id: 3, color: '', porcentaje: '0%', tiempo: 'mes'
+      id: 3, color: '', porcentaje: '0', tiempo: 'mes'
     }
   ]
 
@@ -38,13 +39,14 @@ export class EficienciaComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.fechaActual = new Date().toDateString();
-    this.fecha = moment().format('YY-MM-DD HH:mm:ss');
+    this.fechaActual = moment().format('YYYY-MM-DD');
+    this.fechaSeleccionada = new Date().toDateString();
+    this.fechaInicial = moment().format('YY-MM-DD HH:mm:ss');
     // Se agrega el setTimeout debido que si inician en esta ruta la petición no alcanzaba a enviar los Headers
     setTimeout( () => {
       const data = {
         modo: this.modo,
-        fecha: this.fecha
+        fecha: this.fechaInicial
       };
       this.eficienciaService.obtenerEficienciaModo(data);
     }, 1000)
@@ -65,7 +67,7 @@ export class EficienciaComponent implements OnInit {
     this.modo = card.tiempo
     const data = {
       modo: this.modo,
-      fecha: moment(this.fechaActual).format('YY-MM-DD HH:mm:ss')
+      fecha: moment(this.fechaSeleccionada).format('YY-MM-DD HH:mm:ss')
     };
     this.eficienciaService.obtenerEficienciaModo(data);
   }
@@ -73,7 +75,7 @@ export class EficienciaComponent implements OnInit {
   cambioFecha() {
     const data = {
       modo: this.modo,
-      fecha: moment(this.fechaActual).format('YY-MM-DD HH:mm:ss')
+      fecha: moment(this.fechaSeleccionada).format('YY-MM-DD HH:mm:ss')
     };
     this.eficienciaService.obtenerEficienciaModo(data);
   }
