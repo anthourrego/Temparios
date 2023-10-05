@@ -91,10 +91,9 @@ export class EficienciaService {
 		}
 		this.httpClient.post(this.url, data, { headers: this.headers}).subscribe({
 			next: resp => {
-				const respuesta = this.desencriptar(resp);
-				respuesta.then( resp => {
+				this.desencriptar(resp).then( resp => {
 					this.eficiencia.next(resp);
-				})
+				});
 			},
 			error: (error) => {
 				this.validarAlertaError(error);
@@ -109,8 +108,7 @@ export class EficienciaService {
 		}
 		this.httpClient.post(this.url, data, { headers: this.headers}).subscribe({
 			next: resp => {
-				const respuesta = this.desencriptar(resp);
-				respuesta.then( resp => {
+				this.desencriptar(resp).then( resp => {
 					this.eficienciaModo.next(resp);
 				})
 			},

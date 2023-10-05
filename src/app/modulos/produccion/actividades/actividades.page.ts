@@ -15,8 +15,8 @@ import { takeUntil } from 'rxjs/operators';
 import { ListaChequeoMultipleComponent } from './lista-chequeo-multiple/lista-chequeo-multiple.component';
 import { ListaChequeoComponent } from './lista-chequeo/lista-chequeo.component';
 import { CaracteristicasComponent } from './caracteristicas/caracteristicas.component';
-import { EficienciaService } from 'src/app/servicios/eficiencia.service';
 import { HeaderService } from 'src/app/servicios/header.service';
+import * as moment from 'moment';
 
 @Component({
 	selector: 'app-actividades',
@@ -52,6 +52,7 @@ export class ActividadesPage implements OnInit, OnDestroy {
 	clickPresionado: boolean = false;
 	eliminarMultiple: boolean = false;
 	ingresoModulo: boolean = true;
+	interval: any;
 
 	constructor(
 		private actionSheetController: ActionSheetController,
@@ -62,8 +63,7 @@ export class ActividadesPage implements OnInit, OnDestroy {
 		private router: Router,
 		private cambioCentroProduccionService: CambioCentroProduccionService,
 		private cargadorService: CargadorService,
-		private eficienciaService: EficienciaService,
-		private headerService: HeaderService
+		private headerService: HeaderService,
 	) {
 		this.cambioCentroProduccionService.suscripcion().pipe(takeUntil(this.subject)).subscribe(respu => {
 			this.actividadesLista = [];
@@ -74,21 +74,33 @@ export class ActividadesPage implements OnInit, OnDestroy {
 
 	ngOnDestroy() {
 		this.subject.next(true);
+		clearInterval(this.interval);
 	}
 
 	ngOnInit() {
-		setTimeout(() => {
-			if (this.valoresEficiencia.length === 0) {
-				this.eficienciaService.peticion();
-			} 
-		}, 1500)
-		this.eficienciaService.eficiencia$.subscribe((valor: any) => {
-			this.valoresEficiencia = [
-				{ valor: valor.hora.Eficiencia == null ? '0' : valor.hora.Eficiencia, color: valor.hora.Color },
-				{ valor: valor.dia.Eficiencia == null ? '0' : valor.dia.Eficiencia, color: valor.dia.Color },
-				{ valor: valor.mensual.Eficiencia == null ? '0' : valor.mensual.Eficiencia, color: valor.mensual.Color }
-			]
-		})
+		if (this.valoresEficiencia.length === 0) {	
+			this.actividadesService.informacion({ modo: 'dia', fecha: moment().format('YY-MM-DD HH:mm:ss')}, 'CentrosProduccion/Eficiencia').then( resp => {
+				if(resp) {
+					this.valoresEficiencia = [
+						{ valor: resp.hora.Eficiencia == null ? '0' : resp.hora.Eficiencia, color: resp.hora.Color },
+						{ valor: resp.dia.Eficiencia == null ? '0' : resp.dia.Eficiencia, color: resp.dia.Color },
+						{ valor: resp.mensual.Eficiencia == null ? '0' : resp.mensual.Eficiencia, color: resp.mensual.Color }
+					]
+				}
+			});
+		}
+
+		this.interval = setInterval(() => {
+			this.actividadesService.informacion({ modo: 'dia', fecha: moment().format('YY-MM-DD HH:mm:ss')}, 'CentrosProduccion/Eficiencia').then( resp => {
+				if(resp) {
+					this.valoresEficiencia = [
+						{ valor: resp.hora.Eficiencia == null ? '0' : resp.hora.Eficiencia, color: resp.hora.Color },
+						{ valor: resp.dia.Eficiencia == null ? '0' : resp.dia.Eficiencia, color: resp.dia.Color },
+						{ valor: resp.mensual.Eficiencia == null ? '0' : resp.mensual.Eficiencia, color: resp.mensual.Color }
+					]
+				}
+			});
+		}, 900000)
 	}
 
 	ionViewDidEnter() {

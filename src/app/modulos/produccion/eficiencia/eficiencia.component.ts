@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { EficienciaService } from 'src/app/servicios/eficiencia.service';
 import * as moment from 'moment';
 import { PopoverController } from '@ionic/angular';
 import { SemanasComponent } from 'src/app/componentes/semanas/semanas.component';
+import { PeticionService } from 'src/app/config/peticiones/peticion.service';
 
 @Component({
   selector: 'app-eficiencia',
@@ -32,8 +32,8 @@ export class EficienciaComponent implements OnInit {
   ]
 
   constructor(
-    private eficienciaService: EficienciaService,
-    public popoverController: PopoverController
+    private peticionService: PeticionService,
+    public popoverController: PopoverController,
   ) {
   }
 
@@ -41,23 +41,14 @@ export class EficienciaComponent implements OnInit {
     this.fechaActual = moment().format('YYYY-MM-DD');
     this.fechaSeleccionada = new Date().toDateString();
     this.fechaInicial = moment().format('YY-MM-DD HH:mm:ss');
-    // Se agrega el setTimeout debido que si inician en esta ruta la petición no alcanzaba a enviar los Headers
-    setTimeout( () => {
-      const data = {
-        modo: this.modo,
-        fecha: this.fechaInicial
-      };
-      this.eficienciaService.obtenerEficienciaModo(data);
-    }, 1000)
 
-    this.eficienciaService.eficienciaModo$.subscribe((resp: any) => {
-      this.datos = resp.lista;
-      this.cards[0].porcentaje = resp.dia.Eficiencia;
-      this.cards[0].color = resp.dia.Color;
-      this.cards[1].porcentaje = resp.semana.Eficiencia;
-      this.cards[1].color = resp.dia.Color;
-      this.cards[2].porcentaje = resp.mensual.Eficiencia;
-      this.cards[2].color = resp.dia.Color;
+    const data = {
+      modo: this.modo,
+      fecha: this.fechaInicial
+    };
+
+    this.peticionService.informacion(data, 'CentrosProduccion/Eficiencia').then( resp => {
+      this.recibirDatos(resp);
     })
   }
 
@@ -68,7 +59,9 @@ export class EficienciaComponent implements OnInit {
       modo: this.modo,
       fecha: moment(this.fechaSeleccionada).format('YY-MM-DD HH:mm:ss')
     };
-    this.eficienciaService.obtenerEficienciaModo(data);
+    this.peticionService.informacion(data, 'CentrosProduccion/Eficiencia').then( resp => {
+      this.recibirDatos(resp);
+    })
   }
 
   cambioFecha() {
@@ -76,7 +69,9 @@ export class EficienciaComponent implements OnInit {
       modo: this.modo,
       fecha: moment(this.fechaSeleccionada).format('YY-MM-DD HH:mm:ss')
     };
-    this.eficienciaService.obtenerEficienciaModo(data);
+    this.peticionService.informacion(data, 'CentrosProduccion/Eficiencia').then( resp => {
+      this.recibirDatos(resp);
+    })
   }
 
   async verPopover(dato) {
@@ -89,6 +84,16 @@ export class EficienciaComponent implements OnInit {
       componentProps: { dato }
     });
     await popover.present();
+  }
+
+  private recibirDatos(resp) {
+    this.datos = resp.lista;
+    this.cards[0].porcentaje = resp.dia.Eficiencia;
+    this.cards[0].color = resp.dia.Color;
+    this.cards[1].porcentaje = resp.semana.Eficiencia;
+    this.cards[1].color = resp.dia.Color;
+    this.cards[2].porcentaje = resp.mensual.Eficiencia;
+    this.cards[2].color = resp.dia.Color;
   }
 
 }
