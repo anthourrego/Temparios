@@ -15,6 +15,8 @@ import { takeUntil } from 'rxjs/operators';
 import { ListaChequeoMultipleComponent } from './lista-chequeo-multiple/lista-chequeo-multiple.component';
 import { ListaChequeoComponent } from './lista-chequeo/lista-chequeo.component';
 import { CaracteristicasComponent } from './caracteristicas/caracteristicas.component';
+import { HeaderService } from 'src/app/servicios/header.service';
+import * as moment from 'moment';
 
 @Component({
 	selector: 'app-actividades',
@@ -24,7 +26,7 @@ import { CaracteristicasComponent } from './caracteristicas/caracteristicas.comp
 export class ActividadesPage implements OnInit, OnDestroy {
 
 	tituloEficiencia: Array<string> = ['Hora', 'Diaria', 'Mensual'];
-	valoresEficiencia: Array<string> = ['0%', '0%', '0%'];
+	valoresEficiencia: Array<any> = [];
 	searching: boolean = true;
 	actividadesLista: Array<object> = [];
 	botones: Array<object> = [
@@ -50,6 +52,7 @@ export class ActividadesPage implements OnInit, OnDestroy {
 	clickPresionado: boolean = false;
 	eliminarMultiple: boolean = false;
 	ingresoModulo: boolean = true;
+	interval: any;
 
 	constructor(
 		private actionSheetController: ActionSheetController,
@@ -59,7 +62,8 @@ export class ActividadesPage implements OnInit, OnDestroy {
 		private storage: StorageService,
 		private router: Router,
 		private cambioCentroProduccionService: CambioCentroProduccionService,
-		private cargadorService: CargadorService
+		private cargadorService: CargadorService,
+		private headerService: HeaderService,
 	) {
 		this.cambioCentroProduccionService.suscripcion().pipe(takeUntil(this.subject)).subscribe(respu => {
 			this.actividadesLista = [];
@@ -70,9 +74,34 @@ export class ActividadesPage implements OnInit, OnDestroy {
 
 	ngOnDestroy() {
 		this.subject.next(true);
+		clearInterval(this.interval);
 	}
 
-	ngOnInit() { }
+	ngOnInit() {
+		if (this.valoresEficiencia.length === 0) {	
+			this.actividadesService.informacion({ modo: 'dia', fecha: moment().format('YY-MM-DD HH:mm:ss')}, 'CentrosProduccion/Eficiencia').then( resp => {
+				if(resp) {
+					this.valoresEficiencia = [
+						{ valor: resp.hora.Eficiencia == null ? '0' : resp.hora.Eficiencia, color: resp.hora.Color },
+						{ valor: resp.dia.Eficiencia == null ? '0' : resp.dia.Eficiencia, color: resp.dia.Color },
+						{ valor: resp.mensual.Eficiencia == null ? '0' : resp.mensual.Eficiencia, color: resp.mensual.Color }
+					]
+				}
+			});
+		}
+
+		this.interval = setInterval(() => {
+			this.actividadesService.informacion({ modo: 'dia', fecha: moment().format('YY-MM-DD HH:mm:ss')}, 'CentrosProduccion/Eficiencia').then( resp => {
+				if(resp) {
+					this.valoresEficiencia = [
+						{ valor: resp.hora.Eficiencia == null ? '0' : resp.hora.Eficiencia, color: resp.hora.Color },
+						{ valor: resp.dia.Eficiencia == null ? '0' : resp.dia.Eficiencia, color: resp.dia.Color },
+						{ valor: resp.mensual.Eficiencia == null ? '0' : resp.mensual.Eficiencia, color: resp.mensual.Color }
+					]
+				}
+			});
+		}, 900000)
+	}
 
 	ionViewDidEnter() {
 		this.idLogActividadSearch = '';
@@ -462,6 +491,11 @@ export class ActividadesPage implements OnInit, OnDestroy {
 			handler: () => console
 		}]
 		this.notificacionesService.alerta(`¿Desea reanudar la actividad?`, 'Reanudar actividad', [], botones);
+	}
+
+	verEficiencia() {
+		this.headerService.setRuta('eficiencia');
+		this.router.navigateByUrl(`modulos/produccion/eficiencia`);
 	}
 
 }

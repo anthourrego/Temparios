@@ -42,7 +42,6 @@ export class ThemeService {
 			this.temaActual = theme.name;
 			this.domCtrl.write(() => {
 				theme.styles.forEach(style => {
-					console.log(this.document.documentElement.style);
 					this.document.documentElement.style.setProperty(style.themeVariable, style.value);
 				});
 			});

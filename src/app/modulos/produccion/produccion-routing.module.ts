@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { ProduccionPage } from './produccion.page';
+import { EficienciaComponent } from './eficiencia/eficiencia.component';
 
 const routes: Routes = [
 	{
@@ -18,6 +19,9 @@ const routes: Routes = [
 			{
 				path: 'actividades',
 				loadChildren: () => import('./actividades/actividades.module').then(m => m.ActividadesPageModule),
+			},
+			{
+			  path: 'eficiencia', component: EficienciaComponent
 			}
 		]
 	},

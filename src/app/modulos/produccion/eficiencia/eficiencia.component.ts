@@ -1,0 +1,99 @@
+import { Component, OnInit } from '@angular/core';
+import * as moment from 'moment';
+import { PopoverController } from '@ionic/angular';
+import { SemanasComponent } from 'src/app/componentes/semanas/semanas.component';
+import { PeticionService } from 'src/app/config/peticiones/peticion.service';
+
+@Component({
+  selector: 'app-eficiencia',
+  templateUrl: './eficiencia.component.html',
+  styleUrls: ['./eficiencia.component.scss'],
+})
+export class EficienciaComponent implements OnInit {
+
+  tiempoSeleccionado: any = { id: 1, color: '', porcentaje: '0%', tiempo: 'dia' };
+  searching: boolean;
+  modo: 'dia' | 'semana' | 'mes' = 'dia';
+  fechaActual: any;
+  fechaSeleccionada: any;
+  fechaInicial: any;
+  datos: any;
+
+  cards = [
+    {
+      id: 1, color: '', porcentaje: '0', tiempo: 'dia'
+    },
+    {
+      id: 2, color: '', porcentaje: '0', tiempo: 'semana'
+    },
+    {
+      id: 3, color: '', porcentaje: '0', tiempo: 'mes'
+    }
+  ]
+
+  constructor(
+    private peticionService: PeticionService,
+    public popoverController: PopoverController,
+  ) {
+  }
+
+  ngOnInit() {
+    this.fechaActual = moment().format('YYYY-MM-DD');
+    this.fechaSeleccionada = new Date().toDateString();
+    this.fechaInicial = moment().format('YY-MM-DD HH:mm:ss');
+
+    const data = {
+      modo: this.modo,
+      fecha: this.fechaInicial
+    };
+
+    this.peticionService.informacion(data, 'CentrosProduccion/Eficiencia').then( resp => {
+      this.recibirDatos(resp);
+    })
+  }
+
+  seleccionarRangoTiempo(card) {
+    this.tiempoSeleccionado = card;
+    this.modo = card.tiempo
+    const data = {
+      modo: this.modo,
+      fecha: moment(this.fechaSeleccionada).format('YY-MM-DD HH:mm:ss')
+    };
+    this.peticionService.informacion(data, 'CentrosProduccion/Eficiencia').then( resp => {
+      this.recibirDatos(resp);
+    })
+  }
+
+  cambioFecha() {
+    const data = {
+      modo: this.modo,
+      fecha: moment(this.fechaSeleccionada).format('YY-MM-DD HH:mm:ss')
+    };
+    this.peticionService.informacion(data, 'CentrosProduccion/Eficiencia').then( resp => {
+      this.recibirDatos(resp);
+    })
+  }
+
+  async verPopover(dato) {
+    if (this.modo !== 'semana') return;
+    const popover = await this.popoverController.create({
+      component: SemanasComponent,
+      event: dato,
+      translucent: true,
+      mode: 'ios',
+      componentProps: { dato }
+    });
+    await popover.present();
+  }
+
+  private recibirDatos(resp) {
+    this.datos = resp.lista;
+    this.cards[0].porcentaje = resp.dia.Eficiencia;
+    this.cards[0].color = resp.dia.Color;
+    this.cards[1].porcentaje = resp.semana.Eficiencia;
+    this.cards[1].color = resp.dia.Color;
+    this.cards[2].porcentaje = resp.mensual.Eficiencia;
+    this.cards[2].color = resp.dia.Color;
+  }
+
+}

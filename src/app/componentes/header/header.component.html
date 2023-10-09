@@ -2,7 +2,7 @@
 	<ion-toolbar>
 		<ion-segment mode="md" (ionChange)="segmentChanged($event)" [(ngModel)]="valorDefecto">
 			<ion-segment-button *ngFor="let it of segmentos;" [value]="it.valor">
-				<ion-label>{{ it.titulo }}</ion-label>
+				<ion-label style="font-size: 10px;">{{ it.titulo }}</ion-label>
 			</ion-segment-button>
 		</ion-segment>
 	</ion-toolbar>

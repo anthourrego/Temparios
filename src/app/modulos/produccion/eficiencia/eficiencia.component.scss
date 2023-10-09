@@ -1,0 +1,59 @@
+.eficiencia-div-btn {
+    display: flex;
+    justify-content: space-evenly;
+    margin: 1rem 0.5rem;
+}
+
+.eficiencia-card {
+    width: 70px;
+    height: 50px;
+    display: grid;
+    place-items: center;
+    text-align: center;
+    margin: 0;
+    border-radius: 10px;
+}
+
+.card-fecha {
+    background-color: var(--ion-color-primary);
+}
+
+.eficiencia-card-text {
+  display: flex;
+  flex-direction: column;
+
+  :first-child {
+    font-size: 16px;
+    margin: 0;
+  }
+
+  :nth-child(2) {
+    text-transform: capitalize;
+  }
+
+  p {
+    margin: 0;
+    font-size: 12px;
+  }
+}
+
+.eficiencia-grid {
+    width: 96%;
+    margin: 0 auto;
+    padding: 0;
+    border: 1px solid var(--ion-color-dark);
+    border-radius: 10px;
+
+    .eficiencia-row {
+        text-align: center;
+        border-bottom: 1px solid var(--ion-color-dark);
+    }
+
+    .eficiencia-col {
+        text-align: center;
+    }
+}
+
+.card-seleccionada {
+  border: 3px solid #428cff;
+}
