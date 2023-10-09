@@ -91,9 +91,9 @@ export class EficienciaComponent implements OnInit {
     this.cards[0].porcentaje = resp.dia.Eficiencia;
     this.cards[0].color = resp.dia.Color;
     this.cards[1].porcentaje = resp.semana.Eficiencia;
-    this.cards[1].color = resp.dia.Color;
+    this.cards[1].color = resp.semana.Color;
     this.cards[2].porcentaje = resp.mensual.Eficiencia;
-    this.cards[2].color = resp.dia.Color;
+    this.cards[2].color = resp.mensual.Color;
   }
 
 }
