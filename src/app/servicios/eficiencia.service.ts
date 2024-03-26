@@ -109,6 +109,9 @@ export class EficienciaService {
 	}
 
 	async peticion() {
+		if (this.nit === null) {
+			this.storageService.limpiarTodo(true);
+		};
 		let fecha = moment().format('YY-MM-DD HH:mm:ss');
 		const data = {
 			encriptado: await this.encriptar({ modo: 'dia', fecha})
