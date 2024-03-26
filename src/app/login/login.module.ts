@@ -6,6 +6,7 @@ import { LoginPageRoutingModule } from './login-routing.module';
 import { LoginPage } from './login.page';
 import { RxReactiveFormsModule } from '@rxweb/reactive-form-validators';
 import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
+import { ModalconfiguracionComponent } from './componentes/modalconfiguracion/modalconfiguracion.component';
 
 
 @NgModule({
@@ -17,7 +18,7 @@ import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
 		ReactiveFormsModule,
 		RxReactiveFormsModule
 	],
-	declarations: [LoginPage],
+	declarations: [LoginPage, ModalconfiguracionComponent],
 	providers: [AppVersion]
 })
 export class LoginPageModule { }

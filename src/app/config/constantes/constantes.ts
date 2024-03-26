@@ -24,7 +24,7 @@ export class Constantes {
 			{ themeVariable: '--ion-color-gray', value: '#2a2a2a' },
 			{ themeVariable: '--ion-color-light', value: '#1f1c1c' },
 			{ themeVariable: '--ion-color-medium', value: '#e0e1e6' },
-			{ themeVariable: '--ion-color-dark', value: '#ffffff' },
+			{ themeVariable: '--ion-color-dark', value: '#535353' },
 			{ themeVariable: '--ion-color-light-contrast', value: '#f9efef' },
 			{ themeVariable: '--ion-backdrop-color', value: '#fff' },
 			{ themeVariable: '--ion-text-color', value: '#fff' },

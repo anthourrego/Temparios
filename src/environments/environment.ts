@@ -8,11 +8,12 @@ export const environment = {
   //urlBack: 'http://192.168.0.224:8016/dev/TemparioApp/TemparioBack/',
   //urlBack: 'https://prosof.co:8011/dev/TemparioApp/TemparioBack/',
   //nit: '900445834'
+  //nit: '111111111',
   // urlBack: 'https://prosof.co:8011/testing/TemparioBack/',
-  // nit: '111111111',
-  urlBack: 'https://prosof.co:8011/TempariosAPP/TemparioBack/',
   // urlBack: 'https://prosof.co:8011/TempariosAPP/TemparioBack1/',
-  nit: '900445834'
+  // urlBack: 'https://prosof.co:8011/TempariosAPP/TemparioBack/',
+  urlBack:          'https://prosof.co:8011/testing/TemparioBack/',
+  urlContingencia:  'https://cs.prosof.co:8015/testing/TempariosApp/',
 };
 
 /*

@@ -36,6 +36,24 @@ export class PeticionService {
 		}
 	}
 
+	async obtenerUrl() {
+		let esContingencia = await this.storageService.get('usarUrlContingencia');
+
+		if (environment.production) {
+			if (esContingencia) {
+				this.url = environment.urlContingencia;
+			} else {
+				this.url = environment.urlBack;
+			}
+		} else {
+			if (esContingencia) {
+				this.url = await this.storageService.get('urlSecundariaTesting');
+			} else {
+				this.url = environment.urlBack
+			};
+		}
+	}
+
 	async encriptar(datos) {
 		const salt = CryptoJS.lib.WordArray.random(256);
 		const iv = CryptoJS.lib.WordArray.random(16);
@@ -69,6 +87,11 @@ export class PeticionService {
 	}
 
 	async informacion(body: object | string | Array<any> | number, controlador: string) {
+		const nit = await this.storageService.get('nit').then(resp => resp);
+		if (nit === null) {
+			this.storageService.limpiarTodo(true);
+		};
+		await this.obtenerUrl();
 		const data = {
 			encriptado: await this.encriptar(body)
 			, RASTREO: FuncionesGenerales.rastreo('', 'TemparioApp')
@@ -83,7 +106,7 @@ export class PeticionService {
 			Token: '' + user.OperarioId
 			, Conexion
 			, Cedula
-			, Nit: environment.nit
+			, Nit: nit
 			, Usuario: '' + user.OperarioId
 			, indice
 			, Version: (Version || '')
@@ -103,7 +126,8 @@ export class PeticionService {
 		});
 	}
 
-	private validarAlertaError(request) {
+	private async validarAlertaError(request) {
+		let nit = await this.storageService.get('nit');
 		if (request.error !== '' && request.error != undefined) {
 			let encabezado = 'Se ha producido un problema';
 			let encabezado2 = 'Error';
@@ -119,7 +143,7 @@ export class PeticionService {
 								text: 'Cerrar',
 								role: 'aceptar',
 								handler: () => {
-									if (environment.nit !== '111111111') {
+									if (nit !== '111111111') {
 										this.storageService.limpiarTodo(true);
 									}
 								}
@@ -130,7 +154,7 @@ export class PeticionService {
 					text: 'Cerrar',
 					role: 'cancel',
 					handler: () => {
-						if (environment.nit !== '111111111') {
+						if (nit !== '111111111') {
 							this.storageService.limpiarTodo(true);
 						}
 					}
@@ -161,10 +185,12 @@ export class PeticionService {
 	}
 
 	async iniciarSesionUser(data, Version) {
+		await this.obtenerUrl();
+		let nit = await this.storageService.get('nit');
 		data = {
 			user: data.nroDocumento,
 			clave: data.password,
-			nit: environment.nit,
+			nit: nit,
 			RASTREO: FuncionesGenerales.rastreo('Ingresa al Sistema Process App', 'TemparioApp')
 		};
 		const headers = new HttpHeaders({ Version });

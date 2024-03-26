@@ -21,4 +21,8 @@
 	<ion-item [ngClass]='fontSize' color='light' (click)="confirmarCerrarSesion(true)" detail>
 		<ion-label>Terminar turno</ion-label>
 	</ion-item>
+	<ion-item [ngClass]='fontSize' color='light'>
+		<ion-label>Red de contingencia</ion-label>
+		<ion-toggle [checked]="urlToggle" (ionChange)="actualizarUrl($event)"></ion-toggle>
+	</ion-item>
 </ion-list>

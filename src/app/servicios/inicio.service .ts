@@ -18,6 +18,11 @@ export class InicioService extends PeticionService {
 
 	async verificarCierreSesion() {
 		const conexion = await this.storage.get('conexion');
+		const nit = await this.storage.get('nit');
+		if (nit === null) {
+			this.storage.clear();
+			this.router.navigateByUrl('/login');
+		};
 		if (conexion) {
 			this.informacion([], 'CentrosProduccion/inicioCierreForzado').then(({ valido, msg}) => {
 				if (!valido) {

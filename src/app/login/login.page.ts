@@ -8,6 +8,8 @@ import { LoginService } from '../servicios/login.service';
 import { NotificacionesService } from '../servicios/notificaciones.service';
 import { StorageService } from '../servicios/storage.service';
 import { ThemeService } from '../servicios/theme.service';
+import { ModalController } from '@ionic/angular';
+import { ModalconfiguracionComponent } from './componentes/modalconfiguracion/modalconfiguracion.component';
 
 @Component({
 	selector: 'app-login',
@@ -31,6 +33,7 @@ export class LoginPage implements OnInit {
 		private cargadorService: CargadorService,
 		private theme: ThemeService,
 		private appVersion: AppVersion,
+		private modalController: ModalController,
 	) {
 		this.appVersion.getVersionNumber().then(op => {
 			this.versionNumber = op;
@@ -49,9 +52,10 @@ export class LoginPage implements OnInit {
 		this.formLogin.formulario.markAsUntouched();
 		let datos = {
 			nroDocumento: await this.storageService.get('nroDocumento'),
-			password: await this.storageService.get('password')
+			password: await this.storageService.get('password'),
+			nit: await this.storageService.get('nit')
 		}
-		if (datos.nroDocumento && datos.password) {
+		if (datos.nroDocumento && datos.password && datos.nit) {
 			datos.password = await this.loginService.desencriptar(JSON.parse(datos.password));
 			this.formLogin.formulario.patchModelValue(datos);
 			this.login();
@@ -108,6 +112,18 @@ export class LoginPage implements OnInit {
 		} else {
 			FuncionesGenerales.formularioTocado(this.formLogin.formulario);
 		}
+	}
+
+	async configuracion() {
+		const modal = await this.modalController.create({
+			component: ModalconfiguracionComponent
+		});
+
+		await modal.present();
+
+		modal.onDidDismiss().then(({ data, role }) => {
+			console.log(data, role);
+		})
 	}
 
 }

@@ -1,0 +1,26 @@
+.content {
+	overflow-y: auto;
+	overflow-x: hidden;
+    backdrop-filter: blur(3px);
+    background: rgba(0, 0, 0, 0.5);
+	min-height: 100vh;
+	min-width: 100vw;
+	display: flex;
+	justify-content: center;
+	flex-direction: column;
+	align-items: center;
+}
+
+ion-item {
+	width: 288px;
+	min-height: 46px;
+	border-bottom: 2px solid #ffffff;
+	--background: #ffffff5d;
+	border-radius: 10px;
+	ion-input,
+	ion-select,
+    ion-icon,
+	ionic-selectable {
+		color: #ffffff !important;
+	}
+}

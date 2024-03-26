@@ -16,6 +16,7 @@ import { App } from '@capacitor/app';
 export class ConfiguracionPage implements OnInit {
 
 	temas = Constantes.valoresTemas;
+	urlToggle = false;
 	@ViewChild('rangeLetra') range: IonRange;
 	@ViewChild('checkLetra') check: IonCheckbox;
 
@@ -24,7 +25,7 @@ export class ConfiguracionPage implements OnInit {
 		private notificaciones: NotificacionesService,
 		private storage: StorageService,
 		private cargadorService: CargadorService,
-		private loginService: LoginService
+		private loginService: LoginService,
 	) { }
 
 	ngOnInit() { }
@@ -50,7 +51,11 @@ export class ConfiguracionPage implements OnInit {
 					this.check.checked = applied;
 				});
 			});
-		}
+		};
+
+		this.storage.get('usarUrlContingencia').then((valor) => {
+			if (valor)  this.urlToggle = valor;
+		});
 	}
 
 	get fontSize() {
@@ -119,6 +124,10 @@ export class ConfiguracionPage implements OnInit {
 			console.error(error);
 			this.cargadorService.ocultar();
 		});
+	}
+
+	actualizarUrl(event: any) {
+		this.storage.set('usarUrlContingencia', event.detail.checked);
 	}
 
 }

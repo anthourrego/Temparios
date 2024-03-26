@@ -15,6 +15,7 @@ export class EficienciaService {
 
 	private headers: HttpHeaders;
 	private url = `${environment.urlBack}API/CentrosProduccion/Eficiencia`;
+	private nit = '';
 	private eficiencia = new Subject();
 	private eficienciaModo = new Subject();
 	eficiencia$ = this.eficiencia.asObservable();
@@ -25,9 +26,33 @@ export class EficienciaService {
 		private 	storageService			: StorageService,
 		protected	notificacionesService	: NotificacionesService
 	) {
+		this.obtenerNit();
+		this.obtenerUrl();
 		this.obtenerHeaders().then( () => {
 			this.obtenerEficiencia();
 		});
+	}
+
+	async obtenerNit() {
+		this.nit = await this.storageService.get('nit')
+	}
+
+	async obtenerUrl() {
+		let esContingencia = await this.storageService.get('usarUrlContingencia');
+
+		if (environment.production) {
+			if (esContingencia) {
+				this.url = environment.urlContingencia;
+			} else {
+				this.url = environment.urlBack;
+			}
+		} else {
+			if (esContingencia) {
+				this.url = await this.storageService.get('urlSecundariaTesting');
+			} else {
+				this.url = environment.urlBack
+			};
+		}
 	}
 
 	async obtenerHeaders() {
@@ -40,7 +65,7 @@ export class EficienciaService {
 			Token: '' + user.OperarioId
 			, Conexion
 			, Cedula
-			, Nit: environment.nit
+			, Nit: this.nit
 			, Usuario: '' + user.OperarioId
 			, indice
 			, Version: (Version || '')
@@ -134,7 +159,7 @@ export class EficienciaService {
 								text: 'Cerrar',
 								role: 'aceptar',
 								handler: () => {
-									if (environment.nit !== '111111111') {
+									if (this.nit !== '111111111') {
 										this.storageService.limpiarTodo(true);
 									}
 								}
@@ -145,7 +170,7 @@ export class EficienciaService {
 					text: 'Cerrar',
 					role: 'cancel',
 					handler: () => {
-						if (environment.nit !== '111111111') {
+						if (this.nit !== '111111111') {
 							this.storageService.limpiarTodo(true);
 						}
 					}
