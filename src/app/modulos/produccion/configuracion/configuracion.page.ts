@@ -97,7 +97,8 @@ export class ConfiguracionPage implements OnInit {
 		}, console.error);
 	}
 
-	ejecutarPeticionLog(terminar) {
+	async ejecutarPeticionLog(terminar) {
+		const nit = await this.storage.get('nit');
 		let data = {
 			Tipo: 'SALIDA', //INGRESO
 			TipoParada: null,
@@ -115,6 +116,7 @@ export class ConfiguracionPage implements OnInit {
 				} else {
 					this.storage.limpiarTodo(true);
 					this.cargadorService.ocultar();
+					this.storage.set('nit', nit)
 				}
 			} else {
 				this.notificaciones.notificacion(`No fue posible ${terminar ? 'terminar el turno' : 'cerrar la sesión'}`);

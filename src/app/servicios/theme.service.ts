@@ -36,15 +36,12 @@ export class ThemeService {
 
 
 	setTheme(name): void {
-		const theme = this.themes.find(theme => theme.name === name);
-		if (theme) {
-			this.storage.set('theme', name);
-			this.temaActual = theme.name;
-			this.domCtrl.write(() => {
-				theme.styles.forEach(style => {
-					this.document.documentElement.style.setProperty(style.themeVariable, style.value);
-				});
-			});
+		this.storage.set('theme', name);
+		this.temaActual = name;
+		if (name === 'dark') {
+			document.body.classList.toggle('dark', true);
+		} else {
+			document.body.classList.toggle('dark', false);
 		}
 	}
 
