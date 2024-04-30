@@ -12,8 +12,9 @@ export const environment = {
   // urlBack: 'https://prosof.co:8011/testing/TemparioBack/',
   // urlBack: 'https://prosof.co:8011/TempariosAPP/TemparioBack1/',
   // urlBack: 'https://prosof.co:8011/TempariosAPP/TemparioBack/',
-  urlBack:          'https://prosof.co:8011/testing/TemparioBack/',
-  urlContingencia:  'https://cs.prosof.co:8015/testing/TempariosApp/',
+  // urlBack:          'https://prosof.co:8011/dev/TempariosApp/',
+  urlBack:          'https://cs.prosof.co:8015/testing/TempariosApp/',
+  urlContingencia:  'https://cs.prosof.co:8015/dev/TempariosApp/',
 };
 
 /*
