@@ -12,11 +12,11 @@
 <ion-progress-bar *ngIf="cargando" type="indeterminate"></ion-progress-bar>
 
 <ion-content color="gray">
-  <div class="content" style="margin: -56px 0;">
+  <div class="content" style="min-width: 100%; min-height: 100%;">
     <form [formGroup]="formConfig">
       <ion-item class="ion-margin-top" lines="none">
         <ion-icon class="ion-margin-end" slot="start" name="reader-outline"></ion-icon>
-      <ion-input type="number" placeholder="Nit" formControlName="nit"></ion-input>
+      <ion-input type="text" placeholder="Nit" formControlName="nit"></ion-input>
       </ion-item>
 
       <ion-item class="ion-margin-top" lines="none" *ngIf="esTesting">
@@ -30,13 +30,12 @@
       </ion-item>
       <ion-grid class="ion-no-margin">
         <ion-row>
-          <ion-col size="6" size-xs='12' size-lg='6' size-md='6'
-          class="ion-align-self-center ion-text-center">
-          <ion-button class="ion-no-margin" (click)="guardar()" expand="full" shape="round">
-            Guardar
-            <ion-icon slot="start" name="save-outline"></ion-icon>
-          </ion-button>
-        </ion-col>
+          <ion-col size="6" size-xs='12' class="ion-align-self-center ion-text-center">
+            <ion-button class="ion-no-margin" (click)="guardar()" expand="full" shape="round">
+              Guardar
+              <ion-icon slot="start" name="save-outline"></ion-icon>
+            </ion-button>
+          </ion-col>
         </ion-row>
       </ion-grid>
     </form>

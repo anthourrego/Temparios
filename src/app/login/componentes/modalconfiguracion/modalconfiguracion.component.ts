@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormControl, FormGroup } from '@angular/forms';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ModalController, ToastController } from '@ionic/angular';
 import { StorageService } from 'src/app/servicios/storage.service';
 import { environment } from 'src/environments/environment';
@@ -13,7 +13,7 @@ export class ModalconfiguracionComponent implements OnInit {
 
   cargando: boolean = false;
   formConfig = new FormGroup({
-    nit: new FormControl(''),
+    nit: new FormControl('', [Validators.pattern(/^([0-9])*$/)]),
     url: new FormControl('')
   })
   esTesting = !environment.production;
@@ -54,6 +54,14 @@ export class ModalconfiguracionComponent implements OnInit {
   }
 
   async guardar(){
+    if (this.formConfig.controls.nit.invalid) {
+      const toast = await this.toast.create({
+        message: 'Debe ingresar solo números',
+        duration: 3000
+      });
+      await toast.present();
+      return;
+    };
     if (!environment.production && this.urlToggle && this.formConfig.value.url === '') {
       const toast = await this.toast.create({
         message: 'Debe ingresar una url de contingencia para testing',
@@ -61,7 +69,7 @@ export class ModalconfiguracionComponent implements OnInit {
       });
       await toast.present();
       return;
-    }
+    };
     await this.storage.set('nit', this.formConfig.value.nit.toString());
     await this.storage.set('urlSecundariaTesting', this.formConfig.value.url);
     this.storage.set('usarUrlContingencia', this.urlToggle);

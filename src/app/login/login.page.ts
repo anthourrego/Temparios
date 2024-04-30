@@ -122,7 +122,7 @@ export class LoginPage implements OnInit {
 		await modal.present();
 
 		modal.onDidDismiss().then(({ data, role }) => {
-			console.log(data, role);
+			// Se puede agregar funcionalidad si lo requiere
 		})
 	}
 
