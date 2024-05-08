@@ -55,7 +55,7 @@ export class DetalleActividadComponent implements OnInit {
 		};
 		this.searching = true;
 		this.actividadesService.informacion(datos, 'CentrosProduccion/obtenerDetalleGrupo').then(({ valido, datos }) => {
-			this.detalleActividad = datos;
+			this.detalleActividad = datos.map(o => ({...o, CantidadTotal: parseInt(o.CantidadTotal) + parseInt(o.CantidadReproceso)}));
 			if (event) event.target.complete();
 			this.searching = false;
 		}, err => {

@@ -2,6 +2,7 @@ import { Component, Input, OnInit } from '@angular/core';
 import { ModalController } from '@ionic/angular';
 import { ListaChequeoService } from 'src/app/servicios/lista-chequeo.service';
 import { ListaChequeoComponent } from '../lista-chequeo/lista-chequeo.component';
+import { NotificacionesService } from 'src/app/servicios/notificaciones.service';
 
 @Component({
 	selector: 'app-lista-chequeo-multiple',
@@ -18,15 +19,27 @@ export class ListaChequeoMultipleComponent implements OnInit {
 
 	constructor(
 		private modalController: ModalController,
-		private listaChequeoService: ListaChequeoService
+		private listaChequeoService: ListaChequeoService,
+		private notificacionesService: NotificacionesService,
+
 	) { }
 
 	ngOnInit() {
 		this.obtenerInformacion();
 	}
 
-	cerrarModal(listar?) {
-		this.modalController.dismiss(listar);
+	cerrarModal(listar) {
+		this.modalController.dismiss({ listar });
+	}
+
+	finalizarGrupo(listar?) {
+		let dataListasChequeo = this.arrGrupoLista.map(l => l.dataLista ? l.dataLista : null);
+		let validacionLisatas = dataListasChequeo.filter(l => l === null);
+		if (validacionLisatas.length > 0) {
+			this.notificacionesService.notificacion('Debe diligenciar todas las listas para poder finalizar el grupo');
+			return;
+		}
+		this.modalController.dismiss({ listar, listachequeo: true, dataListasChequeo });
 	}
 
 	obtenerInformacion() {
@@ -46,19 +59,19 @@ export class ListaChequeoMultipleComponent implements OnInit {
 	}
 
 	async itemSeleccionado(option, pos) {
-		if (!option['AplicoListaChequeo']) {
-			const modal = await this.modalController.create({
-				component: ListaChequeoComponent
-				, backdropDismiss: false
-				, componentProps: { datos: option, centroProduccion: this.centroProduccion }
-			});
-			await modal.present();
-			modal.onWillDismiss().then(({ data, role }) => {
-				if (data && data.listachequeo) {
-					this.arrGrupoLista[pos]['AplicoListaChequeo'] = true;
-				}
-			}, console.error);
-		}
+		const modal = await this.modalController.create({
+			component: ListaChequeoComponent
+			, backdropDismiss: false
+			, componentProps: { datos: option, centroProduccion: this.centroProduccion }
+		});
+		await modal.present();
+		modal.onWillDismiss().then(({ data, role }) => {
+			if (data && data.listachequeo) {
+				this.arrGrupoLista[pos]['AplicoListaChequeo'] = true;
+				this.arrGrupoLista[pos]['dataLista'] = data.dataLista;
+				this.arrGrupoLista[pos]['cantidadReproceso'] = data.dataLista.cantReproceso;
+			}
+		}, console.error);
 	}
 
 }

@@ -19,7 +19,7 @@ export class NotificacionesService {
     return toast.present();
   }
 
-  async alerta(message: string, header?: string, cssClass?: string[],  buttons?: AlertButton[], inputs?: AlertInput[], backdropDismiss?: boolean, mode?: 'ios' | 'md') {
+  async alerta(message: string, header?: string, cssClass?: string[],  buttons?: AlertButton[], inputs?: AlertInput[], backdropDismiss: boolean = false, mode?: 'ios' | 'md') {
     if (!buttons) {
       buttons = [{
         text: 'Aceptar', role: 'aceptar'

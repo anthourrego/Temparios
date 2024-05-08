@@ -1,7 +1,7 @@
 <ion-header class="ion-no-border">
 	<ion-toolbar color="ligth">
 		<ion-title color="dark" class="ion-text-center">Lista de chequeo grupo Nro {{ datos?.GrupoId }}</ion-title>
-		<ion-buttons slot="end" (click)="cerrarModal()">
+		<ion-buttons slot="end" (click)="cerrarModal(true)">
 			<ion-icon color="dark" slot='icon-only' size='large' name='close-outline'>
 			</ion-icon>
 		</ion-buttons>
@@ -21,6 +21,7 @@
 				<p>{{item['Nombre']}}</p>
 				<p>Orden: {{ item['NumerOrden'] }} - Ref: {{ item['Referencia'] }}</p>
 				<p>Cant: {{ +item['CantidadTotal'] }}</p>
+				<p *ngIf="item['cantidadReproceso']">Cant Reproceso: {{ +item['cantidadReproceso'] }}</p>
 			</ion-label>
 		</ion-item>
 	</ion-list>
@@ -33,7 +34,7 @@
 
 <ion-footer>
 	<ion-toolbar color="light">
-		<ion-button class="ion-margin-horizontal" (click)="cerrarModal({ listachequeo: true })" [size]="'full'"
+		<ion-button class="ion-margin-horizontal" (click)="finalizarGrupo(true)" [size]="'full'"
 			shape="round">
 			<ion-icon slot="start" name="checkmark"></ion-icon>
 			Finalizar Grupo

@@ -16,6 +16,7 @@ export class ListaChequeoComponent implements OnInit {
 	formulario: any = true;
 	datosLista: any = {};
 	searching: boolean = false;
+	cantidadParcial = 0;
 
 	constructor(
 		private modalController: ModalController,
@@ -25,10 +26,48 @@ export class ListaChequeoComponent implements OnInit {
 
 	ngOnInit() {
 		this.buscarListaChequeos();
+		if (this.datos.Ultimo === '1' && this.datos.GrupoId === null) {
+			this.cambiarCantidadParcial();
+		} else {
+			if (this.datos.GrupoId !== null) {
+				this.cantidadParcial = this.datos.CantidadTotal;
+			} else {
+				this.cantidadParcial = this.datos.CantidadReproceso > 0 ? parseInt(this.datos.CantidadTotal) - parseInt(this.datos.CantidadOriginal) : parseInt(this.datos.CantidadOriginal);
+			}
+		}
 	}
 
 	cerrarModal(listar?) {
 		this.modalController.dismiss(listar);
+	}
+
+	cambiarCantidadParcial() {
+		let cantidadValida = this.datos['CantidadParcialEntregada'] === 0 ? this.datos['CantidadOriginal'] : this.datos['CantidadMinima'];
+		let botones = [{
+			text: 'Aceptar',
+			handler: (data) => {
+				let cantidad = data.cantidad == '' ? 0 : data.cantidad;
+				cantidad = Number(cantidad);
+				if (cantidad > 0) {
+					if (cantidad <= cantidadValida) {
+						this.cantidadParcial = cantidad;
+					} else {
+						this.notificacionesService.notificacion(`Ha superado la cantidad maxima que es ${cantidadValida}`);
+						return false;
+					}
+				} else {
+					this.notificacionesService.notificacion("La cantidad debe ser mayor a 0.");
+					return false;
+				}
+			}
+		}];
+		this.notificacionesService.alerta(
+			`Confirme cantidad a entregar: <br> Cantidad máxima ${cantidadValida}`
+			, 'Cantidad'
+			, ['alerta-input']
+			, botones
+			, [{ min: 0, max: cantidadValida, type: "number", name: "cantidad" }]
+		);
 	}
 
 	buscarListaChequeos() {
@@ -157,6 +196,7 @@ export class ListaChequeoComponent implements OnInit {
 								for (var i = 0; i < document.getElementsByName(element.name).length; i++) {
 									if (document.getElementsByName(element.name)[i]['checked']) {
 										data[element.getAttribute('listachequeoid')][element.name]['value'] = document.getElementsByName(element.name)[i]['value'];
+										data[element.getAttribute('listachequeoid')][element.name]['LCOperacion'] = document.getElementsByName(element.name)[i].getAttribute('LCOperacion').replace('[', '').replace(']', '');
 										break;
 									}
 								}
@@ -169,7 +209,28 @@ export class ListaChequeoComponent implements OnInit {
 			}
 		}
 		data['observacion'] = document.getElementById('observaciones')['value'];
-		return data;
+
+		let preguntas = Object.values(data);
+		let valido = true;
+
+		preguntas.forEach((p: any) => {
+			for (const key in p) {
+				if (Object.prototype.hasOwnProperty.call(p, key)) {
+					if (p[key]['value'] === '') {
+						this.notificacionesService.notificacion('Faltan preguntas por responder');
+						valido = false;
+						return;
+					};
+				};
+			};
+		});
+
+		if (valido) {
+			return data;
+		} else {
+			return null;
+		};
+
 	}
 
 	getSelectValues(select: any) {
@@ -195,10 +256,7 @@ export class ListaChequeoComponent implements OnInit {
 			}
 		}
 		if ($LCOperacion.length) {
-			let cantidadValida = Number(this.datos.CantidadTotal);
-			if (this.datos['GrupoId']) {
-				cantidadValida = Number(this.datosLista['cantidad']);
-			}
+			let cantidadValida = this.cantidadParcial; // Se cambia la cantidad porque ese valor es la cantidad maxima que tiene todos los procesos
 			let botones = [{
 				text: 'Aceptar',
 				handler: (data) => {
@@ -235,38 +293,46 @@ export class ListaChequeoComponent implements OnInit {
 	guardarInformacion($LCOperacion, cantidad) {
 		var date = new Date();
 		var fecha = date.getFullYear() + "-" + date.getDate() + "-" + (date.getMonth() + 1) + " " + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
-		this.searching = true;
 		var form2 = document.getElementById("formElements");
 		var $DATA2 = {};
-		var data2 = {};
-		data2 = this.cargarDatos({}, form2['elements']);
+		var data2 = this.cargarDatos({}, form2['elements']);
+		if (!data2) return;
+		this.searching = true;
 		$DATA2 = data2;
 		var $DATA: any = {
 			lista: JSON.stringify($DATA2)
 			, LoteProductoId: ''
 			, fecha: fecha
 			, LCOperacion: $LCOperacion
-			, HeadProdId: (this.datos['GrupoId'] ? this.datosLista['headprodid'] : this.datos.HeadProdId) //Encabezado del producto
-			, VIN: (this.datos['GrupoId'] ? this.datosLista['OrdeProdOperacionId'] : this.datos.OrdeProdOperacionId) //Orden de produccion
+			, HeadProdId: this.datos.HeadProdId //Encabezado del producto
+			, VIN: this.datos.OrdeProdOperacionId //Orden de produccion
 			, proceso: this.datosLista['nombreActividad']
-			, OrdeProdId: (this.datos['GrupoId'] ? this.datosLista['OrdeProdId'] : this.datos.OrdeProdId)
+			, OrdeProdId: this.datos.OrdeProdId
 			, cantReproceso: cantidad
-			, cantidadTotal: this.datos['GrupoId'] ? this.datosLista['cantidad'] : +this.datos['CantidadTotal']
+			, cantidadTotal: this.cantidadParcial
 			, centroProd: this.centroProduccion
-			, ultimo: this.datos['GrupoId'] ? this.datosLista['Ultimo'] : +this.datos['Ultimo']
+			, grupoId: this.datos['GrupoId']
+			, ultimo: +this.datos['Ultimo']
 		};
-		this.listaChequeoService.informacion($DATA, 'ListaChequeo/Guardar').then((resp) => {
-			if (resp.info == 1) {
-				this.notificacionesService.notificacion("Felicitaciones, se ha diligenciado la lista satisfactoriamente");
-				this.cerrarModal({ listar: true, listachequeo: true });
-			} else {
-				this.notificacionesService.notificacion("Lo sentimos, ocurrió un problema al diligenciar la lista");
-			}
+
+		if ($DATA.cantReproceso > 0 && $DATA.grupoId === null) {
+			this.listaChequeoService.informacion($DATA, 'ListaChequeo/Guardar').then((resp) => {
+				if (resp.info == 1) {
+					this.notificacionesService.notificacion("Felicitaciones, se ha diligenciado la lista satisfactoriamente");
+					this.cerrarModal({ listar: true, listachequeo: false, cantidadParcial: $DATA.cantidadTotal - $DATA.cantReproceso });
+				} else {
+					this.notificacionesService.notificacion("Lo sentimos, ocurrió un problema al diligenciar la lista");
+				}
+				this.searching = false;
+			}).catch((error) => {
+				console.log(error);
+				this.searching = false;
+			});
+		} else {
+			this.notificacionesService.notificacion("Felicitaciones, se ha diligenciado la lista satisfactoriamente");
 			this.searching = false;
-		}).catch((error) => {
-			console.log(error);
-			this.searching = false;
-		});
+			this.cerrarModal({ listar: true, listachequeo: true, cantidadParcial: $DATA.cantidadTotal - $DATA.cantReproceso, dataLista: $DATA, ultimo: $DATA.ultimo });
+		}
 	}
 
 }

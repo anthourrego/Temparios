@@ -24,7 +24,7 @@
 		<ion-item-sliding class="ion-margin"
 			(click)="item['Contador'] == 1 && +item['CantiRecib'] < (+item['CantidadTotal']) ? agregarCantidad(item) : slidingDelInvitado('sliding' + pos)"
 			[id]="'sliding' + pos" *ngFor="let item of detalleActividad; let pos = index;"
-			[ngClass]="{'reproceso': item['ListaChequeoId'], 'd-none' : !item['visible']}">
+			[ngClass]="{'reproceso': item['EjecucionListaId'], 'd-none' : !item['visible']}">
 			<ion-item lines="none"
 				[ngStyle]=" item['AplicoListaChequeo'] ? {'border-left': '4px solid var(--ion-color-success)'} : {}">
 				<!-- [ngStyle]=" item['EstadoOperacion'] == 'FI' ? {'border-left': '4px solid var(--ion-color-success)'} : {}" -->

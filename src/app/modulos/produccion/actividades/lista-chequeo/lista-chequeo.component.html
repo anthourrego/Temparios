@@ -14,22 +14,23 @@
 
 	<div class="row m-3">
 		<div class="col-12 border border-bottom-0 text-truncate p-2">
-			{{ datos['GrupoId'] ? datosLista['NombreProducto'] : datos['NombreProducto'] }}
+			{{ datos['NombreProducto'] }}
 		</div>
 		<div class="col-12 border border-bottom-0 text-truncate p-2">
-			{{ datos['GrupoId'] ? datosLista['nombre'] : datos['Nombre'] }}
+			{{ datos['Nombre'] }}
 		</div>
 		<div class="col-6 border border-bottom-0 border-right-0 border-bottom p-2">
 			<strong>Orden: </strong>
-			{{ datos['GrupoId'] ? datosLista['NumerOrden'] : +datos['NumerOrden'] }}
+			{{ +datos['NumerOrden'] }}
 		</div>
 		<div class="col-6 border p-2">
 			<strong>Cantidad: </strong>
-			{{ datos['GrupoId'] ? datosLista['cantidad'] : +datos['CantidadTotal'] }}
+			<span *ngIf="datos['GrupoId'] === null">{{ cantidadParcial }}</span>
+			<span *ngIf="datos['GrupoId'] !== null">{{ datos['CantidadTotal'] }}</span>
 		</div>
 		<div class="col-6 border border-right border-left border-bottom p-2">
 			<strong>Referencia: </strong>
-			{{ datos['GrupoId'] ? datosLista['Referencia'] : datos['Referencia'] }}
+			{{ datos['Referencia'] }}
 		</div>
 	</div>
 

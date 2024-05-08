@@ -74,7 +74,7 @@
 			<div class="collapse" [id]="'collapse' + pos">
 				<ion-list>
 					<div *ngFor="let item of it['actividades']; let po = index"
-						[ngClass]="{'content-reproceso' : item['ListaChequeoId']}">
+						[ngClass]="{'content-reproceso' : (item['Detalle'] && item['EjecucionListaId'])}">
 						<ion-item lines="inset">
 							<ion-label>
 								<h2>{{ item['Nombre'] }}</h2>
@@ -112,7 +112,7 @@
 				[ngClass]="{'height-collapse show' : collapseAbierto && pos == posicionAnterior}">
 				<ion-list>
 					<div *ngFor="let item of it['actividades']; let po = index"
-						[ngClass]="{'content-reproceso' : item['ListaChequeoId']}">
+						[ngClass]="{'content-reproceso' : (item['Detalle'] && item['EjecucionListaId'])}">
 						<ion-item lines="inset">
 							<ion-avatar>
 								<img class="rounded-circle"
@@ -181,7 +181,7 @@
 							[attr.aria-labelledby]="'flushHeader' + pos + po"
 							[attr.data-bs-parent]="'#accordionFlushMaquinaria' + pos">
 							<div *ngFor="let itemA of item['actividades']; let p = index"
-								[ngClass]="{'content-reproceso' : itemA['ListaChequeoId']}">
+								[ngClass]="{'content-reproceso' : (item['Detalle'] && item['EjecucionListaId'])}">
 								<ion-item lines="inset">
 									<ion-label>
 										<h2>{{ itemA['Nombre'] }}</h2>
@@ -240,7 +240,7 @@
 			<div class="collapse" [id]="'collapse' + pos">
 				<ion-list>
 					<div *ngFor="let item of it['actividades']; let po = index"
-						[ngClass]="{'content-reproceso' : item['ListaChequeoId']}">
+						[ngClass]="{'content-reproceso' : (item['Detalle'] && item['EjecucionListaId'])}">
 						<ion-item lines="inset" [ngClass]="{'fondo-grupo-contador' : item['Contador'] == 1}">
 							<ion-label>
 								<h2>{{ item['Nombre'] }}</h2>

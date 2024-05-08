@@ -7,7 +7,7 @@ export class Constantes {
 
 	static temas = [{
 		name: 'dark',
-		styles: [
+		styles: [ // NO SE ESTAN USANDO, NO SE BORRAN POR SI SE DESEA VOVLER A TENER ESOS MISMOS ESTILOS
 			{ themeVariable: '--ion-color-primary', value: '#737373' },
 			{ themeVariable: '--ion-color-primary-rgb', value: '34,34,34' },
 			{ themeVariable: '--ion-color-primary-contrast', value: '#ffffff' },

@@ -159,7 +159,11 @@ export class ActividadesPage implements OnInit, OnDestroy {
 				icon: 'bag-add-outline',
 				handler: () => {
 					if (Number(op.CantidadMinima) > 0) {
-						this.entregaParcial(op);
+						if (op.AplicaListaChequeo) {
+							this.accionBoton({ accion: 'terminado', component: ListaChequeoComponent }, op, pos);
+						} else {
+							this.entregaParcial(op);
+						}
 					} else {
 						this.notificacionesService.notificacion("No tiene cantidad para la entrega");
 					}
@@ -202,6 +206,7 @@ export class ActividadesPage implements OnInit, OnDestroy {
 		this.actividadesService.informacion(this.dataQuery, 'CentrosProduccion/obtenerActividadesAsignadas').then((datos) => {
 			if (datos) {
 				this.actividadesLista = datos.datos;
+				this.mappearCantidadActividades();
 			};
 			if (event) event.target.complete();
 			this.searching = false;
@@ -241,10 +246,14 @@ export class ActividadesPage implements OnInit, OnDestroy {
 		modal.onWillDismiss().then(({ data, role }) => {
 			if (data) {
 				if (data.listachequeo) {
-					if (this.actividadesLista[pos]) {
-						this.actividadesLista[pos]['AplicoListaChequeo'] = true;
+					if (data.dataListasChequeo) {
+						let info = { ...datos, dataLista: data.dataListasChequeo };
+						this.accionBoton({ accion: 'terminado', component: ProductoTerminadoComponent }, info);
 					}
-					this.accionBoton({ accion: 'terminado', component: ProductoTerminadoComponent }, datos);
+					if (data.cantidadParcial > 0) {
+						let info = { ...datos, cantidadParcial: data.cantidadParcial, dataLista: [data.dataLista] };
+						this.accionBoton({ accion: 'terminado', component: ProductoTerminadoComponent }, info);
+					}
 					if (data.listar) {
 						this.obtenerInformacion(false);
 					}
@@ -271,7 +280,7 @@ export class ActividadesPage implements OnInit, OnDestroy {
 				OrdeProdOperacionId: op['OrdeProdOperacionId'],
 				GrupoId: op['GrupoId'],
 				Cantidad: op['GrupoId'] == null ? (cantidad ? cantidad : 1) : op['CantidadTotal'],
-				Tipo: (op['ListaChequeoId'] ? 'REPROCESO' : 'OPERACION'),
+				Tipo: (op['EjecucionListaId'] ? 'REPROCESO' : 'OPERACION'),
 				centroProd: this.dataQuery['centroProd'],
 				contadorGrupo: (op['GrupoERP'] > 0 ? (op['ContadorGrupo'] == 0 ? 0 : 1) : 1)
 			}
@@ -282,7 +291,8 @@ export class ActividadesPage implements OnInit, OnDestroy {
 					this.notificacionesService.notificacion(msg);
 				} else {
 					if (pos >= 0 && actividades[pos] && this.actividadesLista[pos]) {
-						this.actividadesLista[pos] = actividades[pos];
+						this.actividadesLista[pos] = { ...this.actividadesLista[pos], ...actividades[pos] };
+						this.mappearCantidadActividades();
 					}
 					if (((op['GrupoId'] != null) || ((+op['CantiRecib'] + data.Cantidad) == +op['CantidadTotal'])) && op['ContadorGrupo'] != 0) {
 						op['CantiRecib'] = (+op['CantiRecib'] + data.Cantidad);
@@ -441,6 +451,10 @@ export class ActividadesPage implements OnInit, OnDestroy {
 	}
 
 	ordenOperacionClick(op, pos) {
+		if (op['CantidadMinimaReproceso'] > 0 && op['Ultimo'] === '0') {
+			this.notificacionesService.notificacion('Tiene procesos pendientes o en reproceso');
+			return;
+		}
 		if (op['GrupoId'] != null && op['Pausa'] > 0 && +op['CantiRecib'] < +op['CantidadTotal']) {
 			this.reanudarOperacionPausada(op, pos);
 		} else {
@@ -452,11 +466,7 @@ export class ActividadesPage implements OnInit, OnDestroy {
 				} else {
 					if (op['GrupoId'] == null) {
 						if (op['AplicaListaChequeo']) {
-							if (op['AplicoListaChequeo']) {
-								this.accionBoton({ accion: 'terminado', component: ProductoTerminadoComponent }, op);
-							} else {
-								this.accionBoton({ accion: 'lista-chequeo', component: ListaChequeoComponent }, op, pos);
-							}
+							this.accionBoton({ accion: 'lista-chequeo', component: ListaChequeoComponent }, op, pos);
 						} else {
 							this.accionBoton({ accion: 'terminado', component: ProductoTerminadoComponent }, op);
 						}
@@ -464,9 +474,7 @@ export class ActividadesPage implements OnInit, OnDestroy {
 						if (op['AplicaListaChequeo'] == null) {
 							this.accionBoton({ accion: 'terminado', component: ProductoTerminadoComponent }, op);
 						} else {
-							if (op['AplicaListaChequeo'] == 1) {
-								this.accionBoton({ accion: 'lista-chequeo', component: ListaChequeoComponent }, op, pos);
-							} else {
+							if (op['AplicaListaChequeo'] >= 1) {
 								this.accionBoton({ accion: 'lista-chequeo-multiple', component: ListaChequeoMultipleComponent }, op, pos);
 							}
 						}
@@ -496,6 +504,14 @@ export class ActividadesPage implements OnInit, OnDestroy {
 	verEficiencia() {
 		this.headerService.setRuta('eficiencia');
 		this.router.navigateByUrl(`modulos/produccion/eficiencia`);
+	}
+
+	mappearCantidadActividades() {
+		this.actividadesLista = this.actividadesLista.map((a: any) => ({
+			...a,
+			CantidadTotal: parseInt(a.CantidadOriginal) + parseInt(a.CantidadReproceso ? a.CantidadReproceso : 0),
+			CantidadMinima: a.Ultimo === '0' ? parseInt(a.CantidadReproceso ? a.CantidadReproceso : 0 - a.CantidadMinimaReproceso ? a.CantidadMinimaReproceso : 0) : parseInt(a.CantidadMinimaProceso) - parseInt(a.CantidadMinimaReproceso ? a.CantidadMinimaReproceso : 0)
+		}));
 	}
 
 }

@@ -95,14 +95,26 @@ export class ProductoTerminadoComponent implements OnInit {
 			info['cantiParcial'] = this.datos['cantidadParcial'];
 		}
 		this.searching = true;
-		console.log(info);
+
 		this.actividadesService.informacion(info, 'CentrosProduccion/obtenerProductoTerminado').then(({ contMensaje, datos, consumoGrupo, montaje }) => {
 			this.productos = datos;
-			console.log(datos)
 			this.datosMontaje = montaje;
 			this.productos.forEach(it => {
 				if (it['ManejaLotes'] == 'S') it['formValido'] = false;
 			});
+			if (this.datos.dataLista && this.datos.dataLista.length > 0 && this.productos.length > 0) {
+				this.productos.forEach((producto: any) => {
+					this.datos.dataLista.forEach((lista: any) => {
+						if (producto.OrdeProdId === lista.OrdeProdId) {
+							producto['cantidadReproceso'] = lista.cantReproceso;
+						} else {
+							producto['cantidadReproceso'] = 0;
+						}
+					});
+				});
+			} else {
+				this.productos = this.productos.map(p => ({...p, cantidadReproceso: 0}));
+			};
 			this.mostrarMensajeAgrupada = (this.productos.length == contMensaje ? true : false);
 			if ((this.datos['GrupoId'] && this.mostrarMensajeAgrupada) || !this.productos.length) {
 				this.confirmar("¿Desea finalizar la actividad?");
@@ -134,6 +146,7 @@ export class ProductoTerminadoComponent implements OnInit {
 			, grupoId: this.datos['GrupoId']
 			, Ultimo: this.datos['Ultimo']
 			, GrupoERP: null
+			, cantidadOriginalrestante: this.datos['CantidadOriginal'] - this.datos['CantidadParcialEntregada']
 		}
 		if (this.datos['GrupoId']) {
 			let consumoGrupo = this.productosGrupo.map(op => {
@@ -156,9 +169,16 @@ export class ProductoTerminadoComponent implements OnInit {
 			data['descargueInsumo'] = 1;
 		}
 
-		if (this.datos['cantidadParcial'] && this.datos['cantidadParcial'] > 0) {
+		if (this.datos['cantidadParcial'] && this.datos['cantidadParcial'] > 0 && this.datos['cantidadParcial'] < (this.datos['CantidadTotal'] - this.datos['CantidadParcialEntregada'])) {
 			data['cantiParcial'] = this.datos['cantidadParcial'];
+		};
+
+		if (this.datos['dataLista']) {
+			data['dataLista'] = this.datos['dataLista'];
+		} else {
+			data['dataLista'] = [];
 		}
+
 		this.actividadesService.informacion(data, 'CentrosProduccion/finalizarActividad').then(({ msg, valido, grupoElimino, respUsuario }) => {
 			this.cargadorService.ocultar();
 
@@ -168,6 +188,7 @@ export class ProductoTerminadoComponent implements OnInit {
 				if (!valido) {
 					this.notificacionesService.notificacion(msg);
 				} else {
+					this.notificacionesService.notificacion(msg);
 					this.cerrarModal(true, grupoElimino);
 				}
 			}
