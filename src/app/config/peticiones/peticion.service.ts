@@ -102,6 +102,7 @@ export class PeticionService {
 		const indice = await this.storageService.get('indice').then(resp => resp);
 		const Version = await this.storageService.get('version').then(resp => resp);
 		let user = await this.desencriptar(JSON.parse(await this.storageService.get('usuario').then(resp => resp)));
+		let turno = JSON.parse(await this.storageService.get('usuario').then(resp => resp));
 		const headers = new HttpHeaders({
 			Token: '' + user.OperarioId
 			, Conexion
@@ -111,7 +112,7 @@ export class PeticionService {
 			, indice
 			, Version: (Version || '')
 			, NomUsuario: user.nombre
-			, TurnoId: (user.TurnoId || '')
+			, TurnoId: (turno.TurnoId || '')
 		});
 		return await this.ejecutarPeticion('post', uri, data, headers).toPromise().then(async resp => {
 			const desencriptado = await this.desencriptar(resp);
