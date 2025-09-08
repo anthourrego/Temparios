@@ -61,6 +61,7 @@ export class EficienciaService {
 		const indice = await this.storageService.get('indice').then(resp => resp);
 		const Version = await this.storageService.get('version').then(resp => resp);
 		let user = await this.desencriptar(JSON.parse(await this.storageService.get('usuario').then(resp => resp)));
+		let turno = JSON.parse(await this.storageService.get('usuario').then(resp => resp));
 		this.headers = new HttpHeaders({
 			Token: '' + user.OperarioId
 			, Conexion
@@ -70,7 +71,7 @@ export class EficienciaService {
 			, indice
 			, Version: (Version || '')
 			, NomUsuario: user.nombre
-			, TurnoId: (user.TurnoId || '')
+			, TurnoId: (turno.TurnoId || '')
 		});
 		this.peticion();
 	}
@@ -122,23 +123,6 @@ export class EficienciaService {
 				this.desencriptar(resp).then( resp => {
 					this.eficiencia.next(resp);
 				});
-			},
-			error: (error) => {
-				this.validarAlertaError(error);
-			}
-		})
-	}
-
-	async obtenerEficienciaModo(datos) {
-		const data = {
-			encriptado: await this.encriptar(datos)
-			, RASTREO: FuncionesGenerales.rastreo('', 'TemparioApp')
-		}
-		this.httpClient.post(this.url, data, { headers: this.headers}).subscribe({
-			next: resp => {
-				this.desencriptar(resp).then( resp => {
-					this.eficienciaModo.next(resp);
-				})
 			},
 			error: (error) => {
 				this.validarAlertaError(error);

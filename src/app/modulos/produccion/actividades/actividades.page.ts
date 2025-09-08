@@ -45,6 +45,10 @@ export class ActividadesPage implements OnInit, OnDestroy {
 	idLogActividadUltimo: string = '';
 	dataCentroProduccion: object = {};
 	usuarioActual = {};
+	turno = {
+		TurnoId: null,
+		Nombre: ''
+	};
 	codeBase64 = 'data:image/jpeg;base64,';
 	count: number = 0;
 	actividadesEliminar: Array<object> = [];
@@ -112,6 +116,7 @@ export class ActividadesPage implements OnInit, OnDestroy {
 
 	async obtenerCentroProd(event) {
 		this.usuarioActual = await this.actividadesService.desencriptar(JSON.parse(await this.storage.get('usuario')));
+		this.turno = JSON.parse(await this.storage.get('turno'));
 		this.dataCentroProduccion = await this.actividadesService.desencriptar(JSON.parse(await this.storage.get('centroProduccion')));
 		this.dataQuery = {
 			centroProd: this.dataCentroProduccion['CentroProduccion'],
@@ -205,6 +210,9 @@ export class ActividadesPage implements OnInit, OnDestroy {
 		this.searching = true;
 		this.actividadesService.informacion(this.dataQuery, 'CentrosProduccion/obtenerActividadesAsignadas').then((datos) => {
 			if (datos) {
+				this.storage.remove('turno');
+				this.storage.set('turno', JSON.stringify({ TurnoId: datos.turno.TurnoId, Nombre: datos.turno.Nombre }));
+				this.turno = datos.turno;
 				this.actividadesLista = datos.datos;
 				this.mappearCantidadActividades();
 			};
@@ -284,8 +292,11 @@ export class ActividadesPage implements OnInit, OnDestroy {
 				centroProd: this.dataQuery['centroProd'],
 				contadorGrupo: (op['GrupoERP'] > 0 ? (op['ContadorGrupo'] == 0 ? 0 : 1) : 1)
 			}
-			this.actividadesService.informacion(data, 'CentrosProduccion/agregarLogActividad').then(({ datos, msg, valido, actividades }) => {
+			this.actividadesService.informacion(data, 'CentrosProduccion/agregarLogActividad').then(({ datos, msg, valido, actividades, turno }) => {
 				this.idLogActividad = datos;
+				this.storage.remove('turno');
+				this.storage.set('turno', JSON.stringify({ TurnoId: turno.TurnoId, Nombre: turno.Nombre }));
+				this.turno = turno;
 				this.searching = false;
 				if (!valido) {
 					this.notificacionesService.notificacion(msg);
@@ -451,7 +462,7 @@ export class ActividadesPage implements OnInit, OnDestroy {
 	}
 
 	ordenOperacionClick(op, pos) {
-		if (op['CantidadMinimaReproceso'] > 0 && op['Ultimo'] === '0') {
+		if (op['CantidadMinimaReproceso'] > 0) {
 			this.notificacionesService.notificacion('Tiene procesos pendientes o en reproceso');
 			return;
 		}

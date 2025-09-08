@@ -19,7 +19,7 @@
 					<ion-col class="mt-1 ml-3" size="12">
 						<div class="nombreusuario mx-3 text-truncate">{{ usuarioActual['OperarioId'] }} - {{ usuarioActual['nombre'] }}</div>
 						<div class="nombreusuario mx-3 text-truncate">
-							<strong *ngIf="usuarioActual['NombreTurno'] != null">Turno: </strong>{{ usuarioActual['NombreTurno'] == null ? 'No tiene turno asignado' : usuarioActual['NombreTurno']}}
+							<strong *ngIf="turno['Nombre'] != null">Turno: </strong>{{ turno['Nombre'] == null ? 'No tiene turno asignado' : turno['Nombre']}}
 						</div>
 					</ion-col>
 					<ion-col class="columna-eficiencia" size="8">

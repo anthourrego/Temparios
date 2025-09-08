@@ -83,6 +83,8 @@ export class LoginPage implements OnInit {
 						this.storageService.set('password', JSON.stringify(password));
 						this.storageService.set('indice', indice);
 						let centrosProduccionDecryp = await this.loginService.desencriptar(centrosProduccion);
+						let usuarioinfo = await this.loginService.desencriptar(usuario);
+						this.storageService.set('turno', JSON.stringify({ TurnoId: usuarioinfo.TurnoId, Nombre: usuarioinfo.NombreTurno }));
 						if (centrosProduccionDecryp.length == 1) {
 							let encryp = await this.loginService.encriptar({
 								CentroProduccion: centrosProduccionDecryp[0].CentroProduccionId,
