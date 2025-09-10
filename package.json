@@ -24,7 +24,7 @@
     "@awesome-cordova-plugins/app-version": "^5.37.3",
     "@awesome-cordova-plugins/core": "^5.37.3",
     "@capacitor/android": "^3.9.0",
-    "@capacitor/app": "^4.1.1",
+    "@capacitor/app": "^1.1.1",
     "@capacitor/core": "^3.9.0",
     "@ionic/angular": "^6.7.5",
     "@ionic/storage": "^3.0.4",
