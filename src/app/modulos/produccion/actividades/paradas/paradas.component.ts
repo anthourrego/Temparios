@@ -3,7 +3,7 @@ import { ModalController } from '@ionic/angular';
 import { TipoParadasService } from 'src/app/servicios/tipo-paradas.service';
 import { NotificacionesService } from '../../../../servicios/notificaciones.service';
 import { CargadorService } from '../../../../servicios/cargador.service';
-import { countUpTimerConfigModel, timerTexts, CountupTimerService, CountdownTimerService } from 'ngx-timer';
+import { countUpTimerConfigModel, timerTexts, CountupTimerService, CountdownTimerService } from '../../../../servicios/timer-replacement.service';
 import * as moment from 'moment';
 import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';

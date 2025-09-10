@@ -38,7 +38,6 @@
 		"crypto-js": "^4.0.0",
 		"jetifier": "^2.0.0",
 		"moment": "^2.29.1",
-		"ngx-timer": "^1.0.6",
 		"rxjs": "~6.6.0",
 		"tslib": "^2.0.0",
 		"zone.js": "~0.11.4"
