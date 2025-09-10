@@ -12,27 +12,26 @@ import { IonicStorageModule } from '@ionic/storage-angular';
 import { Drivers } from '@ionic/storage';
 
 @NgModule({
-	declarations: [
-		AppComponent
-	],
-	entryComponents: [],
-	imports: [
-		BrowserModule,
-		IonicModule.forRoot(),
-		AppRoutingModule,
-		HttpClientModule,
-		IonicStorageModule.forRoot({
-			driverOrder: [Drivers.IndexedDB, Drivers.LocalStorage],
-			name: '__processDB',
-			storeName: 'settings',
-			description: 'TemparioApp data temp'
-		}),
-	],
-	providers: [{
-		provide: RouteReuseStrategy,
-		useClass: IonicRouteStrategy
-	}],
-	bootstrap: [AppComponent],
+    declarations: [
+        AppComponent
+    ],
+    imports: [
+        BrowserModule,
+        IonicModule.forRoot(),
+        AppRoutingModule,
+        HttpClientModule,
+        IonicStorageModule.forRoot({
+            driverOrder: [Drivers.IndexedDB, Drivers.LocalStorage],
+            name: '__processDB',
+            storeName: 'settings',
+            description: 'TemparioApp data temp'
+        }),
+    ],
+    providers: [{
+            provide: RouteReuseStrategy,
+            useClass: IonicRouteStrategy
+        }],
+    bootstrap: [AppComponent]
 })
 export class AppModule {
 	constructor(private injector: Injector) {
