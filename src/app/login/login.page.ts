@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
+import { AppInfoService } from '../servicios/app-info.service';
 import { RxFormGroup } from '@rxweb/reactive-form-validators';
 import { FuncionesGenerales } from '../config/funciones/funciones';
 import { CargadorService } from '../servicios/cargador.service';
@@ -32,12 +32,19 @@ export class LoginPage implements OnInit {
 		private storageService: StorageService,
 		private cargadorService: CargadorService,
 		private theme: ThemeService,
-		private appVersion: AppVersion,
+		private appInfoService: AppInfoService,
 		private modalController: ModalController,
 	) {
-		this.appVersion.getVersionNumber().then(op => {
-			this.versionNumber = op;
-		});
+		this.getAppVersion();
+	}
+
+	async getAppVersion() {
+		try {
+			this.versionNumber = await this.appInfoService.getVersion();
+		} catch (error) {
+			console.error('Error obteniendo versión:', error);
+			this.versionNumber = '2.3.2';
+		}
 	}
 
 	ngOnInit() {

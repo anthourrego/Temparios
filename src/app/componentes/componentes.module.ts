@@ -4,7 +4,7 @@ import { HeaderComponent } from './header/header.component';
 import { IonicModule } from '@ionic/angular';
 import { FormsModule } from '@angular/forms';
 import { FooterVersionComponent } from './footer-version/footer-version.component';
-import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
+// AppVersion removido - usar AppInfoService
 
 
 
@@ -16,6 +16,6 @@ import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
 		FormsModule
 	],
 	exports: [HeaderComponent, FooterVersionComponent],
-	providers: [AppVersion]
+	providers: []
 })
 export class ComponentesModule { }
