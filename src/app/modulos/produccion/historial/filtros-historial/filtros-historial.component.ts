@@ -2,7 +2,7 @@ import { Component, Input, OnInit } from '@angular/core';
 import { ModalController } from '@ionic/angular';
 import { NotificacionesService } from 'src/app/servicios/notificaciones.service';
 import { DateUtilsService } from 'src/app/servicios/date-utils.service';
-import { FormControl, FormGroup } from '@angular/forms';
+import { UntypedFormControl, UntypedFormGroup } from '@angular/forms';
 @Component({
 	selector: 'app-filtros-historial',
 	templateUrl: './filtros-historial.component.html',
@@ -12,7 +12,7 @@ export class FiltrosHistorialComponent implements OnInit {
 
 	@Input() fechaInicio: string;
 	@Input() fechaFin: string;
-	formFiltro: FormGroup;
+	formFiltro: UntypedFormGroup;
 	maximoFechaDesde: string;
 	minFechaHasta: string;
 	maximoFechaHasta: string;
@@ -29,9 +29,9 @@ export class FiltrosHistorialComponent implements OnInit {
 		this.minFechaHasta = this.dateUtilsService.getMinDate();
 		this.maximoFechaHasta = this.dateUtilsService.getCurrentDate();
 
-		this.formFiltro = new FormGroup({
-			desde: new FormControl(this.fechaInicio),
-			hasta: new FormControl(this.fechaFin),
+		this.formFiltro = new UntypedFormGroup({
+			desde: new UntypedFormControl(this.fechaInicio),
+			hasta: new UntypedFormControl(this.fechaFin),
 		});
 	}
 

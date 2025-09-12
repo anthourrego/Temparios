@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
 import { ModalController, ToastController } from '@ionic/angular';
 import { StorageService } from 'src/app/servicios/storage.service';
 import { environment } from 'src/environments/environment';
@@ -12,9 +12,9 @@ import { environment } from 'src/environments/environment';
 export class ModalconfiguracionComponent implements OnInit {
 
   cargando: boolean = false;
-  formConfig = new FormGroup({
-    nit: new FormControl('', [Validators.pattern(/^([0-9])*$/)]),
-    url: new FormControl('')
+  formConfig = new UntypedFormGroup({
+    nit: new UntypedFormControl('', [Validators.pattern(/^([0-9])*$/)]),
+    url: new UntypedFormControl('')
   })
   esTesting = !environment.production;
   urlToggle = false;
