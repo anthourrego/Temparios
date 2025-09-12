@@ -4,7 +4,7 @@ import { TipoParadasService } from 'src/app/servicios/tipo-paradas.service';
 import { NotificacionesService } from '../../../../servicios/notificaciones.service';
 import { CargadorService } from '../../../../servicios/cargador.service';
 import { countUpTimerConfigModel, timerTexts, CountupTimerService, CountdownTimerService } from '../../../../servicios/timer-replacement.service';
-import * as moment from 'moment';
+import { DateUtilsService } from 'src/app/servicios/date-utils.service';
 import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 
@@ -29,7 +29,8 @@ export class ParadasComponent implements OnInit {
 		private notificacionesService: NotificacionesService,
 		private cargadorService: CargadorService,
 		private countupTimerService: CountupTimerService,
-		private countdownTimerService: CountdownTimerService
+		private countdownTimerService: CountdownTimerService,
+		private dateUtilsService: DateUtilsService
 	) { }
 
 	ngOnInit() {
@@ -75,7 +76,7 @@ export class ParadasComponent implements OnInit {
 			this.countupTimerService.startTimer();
 		} else {
 			this.tiempoCuentaRegresiva = { ...this.tiempoCuentaRegresiva, down: true };
-			let fecha = moment().add(opcion['TiempoMaximo'], 'minute').toDate();
+			let fecha = this.dateUtilsService.addMinutesToDate(new Date(), opcion.TiempoMaximo);
 			this.countdownTimerService.startTimer(fecha);
 			this.suscripcionTiempo();
 		}

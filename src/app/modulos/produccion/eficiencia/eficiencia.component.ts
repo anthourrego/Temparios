@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import * as moment from 'moment';
+import { DateUtilsService } from 'src/app/servicios/date-utils.service';
 import { PopoverController } from '@ionic/angular';
 import { SemanasComponent } from 'src/app/componentes/semanas/semanas.component';
 import { PeticionService } from 'src/app/config/peticiones/peticion.service';
@@ -34,13 +34,14 @@ export class EficienciaComponent implements OnInit {
   constructor(
     private peticionService: PeticionService,
     public popoverController: PopoverController,
+    private dateUtilsService: DateUtilsService
   ) {
   }
 
   ngOnInit() {
-    this.fechaActual = moment().format('YYYY-MM-DD');
+    this.fechaActual = this.dateUtilsService.getCurrentDate();
     this.fechaSeleccionada = new Date().toDateString();
-    this.fechaInicial = moment().format('YY-MM-DD HH:mm:ss');
+    this.fechaInicial = this.dateUtilsService.getCurrentDateTime();
 
     const data = {
       modo: this.modo,
@@ -57,7 +58,7 @@ export class EficienciaComponent implements OnInit {
     this.modo = card.tiempo
     const data = {
       modo: this.modo,
-      fecha: moment(this.fechaSeleccionada).format('YY-MM-DD HH:mm:ss')
+      fecha: this.dateUtilsService.formatToCustomDateTime(this.fechaSeleccionada)
     };
     this.peticionService.informacion(data, 'CentrosProduccion/Eficiencia').then( resp => {
       this.recibirDatos(resp);
@@ -67,7 +68,7 @@ export class EficienciaComponent implements OnInit {
   cambioFecha() {
     const data = {
       modo: this.modo,
-      fecha: moment(this.fechaSeleccionada).format('YY-MM-DD HH:mm:ss')
+      fecha: this.dateUtilsService.formatToCustomDateTime(this.fechaSeleccionada)
     };
     this.peticionService.informacion(data, 'CentrosProduccion/Eficiencia').then( resp => {
       this.recibirDatos(resp);

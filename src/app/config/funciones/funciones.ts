@@ -1,5 +1,5 @@
 import { RxFormGroup, RxFormBuilder } from '@rxweb/reactive-form-validators';
-import * as moment from 'moment';
+import { DateUtilsService } from '../../servicios/date-utils.service';
 
 export class FuncionesGenerales {
 
@@ -12,11 +12,11 @@ export class FuncionesGenerales {
 	}
 
 	static formatearFecha(fecha: string, formato?: string, iso?: boolean): string {
-		const valorFecha = moment(fecha);
+		const dateUtilsService = new DateUtilsService();
 		if (iso) {
-			return valorFecha.toISOString();
+			return dateUtilsService.formatToISODate(fecha);
 		}
-		return valorFecha.format(formato ? formato : 'DD/MM/YYYY')
+		return dateUtilsService.formatDate(fecha, formato ? formato : 'dd/MM/yyyy');
 	}
 
 	static crearFormulario(service: any, group?: boolean) {
@@ -40,7 +40,8 @@ export class FuncionesGenerales {
 	}
 
 	static rastreo = (cambio, programa) => {
-		return { fecha: moment().format('YYYY-DD-M HH:mm:ss'), programa, cambio }
+		const dateUtilsService = new DateUtilsService();
+		return { fecha: dateUtilsService.getCurrentDateTime('yyyy-dd-M HH:mm:ss'), programa, cambio };
 	};
 
 	static generarColorAutomatico() {

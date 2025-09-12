@@ -4,7 +4,7 @@ import { Subject } from 'rxjs';
 import { StorageService } from './storage.service';
 import { environment } from 'src/environments/environment';
 import * as CryptoJS from 'Crypto-js';
-import * as moment from 'moment';
+import { DateUtilsService } from './date-utils.service';
 import { FuncionesGenerales } from '../config/funciones/funciones';
 import { NotificacionesService } from './notificaciones.service';
 
@@ -24,7 +24,8 @@ export class EficienciaService {
 	constructor(
 		private 	httpClient				: HttpClient,
 		private 	storageService			: StorageService,
-		protected	notificacionesService	: NotificacionesService
+		protected	notificacionesService	: NotificacionesService,
+		private dateUtilsService: DateUtilsService
 	) {
 		this.obtenerNit();
 		this.obtenerUrl();
@@ -113,7 +114,7 @@ export class EficienciaService {
 		if (this.nit === null) {
 			this.storageService.limpiarTodo(true);
 		};
-		let fecha = moment().format('YY-MM-DD HH:mm:ss');
+		let fecha = this.dateUtilsService.getCurrentDateTime();
 		const data = {
 			encriptado: await this.encriptar({ modo: 'dia', fecha})
 			, RASTREO: FuncionesGenerales.rastreo('', 'TemparioApp')

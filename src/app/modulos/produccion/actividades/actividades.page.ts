@@ -16,7 +16,7 @@ import { ListaChequeoMultipleComponent } from './lista-chequeo-multiple/lista-ch
 import { ListaChequeoComponent } from './lista-chequeo/lista-chequeo.component';
 import { CaracteristicasComponent } from './caracteristicas/caracteristicas.component';
 import { HeaderService } from 'src/app/servicios/header.service';
-import * as moment from 'moment';
+import { DateUtilsService } from 'src/app/servicios/date-utils.service';
 
 @Component({
 	selector: 'app-actividades',
@@ -68,6 +68,7 @@ export class ActividadesPage implements OnInit, OnDestroy {
 		private cambioCentroProduccionService: CambioCentroProduccionService,
 		private cargadorService: CargadorService,
 		private headerService: HeaderService,
+		private dateUtilsService: DateUtilsService,
 	) {
 		this.cambioCentroProduccionService.suscripcion().pipe(takeUntil(this.subject)).subscribe(respu => {
 			this.actividadesLista = [];
@@ -82,8 +83,11 @@ export class ActividadesPage implements OnInit, OnDestroy {
 	}
 
 	ngOnInit() {
-		if (this.valoresEficiencia.length === 0) {	
-			this.actividadesService.informacion({ modo: 'dia', fecha: moment().format('YY-MM-DD HH:mm:ss')}, 'CentrosProduccion/Eficiencia').then( resp => {
+		if (this.valoresEficiencia.length === 0) {
+			this.actividadesService.informacion(
+				{ modo: 'dia', fecha: this.dateUtilsService.getCurrentDateTime()},
+				'CentrosProduccion/Eficiencia'
+			).then( resp => {
 				if(resp) {
 					this.valoresEficiencia = [
 						{ valor: resp.hora.Eficiencia == null ? '0' : resp.hora.Eficiencia, color: resp.hora.Color },
@@ -95,7 +99,10 @@ export class ActividadesPage implements OnInit, OnDestroy {
 		}
 
 		this.interval = setInterval(() => {
-			this.actividadesService.informacion({ modo: 'dia', fecha: moment().format('YY-MM-DD HH:mm:ss')}, 'CentrosProduccion/Eficiencia').then( resp => {
+			this.actividadesService.informacion(
+				{ modo: 'dia', fecha: this.dateUtilsService.getCurrentDateTime()},
+				'CentrosProduccion/Eficiencia'
+			).then( resp => {
 				if(resp) {
 					this.valoresEficiencia = [
 						{ valor: resp.hora.Eficiencia == null ? '0' : resp.hora.Eficiencia, color: resp.hora.Color },

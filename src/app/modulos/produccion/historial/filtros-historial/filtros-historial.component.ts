@@ -1,7 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { ModalController } from '@ionic/angular';
 import { NotificacionesService } from 'src/app/servicios/notificaciones.service';
-import * as moment from 'moment';
+import { DateUtilsService } from 'src/app/servicios/date-utils.service';
 import { FormControl, FormGroup } from '@angular/forms';
 @Component({
 	selector: 'app-filtros-historial',
@@ -13,16 +13,22 @@ export class FiltrosHistorialComponent implements OnInit {
 	@Input() fechaInicio: string;
 	@Input() fechaFin: string;
 	formFiltro: FormGroup;
-	maximoFechaDesde = moment().format('YYYY-MM-DD');
-	minFechaHasta = moment("0000-01-01", "YYYY-MM-DD").format('YYYY-MM-DD');
-	maximoFechaHasta = moment().format('YYYY-MM-DD');
+	maximoFechaDesde: string;
+	minFechaHasta: string;
+	maximoFechaHasta: string;
 
 	constructor(
 		private modalController: ModalController,
 		private notificaciones: NotificacionesService,
+		private dateUtilsService: DateUtilsService
 	) { }
 
 	ngOnInit() {
+		// Inicializar fechas con date-fns
+		this.maximoFechaDesde = this.dateUtilsService.getCurrentDate();
+		this.minFechaHasta = this.dateUtilsService.getMinDate();
+		this.maximoFechaHasta = this.dateUtilsService.getCurrentDate();
+
 		this.formFiltro = new FormGroup({
 			desde: new FormControl(this.fechaInicio),
 			hasta: new FormControl(this.fechaFin),
@@ -46,8 +52,8 @@ export class FiltrosHistorialComponent implements OnInit {
 		const informacion = Object.assign({}, this.formFiltro.value);
 		if (informacion['desde'] != "" || informacion['hasta'] != "") {
 			if (informacion['desde'] && informacion['hasta']) {
-				informacion['hasta'] = moment(informacion['hasta']).format('YYYY-MM-DD');
-				informacion['desde'] = moment(informacion['desde']).format('YYYY-MM-DD');
+				informacion['hasta'] = this.dateUtilsService.formatToISODate(informacion['hasta']);
+				informacion['desde'] = this.dateUtilsService.formatToISODate(informacion['desde']);
 			} else {
 				if (informacion['hasta'] || informacion['desde']) {
 					filtra = false
