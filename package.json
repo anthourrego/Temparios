@@ -21,7 +21,6 @@
     "@angular/platform-browser": "~13.4.0",
     "@angular/platform-browser-dynamic": "~13.4.0",
     "@angular/router": "~13.4.0",
-    "@awesome-cordova-plugins/core": "^5.37.3",
     "@capacitor/android": "4.0.1",
     "@capacitor/app": "4.0.1",
     "@capacitor/core": "4.0.1",
