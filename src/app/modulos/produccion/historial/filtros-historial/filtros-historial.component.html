@@ -16,18 +16,20 @@
 					Desde:
 				</ion-label>
 				<ion-datetime #fechaDesde formControlName="desde" placeholder="Seleccione una fecha"
-					[pickerOptions]="{'cssClass': 'color-picker'}" cancelText="Cancelar" doneText="Aceptar"
-					display-format="DD-MM-YYYY" [max]="maximoFechaDesde"
-					(ionChange)="cambioFechaDesde(fechaDesde.value)"></ion-datetime>
+					cancelText="Cancelar" doneText="Aceptar"
+					displayFormat="DD-MM-YYYY" [max]="maximoFechaDesde"
+					(ionChange)="cambioFechaDesde(fechaDesde.value)"
+					class="color-picker"></ion-datetime>
 			</ion-item>
 			<ion-item>
 				<ion-label color="dark">
 					Hasta:
 				</ion-label>
 				<ion-datetime #fechaHasta formControlName="hasta" placeholder="Seleccione una fecha"
-					[pickerOptions]="{'cssClass': 'color-picker'}" cancelText="Cancelar" doneText="Aceptar"
-					display-format="DD-MM-YYYY" [min]="minFechaHasta" [max]="maximoFechaHasta"
-					(ionChange)="cambioFechaHasta(fechaHasta.value)"></ion-datetime>
+					cancelText="Cancelar" doneText="Aceptar"
+					displayFormat="DD-MM-YYYY" [min]="minFechaHasta" [max]="maximoFechaHasta"
+					(ionChange)="cambioFechaHasta(fechaHasta.value)"
+					class="color-picker"></ion-datetime>
 			</ion-item>
 		</ion-list>
 		<ion-button class="ion-margin-top" mode="md" expand="full" type="submit" shape="round">
