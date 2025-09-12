@@ -46,7 +46,8 @@
 						"optimization": false,
 						"namedChunks": true,
 						"allowedCommonJsDependencies": [
-							"Crypto-js"
+							"Crypto-js",
+							"localforage"
 						]
 					},
 					"configurations": {
