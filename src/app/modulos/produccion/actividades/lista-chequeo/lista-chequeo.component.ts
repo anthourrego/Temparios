@@ -4,9 +4,10 @@ import { ListaChequeoService } from '../../../../servicios/lista-chequeo.service
 import { NotificacionesService } from '../../../../servicios/notificaciones.service';
 
 @Component({
-	selector: 'app-lista-chequeo',
-	templateUrl: './lista-chequeo.component.html',
-	styleUrls: ['./lista-chequeo.component.scss'],
+    selector: 'app-lista-chequeo',
+    templateUrl: './lista-chequeo.component.html',
+    styleUrls: ['./lista-chequeo.component.scss'],
+    standalone: false
 })
 export class ListaChequeoComponent implements OnInit {
 

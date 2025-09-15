@@ -7,9 +7,10 @@ import { AgregarActividadesComponent } from '../agregar-actividades/agregar-acti
 import { ProductoTerminadoComponent } from '../producto-terminado/producto-terminado.component';
 
 @Component({
-	selector: 'app-detalle-actividad',
-	templateUrl: './detalle-actividad.component.html',
-	styleUrls: ['./detalle-actividad.component.scss'],
+    selector: 'app-detalle-actividad',
+    templateUrl: './detalle-actividad.component.html',
+    styleUrls: ['./detalle-actividad.component.scss'],
+    standalone: false
 })
 export class DetalleActividadComponent implements OnInit {
 

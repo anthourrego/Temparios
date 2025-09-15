@@ -9,9 +9,10 @@ import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 
 @Component({
-	selector: 'app-paradas',
-	templateUrl: './paradas.component.html',
-	styleUrls: ['./paradas.component.scss'],
+    selector: 'app-paradas',
+    templateUrl: './paradas.component.html',
+    styleUrls: ['./paradas.component.scss'],
+    standalone: false
 })
 export class ParadasComponent implements OnInit {
 

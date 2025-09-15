@@ -9,9 +9,10 @@ import { ThemeService } from 'src/app/servicios/theme.service';
 import { App } from '@capacitor/app';
 
 @Component({
-	selector: 'app-configuracion',
-	templateUrl: './configuracion.page.html',
-	styleUrls: ['./configuracion.page.scss'],
+    selector: 'app-configuracion',
+    templateUrl: './configuracion.page.html',
+    styleUrls: ['./configuracion.page.scss'],
+    standalone: false
 })
 export class ConfiguracionPage implements OnInit {
 

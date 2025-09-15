@@ -6,9 +6,10 @@ import { CargadorService } from '../../../../servicios/cargador.service';
 import { AlertInput } from '@ionic/core/dist/types/components/alert/alert-interface';
 
 @Component({
-	selector: 'app-producto-terminado',
-	templateUrl: './producto-terminado.component.html',
-	styleUrls: ['./producto-terminado.component.scss'],
+    selector: 'app-producto-terminado',
+    templateUrl: './producto-terminado.component.html',
+    styleUrls: ['./producto-terminado.component.scss'],
+    standalone: false
 })
 export class ProductoTerminadoComponent implements OnInit {
 

@@ -5,9 +5,10 @@ import { ListaChequeoComponent } from '../lista-chequeo/lista-chequeo.component'
 import { NotificacionesService } from 'src/app/servicios/notificaciones.service';
 
 @Component({
-	selector: 'app-lista-chequeo-multiple',
-	templateUrl: './lista-chequeo-multiple.component.html',
-	styleUrls: ['./lista-chequeo-multiple.component.scss'],
+    selector: 'app-lista-chequeo-multiple',
+    templateUrl: './lista-chequeo-multiple.component.html',
+    styleUrls: ['./lista-chequeo-multiple.component.scss'],
+    standalone: false
 })
 export class ListaChequeoMultipleComponent implements OnInit {
 

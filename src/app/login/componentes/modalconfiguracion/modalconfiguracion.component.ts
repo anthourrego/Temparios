@@ -5,9 +5,10 @@ import { StorageService } from 'src/app/servicios/storage.service';
 import { environment } from 'src/environments/environment';
 
 @Component({
-  selector: 'app-modalconfiguracion',
-  templateUrl: './modalconfiguracion.component.html',
-  styleUrls: ['./modalconfiguracion.component.scss'],
+    selector: 'app-modalconfiguracion',
+    templateUrl: './modalconfiguracion.component.html',
+    styleUrls: ['./modalconfiguracion.component.scss'],
+    standalone: false
 })
 export class ModalconfiguracionComponent implements OnInit {
 

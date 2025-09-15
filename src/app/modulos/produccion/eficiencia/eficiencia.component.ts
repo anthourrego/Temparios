@@ -5,9 +5,10 @@ import { SemanasComponent } from 'src/app/componentes/semanas/semanas.component'
 import { PeticionService } from 'src/app/config/peticiones/peticion.service';
 
 @Component({
-  selector: 'app-eficiencia',
-  templateUrl: './eficiencia.component.html',
-  styleUrls: ['./eficiencia.component.scss'],
+    selector: 'app-eficiencia',
+    templateUrl: './eficiencia.component.html',
+    styleUrls: ['./eficiencia.component.scss'],
+    standalone: false
 })
 export class EficienciaComponent implements OnInit {
 

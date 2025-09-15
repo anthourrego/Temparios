@@ -6,9 +6,10 @@ import { FuncionesGenerales } from '../../config/funciones/funciones';
 import { CambioCentroProduccionService } from 'src/app/config/suscripciones/cambio-centro-produccion.service';
 
 @Component({
-	selector: 'app-centros-produccion',
-	templateUrl: './centros-produccion.page.html',
-	styleUrls: ['./centros-produccion.page.scss'],
+    selector: 'app-centros-produccion',
+    templateUrl: './centros-produccion.page.html',
+    styleUrls: ['./centros-produccion.page.scss'],
+    standalone: false
 })
 export class CentrosProduccionPage implements OnInit {
 

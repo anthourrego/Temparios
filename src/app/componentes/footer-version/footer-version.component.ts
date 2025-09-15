@@ -3,9 +3,10 @@ import { AppInfoService } from 'src/app/servicios/app-info.service';
 import { StorageService } from 'src/app/servicios/storage.service';
 
 @Component({
-	selector: 'app-footer-version',
-	templateUrl: './footer-version.component.html',
-	styleUrls: ['./footer-version.component.scss'],
+    selector: 'app-footer-version',
+    templateUrl: './footer-version.component.html',
+    styleUrls: ['./footer-version.component.scss'],
+    standalone: false
 })
 export class FooterVersionComponent implements OnInit {
 

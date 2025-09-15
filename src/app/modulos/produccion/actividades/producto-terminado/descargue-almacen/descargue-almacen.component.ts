@@ -1,9 +1,10 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 
 @Component({
-	selector: 'app-descargue-almacen',
-	templateUrl: './descargue-almacen.component.html',
-	styleUrls: ['./descargue-almacen.component.scss'],
+    selector: 'app-descargue-almacen',
+    templateUrl: './descargue-almacen.component.html',
+    styleUrls: ['./descargue-almacen.component.scss'],
+    standalone: false
 })
 export class DescargueAlmacenComponent implements OnInit {
 

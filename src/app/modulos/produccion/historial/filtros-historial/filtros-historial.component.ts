@@ -4,9 +4,10 @@ import { NotificacionesService } from 'src/app/servicios/notificaciones.service'
 import { DateUtilsService } from 'src/app/servicios/date-utils.service';
 import { UntypedFormControl, UntypedFormGroup } from '@angular/forms';
 @Component({
-	selector: 'app-filtros-historial',
-	templateUrl: './filtros-historial.component.html',
-	styleUrls: ['./filtros-historial.component.scss'],
+    selector: 'app-filtros-historial',
+    templateUrl: './filtros-historial.component.html',
+    styleUrls: ['./filtros-historial.component.scss'],
+    standalone: false
 })
 export class FiltrosHistorialComponent implements OnInit {
 

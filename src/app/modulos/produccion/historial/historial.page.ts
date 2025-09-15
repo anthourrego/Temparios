@@ -4,9 +4,10 @@ import { HistorialService } from '../../../servicios/historial.service';
 import { FiltrosHistorialComponent } from './filtros-historial/filtros-historial.component';
 
 @Component({
-	selector: 'app-historial',
-	templateUrl: './historial.page.html',
-	styleUrls: ['./historial.page.scss'],
+    selector: 'app-historial',
+    templateUrl: './historial.page.html',
+    styleUrls: ['./historial.page.scss'],
+    standalone: false
 })
 export class HistorialPage implements OnInit {
 

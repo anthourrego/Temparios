@@ -4,9 +4,10 @@ import { InicioService } from './servicios/inicio.service ';
 import { EficienciaService } from './servicios/eficiencia.service';
 
 @Component({
-	selector: 'app-root',
-	templateUrl: 'app.component.html',
-	styleUrls: ['app.component.scss'],
+    selector: 'app-root',
+    templateUrl: 'app.component.html',
+    styleUrls: ['app.component.scss'],
+    standalone: false
 })
 export class AppComponent {
 	constructor(

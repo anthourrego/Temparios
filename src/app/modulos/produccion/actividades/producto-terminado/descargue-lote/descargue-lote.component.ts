@@ -3,9 +3,10 @@ import { RxFormControl, RxwebValidators } from '@rxweb/reactive-form-validators'
 import { FuncionesGenerales } from 'src/app/config/funciones/funciones';
 
 @Component({
-	selector: 'app-descargue-lote',
-	templateUrl: './descargue-lote.component.html',
-	styleUrls: ['./descargue-lote.component.scss'],
+    selector: 'app-descargue-lote',
+    templateUrl: './descargue-lote.component.html',
+    styleUrls: ['./descargue-lote.component.scss'],
+    standalone: false
 })
 export class DescargueLoteComponent implements OnInit {
 

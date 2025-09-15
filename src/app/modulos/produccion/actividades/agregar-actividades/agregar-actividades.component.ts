@@ -5,9 +5,10 @@ import { CargadorService } from '../../../../servicios/cargador.service';
 import { NotificacionesService } from '../../../../servicios/notificaciones.service';
 
 @Component({
-	selector: 'app-agregar-actividades',
-	templateUrl: './agregar-actividades.component.html',
-	styleUrls: ['./agregar-actividades.component.scss'],
+    selector: 'app-agregar-actividades',
+    templateUrl: './agregar-actividades.component.html',
+    styleUrls: ['./agregar-actividades.component.scss'],
+    standalone: false
 })
 export class AgregarActividadesComponent implements OnInit {
 

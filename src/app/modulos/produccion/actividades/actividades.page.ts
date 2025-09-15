@@ -19,9 +19,10 @@ import { HeaderService } from 'src/app/servicios/header.service';
 import { DateUtilsService } from 'src/app/servicios/date-utils.service';
 
 @Component({
-	selector: 'app-actividades',
-	templateUrl: './actividades.page.html',
-	styleUrls: ['./actividades.page.scss'],
+    selector: 'app-actividades',
+    templateUrl: './actividades.page.html',
+    styleUrls: ['./actividades.page.scss'],
+    standalone: false
 })
 export class ActividadesPage implements OnInit, OnDestroy {
 

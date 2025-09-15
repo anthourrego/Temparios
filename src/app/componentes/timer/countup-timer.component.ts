@@ -3,14 +3,15 @@ import { countUpTimerConfigModel, CountupTimerService } from '../../servicios/ti
 import { Subscription } from 'rxjs';
 
 @Component({
-  selector: 'countup-timer',
-  template: `<div [class]="config?.timerClass">{{ displayTime }}</div>`,
-  styles: [`
+    selector: 'countup-timer',
+    template: `<div [class]="config?.timerClass">{{ displayTime }}</div>`,
+    styles: [`
     div {
       font-family: 'Courier New', monospace;
       font-weight: bold;
     }
-  `]
+  `],
+    standalone: false
 })
 export class CountupTimerComponent implements OnInit, OnDestroy {
   @Input() countUpTimerConfig?: countUpTimerConfigModel;

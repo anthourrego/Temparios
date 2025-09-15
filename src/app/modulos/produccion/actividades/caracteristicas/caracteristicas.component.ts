@@ -3,9 +3,10 @@ import { ModalController } from '@ionic/angular';
 import { ActividadesService } from 'src/app/servicios/actividades.service';
 
 @Component({
-  selector: 'app-caracteristicas',
-  templateUrl: './caracteristicas.component.html',
-  styleUrls: ['./caracteristicas.component.scss'],
+    selector: 'app-caracteristicas',
+    templateUrl: './caracteristicas.component.html',
+    styleUrls: ['./caracteristicas.component.scss'],
+    standalone: false
 })
 export class CaracteristicasComponent implements OnInit {
 
