@@ -12,16 +12,19 @@ const config: CapacitorConfig = {
   },
   server: {
     // Permitir navegación a dominios específicos
-    /* allowNavigation: [
+    allowNavigation: [
       'http://192.168.0.224:8016',
       'https://localhost',
       'http://localhost',
       'https://prosof.co:8011',
-      'http://prosof.co:8017'
-    ], */
+      'http://prosof.co:8017',
+      'https://cs.prosof.co:8015',
+      'https://prosof.co:*',
+      'http://prosof.co:*'
+    ],
     cleartext: true,
     // Configuración adicional para desarrollo
-    androidScheme: 'http', // Usar HTTP en desarrollo para evitar Mixed Content
+    androidScheme: 'https', // Cambiar a HTTPS para evitar problemas de CORS
     iosScheme: 'ionic'
   }
 };

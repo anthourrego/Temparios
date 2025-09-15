@@ -16,6 +16,81 @@
 
 .card-fecha {
     background-color: var(--ion-color-primary);
+    cursor: pointer;
+    transition: transform 0.2s ease;
+    
+    &:hover {
+        transform: scale(1.05);
+    }
+}
+
+.fecha-label {
+    color: #ffffff !important;
+    font-size: 10px;
+    font-weight: 500;
+    margin-bottom: 2px;
+}
+
+.card-fecha {
+    background: linear-gradient(135deg, #4a90e2, #357abd) !important;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    
+    &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(74, 144, 226, 0.3);
+    }
+    
+    &:active {
+        transform: translateY(0);
+    }
+}
+
+.fecha-display {
+    color: #ffffff !important;
+    font-size: 12px;
+    font-weight: 500;
+    margin-top: 2px;
+    text-align: center;
+}
+
+.datetime-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    min-height: 400px;
+}
+
+ion-modal {
+    --border-radius: 16px;
+    --box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+ion-modal ion-header {
+    box-shadow: none;
+    border-bottom: 1px solid var(--ion-color-light);
+}
+
+ion-modal ion-toolbar {
+    --background: var(--ion-color-primary);
+    --color: white;
+}
+
+ion-modal ion-title {
+    font-weight: 600;
+    font-size: 18px;
+}
+
+ion-modal ion-content {
+    --background: #fafafa;
+}
+
+ion-datetime {
+    --background: white;
+    --background-rgb: 255, 255, 255;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .eficiencia-card-text {

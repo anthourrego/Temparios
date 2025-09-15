@@ -11,12 +11,45 @@
       </ion-label>
     </div>
 
-    <ion-card class="eficiencia-card card-fecha">
+    <div class="eficiencia-card card-fecha" (click)="abrirCalendario()">
       <div class="eficiencia-card-text">
-        <ion-label style="color: #ffffff;">Fecha</ion-label>
-        <ion-datetime displayFormat="D MM YYYY" presentation="date" id="FechaProg" doneText="Aceptar" cancelText="Cancelar" [(ngModel)]="fechaSeleccionada" [max]="fechaActual" style="padding: 0; font-size: 10px; color: #ffffff;" (ionChange)="cambioFecha()"></ion-datetime>
+        <ion-label class="fecha-label">Fecha</ion-label>
+        <div class="fecha-display">
+          {{ fechaSeleccionada | date:'dd/MM/yyyy' }}
+        </div>
       </div>
-    </ion-card>
+    </div>
+
+    <!-- ion-datetime asociado -->
+    <ion-modal #fechaModal [isOpen]="modalAbierto" (didDismiss)="cerrarModal()">
+      <ng-template>
+        <ion-header>
+          <ion-toolbar>
+            <ion-title>Seleccionar Fecha</ion-title>
+            <ion-buttons slot="end">
+              <ion-button (click)="cerrarModal()">
+                <ion-icon name="close"></ion-icon>
+              </ion-button>
+            </ion-buttons>
+          </ion-toolbar>
+        </ion-header>
+        <ion-content>
+          <div class="datetime-container">
+            <ion-datetime 
+              id="datetime-fecha"
+              presentation="date" 
+              [(ngModel)]="fechaSeleccionada" 
+              [max]="fechaActual"
+              (ionChange)="onFechaChange($event)"
+              locale="es-ES"
+              [showDefaultButtons]="true"
+              done-text="Confirmar"
+              cancel-text="Cancelar">
+            </ion-datetime>
+          </div>
+        </ion-content>
+      </ng-template>
+    </ion-modal>
 
   </div>
 
