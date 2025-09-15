@@ -15,7 +15,20 @@ export class DescargueLoteComponent implements OnInit {
 
 	constructor() { }
 
-	ngOnInit() { }
+	ngOnInit() {
+		// Asegurar que cantireal sea un número
+		if (this.datos && this.datos['cantireal'] !== undefined) {
+			this.datos['cantireal'] = Number(this.datos['cantireal']) || 0;
+		}
+		// Asegurar que InvenActua de los lotes sean números
+		if (this.datos && this.datos['lotes']) {
+			this.datos['lotes'].forEach(lote => {
+				if (lote['InvenActua'] !== undefined) {
+					lote['InvenActua'] = Number(lote['InvenActua']) || 0;
+				}
+			});
+		}
+	}
 
 	ngOnChanges() {
 		this.initForm();

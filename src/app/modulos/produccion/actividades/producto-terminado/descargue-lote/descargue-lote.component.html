@@ -3,7 +3,7 @@
 <p>
 	<ion-item>
 		<ion-label position="floating">Cantidad consumida</ion-label>
-		<ion-input readonly clearInput="true" required="true" [(ngModel)]="+datos['cantireal']" type="number"
+		<ion-input readonly clearInput="true" required="true" [(ngModel)]="datos['cantireal']" type="number"
 			placeholder="Cantidad">
 		</ion-input>
 	</ion-item>
@@ -38,8 +38,8 @@
 <p>
 	<ion-item *ngFor="let lote of datos['lotes'];" [ngClass]="{'d-none': !lote.checked}">
 		<ion-label position="floating">{{ lote['Numerolote'] }}</ion-label>
-		<ion-input [id]="'lote'+lote['InveProdLoteId']" (ionChange)="actualizarTotal(lote)" [max]="+lote['InvenReal']"
-			min="0" clearInput="true" required="true" [(ngModel)]="+lote['InvenActua']" inputmode="decimal"
+		<ion-input [id]="'lote'+lote['InveProdLoteId']" (ionChange)="actualizarTotal(lote)" [max]="lote['InvenReal']"
+			min="0" clearInput="true" required="true" [(ngModel)]="lote['InvenActua']" inputmode="decimal"
 			placeholder="Cantidad">
 		</ion-input>
 	</ion-item>

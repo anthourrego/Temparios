@@ -14,6 +14,10 @@ export class DescargueAlmacenComponent implements OnInit {
 	constructor() { }
 
 	ngOnInit() {
+		// Asegurar que cantireal sea un número
+		if (this.datos && this.datos['cantireal'] !== undefined) {
+			this.datos['cantireal'] = Number(this.datos['cantireal']) || 0;
+		}
 		setTimeout(() => {
 			this.actualizarTotal();
 		}, 500);
