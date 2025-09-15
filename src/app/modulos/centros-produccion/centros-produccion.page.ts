@@ -4,6 +4,7 @@ import { CentroProduccionService } from 'src/app/servicios/centro-produccion.ser
 import { StorageService } from '../../servicios/storage.service';
 import { FuncionesGenerales } from '../../config/funciones/funciones';
 import { CambioCentroProduccionService } from 'src/app/config/suscripciones/cambio-centro-produccion.service';
+import { PeticionService } from 'src/app/config/peticiones/peticion.service';
 
 @Component({
     selector: 'app-centros-produccion',
@@ -25,7 +26,8 @@ export class CentrosProduccionPage implements OnInit {
 		private router: Router,
 		private centroProduccionService: CentroProduccionService,
 		private storage: StorageService,
-		private cambioCentroProduccionService: CambioCentroProduccionService
+		private cambioCentroProduccionService: CambioCentroProduccionService,
+		private peticionService: PeticionService
 	) { }
 
 	ngOnInit() { }
@@ -37,7 +39,7 @@ export class CentrosProduccionPage implements OnInit {
 	async obtenerCentrosProd() {
 		let datos = await this.storage.get('centrosProduccion');
 		this.centrosProduccion = [];
-		datos = await this.centroProduccionService.desencriptar(JSON.parse(datos));
+		datos = await this.peticionService.desencriptar(JSON.parse(datos));
 		this.centrosProduccion = datos.map(it => {
 			it.borde = FuncionesGenerales.generarColorAutomatico();
 			return it;

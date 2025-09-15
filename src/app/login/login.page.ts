@@ -25,6 +25,7 @@ export class LoginPage implements OnInit {
 	claseUsuario: string = '';
 	verPassword: Boolean = false;
 	versionNumber: string = '';
+	loginEnProceso: boolean = false;
 
 	constructor(
 		private router: Router,
@@ -79,10 +80,18 @@ export class LoginPage implements OnInit {
 	};
 
 	login() {
-		if (this.formLogin.formulario.valid) {
+		if (this.formLogin.formulario.valid && !this.loginEnProceso) {
+			this.loginEnProceso = true;
 			this.cargadorService.presentar().then(resp => {
 				const data = Object.assign({}, this.formLogin.formulario.value);
-				this.loginService.iniciarSesionUser(data, this.versionNumber).then(async ({ mensaje, db, usuario, valido, indice, centrosProduccion, crypt, password }) => {
+				this.loginService.iniciarSesionUser(data, this.versionNumber).then(async (response) => {
+					if (!response) {
+						this.notificaciones.notificacion('Error: Respuesta vacía del servidor');
+						this.cargadorService.ocultar();
+						return;
+					}
+					
+					const { mensaje, db, usuario, valido, indice, centrosProduccion, crypt, password } = response as any;
 					if (valido) {
 						this.storageService.set('conexion', JSON.stringify(db));
 						this.storageService.set('nroDocumento', data.nroDocumento);
@@ -110,13 +119,16 @@ export class LoginPage implements OnInit {
 						this.notificaciones.notificacion(mensaje);
 					}
 					this.cargadorService.ocultar();
+					this.loginEnProceso = false;
 				}, error => {
 					this.notificaciones.notificacion('Error de conexión');
 					console.error("Error ", error);
 					this.cargadorService.ocultar();
+					this.loginEnProceso = false;
 				}).catch((error) => {
 					console.error("Error ", error);
 					this.cargadorService.ocultar();
+					this.loginEnProceso = false;
 				});
 			});
 		} else {

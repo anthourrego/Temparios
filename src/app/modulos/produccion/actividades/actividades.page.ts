@@ -17,6 +17,7 @@ import { ListaChequeoComponent } from './lista-chequeo/lista-chequeo.component';
 import { CaracteristicasComponent } from './caracteristicas/caracteristicas.component';
 import { HeaderService } from 'src/app/servicios/header.service';
 import { DateUtilsService } from 'src/app/servicios/date-utils.service';
+import { PeticionService } from 'src/app/config/peticiones/peticion.service';
 
 @Component({
     selector: 'app-actividades',
@@ -70,6 +71,7 @@ export class ActividadesPage implements OnInit, OnDestroy {
 		private cargadorService: CargadorService,
 		private headerService: HeaderService,
 		private dateUtilsService: DateUtilsService,
+		private peticionService: PeticionService,
 	) {
 		this.cambioCentroProduccionService.suscripcion().pipe(takeUntil(this.subject)).subscribe(respu => {
 			this.actividadesLista = [];
@@ -123,9 +125,9 @@ export class ActividadesPage implements OnInit, OnDestroy {
 	}
 
 	async obtenerCentroProd(event) {
-		this.usuarioActual = await this.actividadesService.desencriptar(JSON.parse(await this.storage.get('usuario')));
+		this.usuarioActual = await this.peticionService.desencriptar(JSON.parse(await this.storage.get('usuario')));
 		this.turno = JSON.parse(await this.storage.get('turno'));
-		this.dataCentroProduccion = await this.actividadesService.desencriptar(JSON.parse(await this.storage.get('centroProduccion')));
+		this.dataCentroProduccion = await this.peticionService.desencriptar(JSON.parse(await this.storage.get('centroProduccion')));
 		this.dataQuery = {
 			centroProd: this.dataCentroProduccion['CentroProduccion'],
 			ingresoModulo: this.ingresoModulo

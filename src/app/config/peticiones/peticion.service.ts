@@ -101,8 +101,25 @@ export class PeticionService {
 		const Cedula = await this.storageService.get('nroDocumento').then(resp => resp);
 		const indice = await this.storageService.get('indice').then(resp => resp);
 		const Version = await this.storageService.get('version').then(resp => resp);
-		let user = await this.desencriptar(JSON.parse(await this.storageService.get('usuario').then(resp => resp)));
-		let turno = JSON.parse(await this.storageService.get('usuario').then(resp => resp));
+		
+		// Validar que existan datos de usuario antes de desencriptar
+		const usuarioStorage = await this.storageService.get('usuario').then(resp => resp);
+		if (!usuarioStorage) {
+			console.error('No se encontraron datos de usuario en storage');
+			this.storageService.limpiarTodo(true);
+			return null;
+		}
+		
+		let user = await this.desencriptar(JSON.parse(usuarioStorage));
+		let turno = JSON.parse(usuarioStorage);
+		
+		// Validar que el usuario se haya desencriptado correctamente
+		if (!user || !user.OperarioId) {
+			console.error('Error: datos de usuario inválidos después de desencriptar');
+			this.storageService.limpiarTodo(true);
+			return null;
+		}
+		
 		const headers = new HttpHeaders({
 			Token: '' + user.OperarioId
 			, Conexion
@@ -111,7 +128,7 @@ export class PeticionService {
 			, Usuario: '' + user.OperarioId
 			, indice
 			, Version: (Version || '')
-			, NomUsuario: user.nombre
+			, NomUsuario: user.nombre || ''
 			, TurnoId: (turno.TurnoId || '')
 		});
 		return await this.ejecutarPeticion('post', uri, data, headers).toPromise().then(async resp => {

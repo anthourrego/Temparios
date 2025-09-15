@@ -19,6 +19,7 @@ export class EficienciaComponent implements OnInit {
   fechaSeleccionada: any;
   fechaInicial: any;
   datos: any;
+  modalAbierto: boolean = false;
 
   cards = [
     {
@@ -41,7 +42,7 @@ export class EficienciaComponent implements OnInit {
 
   ngOnInit() {
     this.fechaActual = this.dateUtilsService.getCurrentDate();
-    this.fechaSeleccionada = new Date().toDateString();
+    this.fechaSeleccionada = new Date().toISOString();
     this.fechaInicial = this.dateUtilsService.getCurrentDateTime();
 
     const data = {
@@ -73,7 +74,21 @@ export class EficienciaComponent implements OnInit {
     };
     this.peticionService.informacion(data, 'CentrosProduccion/Eficiencia').then( resp => {
       this.recibirDatos(resp);
-    })
+    })    
+  }
+
+  onFechaChange(event: any) {
+    this.fechaSeleccionada = event.detail.value;
+    this.cambioFecha();
+    this.cerrarModal();
+  }
+
+  abrirCalendario() {
+    this.modalAbierto = true;
+  }
+
+  cerrarModal() {
+    this.modalAbierto = false;
   }
 
   async verPopover(dato) {
@@ -87,6 +102,7 @@ export class EficienciaComponent implements OnInit {
     });
     await popover.present();
   }
+
 
   private recibirDatos(resp) {
     this.datos = resp.lista;

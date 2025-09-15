@@ -7,6 +7,7 @@ import * as CryptoJS from 'Crypto-js';
 import { DateUtilsService } from './date-utils.service';
 import { FuncionesGenerales } from '../config/funciones/funciones';
 import { NotificacionesService } from './notificaciones.service';
+import { PeticionService } from '../config/peticiones/peticion.service';
 
 @Injectable({
 	providedIn: 'root'
@@ -25,7 +26,8 @@ export class EficienciaService {
 		private 	httpClient				: HttpClient,
 		private 	storageService			: StorageService,
 		protected	notificacionesService	: NotificacionesService,
-		private dateUtilsService: DateUtilsService
+		private dateUtilsService: DateUtilsService,
+		private peticionService: PeticionService
 	) {
 		this.obtenerNit();
 		this.obtenerUrl();
@@ -61,7 +63,7 @@ export class EficienciaService {
 		const Cedula = await this.storageService.get('nroDocumento').then(resp => resp);
 		const indice = await this.storageService.get('indice').then(resp => resp);
 		const Version = await this.storageService.get('version').then(resp => resp);
-		let user = await this.desencriptar(JSON.parse(await this.storageService.get('usuario').then(resp => resp)));
+		let user = await this.peticionService.desencriptar(JSON.parse(await this.storageService.get('usuario').then(resp => resp)));
 		let turno = JSON.parse(await this.storageService.get('usuario').then(resp => resp));
 		this.headers = new HttpHeaders({
 			Token: '' + user.OperarioId
@@ -77,18 +79,6 @@ export class EficienciaService {
 		this.peticion();
 	}
 
-	async desencriptar(encriptado) {
-		const salt = CryptoJS.enc.Hex.parse(encriptado.salt);
-		const iv = CryptoJS.enc.Hex.parse(encriptado.iv);
-		const crypt = JSON.parse(await this.storageService.get('crypt').then(resp => resp));
-		const key = CryptoJS.PBKDF2(crypt.key, salt, { hasher: CryptoJS.algo.SHA512, keySize: 64 / 8, iterations: crypt.it });
-		const decrypted = CryptoJS.AES.decrypt(encriptado.ciphertext, key, { iv: iv });
-		try {
-			return JSON.parse(decrypted.toString(CryptoJS.enc.Utf8));
-		} catch (err) {
-			return decrypted.toString(CryptoJS.enc.Utf8)
-		}
-	}
 
 	async encriptar(datos) {
 		const salt = CryptoJS.lib.WordArray.random(256);
@@ -121,7 +111,7 @@ export class EficienciaService {
 		}
 		this.httpClient.post(this.url, data, { headers: this.headers}).subscribe({
 			next: resp => {
-				this.desencriptar(resp).then( resp => {
+				this.peticionService.desencriptar(resp).then( resp => {
 					this.eficiencia.next(resp);
 				});
 			},
@@ -164,7 +154,8 @@ export class EficienciaService {
 					}
 				}];
 			} else {
-				if (request.error.includes('DELETE') && request.error.includes('REFERENCE') && request.error.includes('FK')) {
+				// Verificar si request.error es string antes de usar includes
+				if (typeof request.error === 'string' && request.error.includes('DELETE') && request.error.includes('REFERENCE') && request.error.includes('FK')) {
 					mensaje = 'No se puede eliminar, el registro se encuentra referenciado en otras tablas.';
 					encabezado = 'Error de Integridad';
 					encabezado2 = encabezado;
